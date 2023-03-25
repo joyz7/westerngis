@@ -16,6 +16,7 @@ public class POI {
     private String roomNum;
     private String name;
     private String description;
+<<<<<<< HEAD
     private boolean builtIn;
     
     public POI(int layerId, int xCoord, int yCoord, String roomNum, String name, String description, boolean builtIn) {
@@ -27,6 +28,19 @@ public class POI {
         this.name = name;
         this.description = description;
         this.builtIn = builtIn;
+=======
+    private boolean isBuiltIn;
+    
+    public POI() {
+        this.id = id;
+        this.layerId = layerId;
+        this.xcoord = xcoord;
+        this.ycoord = ycoord;
+        this.roomNum = roomNum;
+        this.name = name;
+        this.description = description;
+        this.isBuiltIn = isBuiltIn;
+>>>>>>> a04d80a84edb05e1596bfed4d4d7eb871db09921
     }
     
     public int getID() {
@@ -58,7 +72,11 @@ public class POI {
     }
     
     public boolean isBuiltIn() {
+<<<<<<< HEAD
         return builtIn;
+=======
+        return isBuiltIn;
+>>>>>>> a04d80a84edb05e1596bfed4d4d7eb871db09921
     }
     
     private void setLayerId(int id) {

@@ -16,8 +16,14 @@ public class Building {
     private String name;
     private String address;
     
+<<<<<<< HEAD
     private Building(String name, String address) {
         floors = new HashMap<Integer,Floor>();
+=======
+    private Building() {
+        floors = new HashMap<Integer,Floor>();
+        this.floor = floor;
+>>>>>>> a04d80a84edb05e1596bfed4d4d7eb871db09921
         this.name = name;
         this.address = address;
     }

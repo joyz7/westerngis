@@ -18,7 +18,8 @@ public class Consumer extends User {
         super(username, password);
         this.pois = new HashSet<POI>();
         this.favourites = new HashSet<POI>();
-        this.activeLayers = new HashSet<Layer>();   
+        this.activeLayers = new HashSet<Layer>();  
+        // soap made this change
     }
     
     public HashSet<POI> getPOIs () {
