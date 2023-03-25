@@ -12,6 +12,13 @@ import java.util.*;
  */
 public class Campus {
     private Map<Integer, Building> buildings;
+<<<<<<< HEAD
+    private String name;
+    private String address;
+    
+    public Campus(String name, String address) {
+        buildings = new HashMap<Integer,Building>();
+=======
     private Building building;
     private String name;
     private String address;
@@ -19,6 +26,7 @@ public class Campus {
     private Campus() {
         buildings = new HashMap<Integer,Building>();
         this.building = building;
+>>>>>>> a04d80a84edb05e1596bfed4d4d7eb871db09921
         this.name = name;
         this.address = address;
     }
@@ -28,7 +36,11 @@ public class Campus {
     }
     
     public Building getBuilding() {
+<<<<<<< HEAD
+        
+=======
         return building;
+>>>>>>> a04d80a84edb05e1596bfed4d4d7eb871db09921
     }
     
     public String getName() {
