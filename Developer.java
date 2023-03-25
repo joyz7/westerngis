@@ -15,7 +15,7 @@ public class Developer extends User {
     }
     
     public boolean addPOI(int layerID, int xCoord, int yCoord, String roomNum, String name, String description) {
-        newPOI = new POI(layerId, xCoord, yCoord, roomNum, name, description, true);
+        POI newPOI = new POI(layerID, xCoord, yCoord, roomNum, name, description, true);
     }
     
     public boolean editPOI(Main main, int poiID, int layerID, int xCoord, int yCoord, String roomNum, String name, String description) {

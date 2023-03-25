@@ -28,7 +28,7 @@ public class User {
     
     public boolean setUsername (String newUsername) {
         // Check if username exists
-        boolean usernameExists = False;
+        boolean usernameExists = false;
         
         if (usernameExists) {
             return false;
