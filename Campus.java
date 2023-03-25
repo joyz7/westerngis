@@ -1,4 +1,4 @@
-package com.mycompany.westernmap;
+package com.cs2212;
 import java.util.*;
 
 /*
