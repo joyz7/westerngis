@@ -12,12 +12,11 @@ import java.util.*;
  */
 public class Building {
     private Map<Integer,Floor> floors;
-    private Floor floor;
     private String name;
     private String address;
     
     private Building(String name, String address) {
-        this.floor = floor;
+        floors = new HashMap<Integer,Floor>();
         this.name = name;
         this.address = address;
     }
@@ -25,11 +24,7 @@ public class Building {
     public Map getBuildings() {
         return floors;
     }
-    
-    public Floor getFloor() {
-        return floor;
-    }
-    
+        
     public String getName() {
         return name;
     }
