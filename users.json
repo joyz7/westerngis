@@ -4,6 +4,7 @@
             "userid":"0",
             "username":"developer",
             "password":"encrypted",
+            "consumer":false,
             "createdpois":null,
             "favourites":null,
             "activelayers":0
@@ -12,6 +13,7 @@
             "userid":"1",
             "username":"consumer",
             "password":"encrypted",
+            "consumer":true,
             "createdpois":[
                 {
                     "pid":"199"
