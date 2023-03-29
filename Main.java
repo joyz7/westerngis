@@ -22,7 +22,7 @@ public class Main {
         
         // Load built in POIs from JSON
         JSONParser parser = new JSONParser();
-          
+                        
         try {
            Object obj = parser.parse(new FileReader("C:/Users/JOYZH/OneDrive/Documents/NetBeansProjects/WesternMap/src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
@@ -39,10 +39,10 @@ public class Main {
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
   
-                POI newPoi = new POI(id, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
-                id++;
+                POI newPoi = new POI(0, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
            }
         } catch(Exception e) {
+            System.out.println("error");
            e.printStackTrace();
         }
     }
