@@ -39,7 +39,7 @@ public class Floor {
         return image;
     }
     
-    private Map search() {
+    /*private Map search() {
         return 
-    }
+    }*/
 }
