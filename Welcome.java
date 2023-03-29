@@ -115,7 +115,7 @@ public class Welcome extends JFrame implements ActionListener {
 
                     // Load active layers
                     JSONArray layer = (JSONArray)user.get("activelayers");
-                    createdPois.put(id,layer);
+                    activeLayers.put(id,layer);
                 }
                 id++;
            }
