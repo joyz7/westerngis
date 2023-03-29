@@ -52,7 +52,7 @@ public class Weather {
                 String currCondition = (String)condition.get("text");
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
     

@@ -111,11 +111,19 @@ public class Main extends JFrame {
         
         Campus campus = new Campus("Western University", "1151 Richmond Street, London");
         
+<<<<<<< HEAD
 //        // Load built in POIs from JSON
         JSONParser parser = new JSONParser();
                         
         try {
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
+=======
+        // Load built in POIs from JSON
+        JSONParser parser = new JSONParser();
+                        
+        try {
+           Object obj = parser.parse(new FileReader("poi.json"));
+>>>>>>> fbe5de0a9c76dcc78d6a15a512645212a5be0161
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -132,6 +140,7 @@ public class Main extends JFrame {
                 POI newPoi = new POI(0, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
            }
         } catch(Exception e) {
+<<<<<<< HEAD
             System.out.println("error");
            e.printStackTrace();
         }
@@ -144,11 +153,19 @@ public class Main extends JFrame {
 //        
 //        // Load current layers
    
+=======
+           e.printStackTrace();
+        }
     }
     
-//    public POI getPOI(int poiId) {
-//        
-//    }
+    public Main(User user, JSONArray createdPois, JSONArray favourites, JSONArray activeLayers) {
+        
+    } 
+            
+    public POI getPOI(int poiId) {
+        
+>>>>>>> fbe5de0a9c76dcc78d6a15a512645212a5be0161
+    }
     
     public boolean deletePOI(int poiId) {
         return true;
