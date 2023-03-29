@@ -4,7 +4,6 @@
 
 package com.cs2212;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 /**
@@ -14,6 +13,8 @@ import java.awt.event.*;
 public class Welcome extends JFrame implements ActionListener {
 
     private JFrame welcomeFrame;
+    private JTextField user, password;
+    private User newUser;
     
     public Welcome() {
         welcomeFrame = new JFrame(); //creating instance of JFrame    
@@ -29,7 +30,7 @@ public class Welcome extends JFrame implements ActionListener {
         usernameLabel.setBounds(400, 300, 100, 30);
         welcomeFrame.add(usernameLabel);
 
-        JTextField user = new JTextField();
+        user = new JTextField();
         user.setBounds(500,300,300,20);
         welcomeFrame.add(user);
 
@@ -37,7 +38,7 @@ public class Welcome extends JFrame implements ActionListener {
         passwordLabel.setBounds(400, 400, 100, 30);
         welcomeFrame.add(passwordLabel);
 
-        JTextField password = new JTextField();
+        password = new JTextField();
         password.setBounds(500,400,300,20);
         welcomeFrame.add(password);
         
@@ -56,10 +57,13 @@ public class Welcome extends JFrame implements ActionListener {
         logIn.setBounds(450,500,100, 40);//x axis, y axis, width, height          
         
         JButton signUp = new JButton(new AbstractAction("Sign Up") {//creating instance of JButton
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Check if username already exists in hashmap
-                new User = new User(user.getText(), password.getText());
+                newUser = new User(user.getText(), password.getText());
+                welcomeFrame.setVisible(false);
+                welcomeFrame.dispose();
                 new Main();
             }
         });
