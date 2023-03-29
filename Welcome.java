@@ -44,6 +44,11 @@ public class Welcome extends JFrame implements ActionListener {
         JButton logIn = new JButton(new AbstractAction("Log In") {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Check if user in user hashmap
+                
+                // If user in hashmap, check if password matches
+                
+                // If password doesn't match, pop up error message
         
             }
         });                        
@@ -53,7 +58,9 @@ public class Welcome extends JFrame implements ActionListener {
         JButton signUp = new JButton(new AbstractAction("Sign Up") {//creating instance of JButton
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                // Check if username already exists in hashmap
+                new User = new User(user.getText(), password.getText());
+                new Main();
             }
         });
         welcomeFrame.add(signUp);
