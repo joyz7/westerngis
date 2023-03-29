@@ -30,11 +30,11 @@ public class Main extends JFrame {
         
         mainFrame = new JFrame();      
       
-        Border blackline = BorderFactory.createLineBorder(Color.black);
+        Border blackBorder = BorderFactory.createLineBorder(Color.black);
 
         JPanel favourites = new JPanel();
         favourites.setBounds(1000,0,200,80);
-        favourites.setBorder(blackline);
+        favourites.setBorder(blackBorder);
         JLabel favouritesLabel = new JLabel("Favourites");
         favouritesLabel.setBounds(1000, 0, 20, 20);
         favourites.add(favouritesLabel);
@@ -42,24 +42,67 @@ public class Main extends JFrame {
              
         JPanel created = new JPanel();
         created.setBounds(1000,80,200,80);
+        created.setBorder(blackBorder);
         JLabel createdLabel = new JLabel("Created POIs");
         createdLabel.setBounds(1000, 80, 20, 20);
+        created.add(createdLabel);
         mainFrame.add(created);
-        mainFrame.add(createdLabel);
         
         JPanel classrooms = new JPanel();
         classrooms.setBounds(1000,160,200,80);
-        JLabel classroomLabel = new JLabel("Created POIs");
+        classrooms.setBorder(blackBorder);
+        JLabel classroomLabel = new JLabel("Classrooms");
         classroomLabel.setBounds(1000, 160, 20, 20);
+        classrooms.add(classroomLabel);
         mainFrame.add(classrooms);
-        mainFrame.add(classroomLabel);
         
         JPanel navigation = new JPanel();
+        navigation.setBounds(1000,240,200,80);
+        navigation.setBorder(blackBorder);
+        JLabel navigationLabel = new JLabel("Navigation");
+        navigationLabel.setBounds(1000, 240, 20, 20);
+        navigation.add(navigationLabel);
+        mainFrame.add(navigation);
+        
         JPanel washrooms = new JPanel();
+        washrooms.setBounds(1000,320,200,80);
+        washrooms.setBorder(blackBorder);
+        JLabel washroomLabel = new JLabel("Washrooms");
+        washroomLabel.setBounds(1000, 320, 20, 20);
+        washrooms.add(washroomLabel);
+        mainFrame.add(washrooms);
+        
         JPanel entryExit = new JPanel();
+        entryExit.setBounds(1000,400,200,80);
+        entryExit.setBorder(blackBorder);
+        JLabel entryExitLabel = new JLabel("Entry and Exit Points");
+        entryExitLabel.setBounds(1000, 400, 20, 20);
+        entryExit.add(entryExitLabel);
+        mainFrame.add(entryExit);
+        
         JPanel genLabs = new JPanel();
+        genLabs.setBounds(1000,480,200,80);
+        genLabs.setBorder(blackBorder);
+        JLabel genLabLabel = new JLabel("GenLabs");
+        genLabLabel.setBounds(1000, 480, 20, 20);
+        genLabs.add(genLabLabel);
+        mainFrame.add(genLabs);
+        
         JPanel resturaunts = new JPanel();
+        resturaunts.setBounds(1000,560,200,80);
+        resturaunts.setBorder(blackBorder);
+        JLabel resturauntLabel = new JLabel("Resturaunts");
+        resturauntLabel.setBounds(1000, 560, 20, 20);
+        resturaunts.add(resturauntLabel);
+        mainFrame.add(resturaunts);
+        
         JPanel csSpecfic = new JPanel();
+        csSpecfic.setBounds(1000,640,200,80);
+        csSpecfic.setBorder(blackBorder);
+        JLabel csSpecficLabel = new JLabel("CS Specfic");
+        csSpecficLabel.setBounds(1000, 640, 20, 20);
+        csSpecfic.add(csSpecficLabel);
+        mainFrame.add(csSpecfic);
         
         mainFrame.setSize(1200,800);//400 width and 500 height  
         mainFrame.setLayout(null);//using no layout managers  
