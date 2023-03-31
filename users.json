@@ -1,0 +1,33 @@
+{
+    "users":[
+        {
+            "userid":"0",
+            "username":"developer",
+            "password":"encrypted",
+            "consumer":false,
+            "createdpois":null,
+            "favourites":null,
+            "activelayers":0
+        },
+        {
+            "userid":"1",
+            "username":"consumer",
+            "password":"encrypted",
+            "consumer":true,
+            "createdpois":[
+                {
+                    "pid":"199"
+                }
+            ],
+            "favourites":[
+                {
+                    "pid":"0"
+                }
+            ],
+            "activelayers":[
+                {
+                    "layer":"1"
+                }
+        }
+    ]
+}
