@@ -9,7 +9,7 @@ package com.cs2212;
  * @author JOYZH
  */
 public class POI {
-    private long id;
+    private int id;
     private long layerId;
     private long xcoord;
     private long ycoord;
@@ -18,7 +18,7 @@ public class POI {
     private String description;
     private boolean builtIn;
     
-    public POI(long id, long layerId, long xCoord, long yCoord, String roomNum, String name, String description, boolean builtIn) {
+    public POI(int id, long layerId, long xCoord, long yCoord, String roomNum, String name, String description, boolean builtIn) {
         this.id = id;
         this.layerId = layerId;
         this.xcoord = xCoord;
@@ -29,7 +29,7 @@ public class POI {
         this.builtIn = builtIn;
     }
     
-    public long getID() {
+    public int getID() {
         return id;
     }
     
