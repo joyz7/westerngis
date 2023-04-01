@@ -18,6 +18,7 @@ public class Layer {
     private Floor floor;
     
     public Layer(String name, boolean active, Floor floor) {
+        poiRef = new HashSet<>();
         this.name = name;
         //this.id = 0;
         this.active = active;

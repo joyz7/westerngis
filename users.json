@@ -7,7 +7,7 @@
             "consumer":false,
             "createdpois":null,
             "favourites":null,
-            "activelayers":0
+            "activelayers":[{}]
         },
         {
             "userid":"1",
