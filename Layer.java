@@ -11,18 +11,23 @@ import java.util.*;
  * @author JOYZH
  */
 public class Layer {
-    private Map<Integer,Integer> poiRef;
+    private HashSet<Integer> poiRef;
     private String name;
     private int id;
     private boolean active;
     private Floor floor;
     
     private Layer(String name, boolean active, Floor floor) {
-        poiRef = new HashMap<Integer,Integer>();
         this.name = name;
-        this.id = 0;
+        //this.id = 0;
         this.active = active;
         this.floor = floor;
+    }
+    
+    public void addPoi(int id, POI poi) {
+        if (poi.getLayerId() == id) {
+            poiRef.add(poi.getId());
+        }
     }
     
     public boolean isActive() {

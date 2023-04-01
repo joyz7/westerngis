@@ -29,7 +29,7 @@ public class POI {
         this.builtIn = builtIn;
     }
     
-    public int getID() {
+    public int getId() {
         return id;
     }
     
