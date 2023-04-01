@@ -11,17 +11,21 @@ import java.util.*;
  * @author JOYZH
  */
 public class Building {
-    private Map<Integer,Floor> floors;
+    private Map<String,Floor> floors;
     private String name;
     private String address;
     
     public Building(String name, String address) {
-        floors = new HashMap<Integer,Floor>();
+        floors = new HashMap<>();
         this.name = name;
         this.address = address;
     }
     
-    public Map getBuildings() {
+    public void addFloor(Floor floor) {
+        floors.put(name,floor);
+    }
+    
+    public Map getFloors() {
         return floors;
     }
         
