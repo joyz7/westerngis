@@ -106,9 +106,9 @@ public class Welcome extends JFrame implements ActionListener {
                         }
 
                         JSONArray layerArray = activeLayers.get(user.getText());
-                        HashSet<Integer> activeLayerId = new HashSet<Integer>();
+                        HashSet<Long> activeLayerId = new HashSet<Long>();
                         for (Object o : layerArray) {
-                            activeLayer.add((int)o);
+                            activeLayerId.add((long)o);
                         }
                         
                         new Main(oldUser, createdPoiId, favouritePoiId, activeLayerId);
