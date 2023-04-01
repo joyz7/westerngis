@@ -27,7 +27,6 @@ public class Main extends JFrame {
     private JFrame mainFrame;
     
     public Main() {
-        
         mainFrame = new JFrame();      
       
         Border blackBorder = BorderFactory.createLineBorder(Color.black);
@@ -115,7 +114,7 @@ public class Main extends JFrame {
         JSONParser parser = new JSONParser();
                         
         try {
-           Object obj = parser.parse(new FileReader("poi.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -128,8 +127,6 @@ public class Main extends JFrame {
                 String name = (String)poi.get("name");
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
-  
-                POI newPoi = new POI(0, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
            }
         } catch(Exception e) {
            e.printStackTrace();

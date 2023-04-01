@@ -93,10 +93,24 @@ public class Welcome extends JFrame implements ActionListener {
                     if (users.get(user.getText()).equals(password.getText())) {
                         User oldUser = new User(user.getText(),password.getText());
                         
-                        JSONArray createdPoi = createdPois.get(user.getText());
-                        JSONArray favourite = favourites.get(user.getText());
-                        JSONArray activeLayer = activeLayers.get(user.getText());
+                        JSONArray poiArray = createdPois.get(user.getText());
+                        HashSet<Integer> createdPoi = new HashSet<Integer>();
+                        for (Object o : poiArray) {
+                            createdPoi.add((int)o);
+                        }
+                        
+                        JSONArray favouriteArray = favourites.get(user.getText());
+                        HashSet<Integer> favourite = new HashSet<Integer>();
+                        for (Object o : favouriteArray) {
+                            favourite.add((int)o);
+                        }
 
+                        JSONArray layerArray = activeLayers.get(user.getText());
+                        HashSet<Integer> activeLayer = new HashSet<Integer>();
+                        for (Object o : layerArray) {
+                            activeLayer.add((int)o);
+                        }
+                        
                         new Main(oldUser, createdPoi, favourite, activeLayer);
                     } else {
                     // If password doesn't match, pop up error message
