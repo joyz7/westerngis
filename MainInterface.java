@@ -1,8 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.cs2212;
+
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import javax.swing.*;
+import javax.imageio.ImageIO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,8 +19,36 @@ public class MainInterface extends javax.swing.JFrame {
     /**
      * Creates new form MainInterface
      */
-    public MainInterface() {
+    public MainInterface() throws IOException {
         initComponents();
+        
+        //Prepared image
+        BufferedImage alumni0Image = ImageIO.read(new File("src/images/AlumniHall-0.png"));
+        JLabel alumni0 = new JLabel(new ImageIcon(alumni0Image));
+
+        BufferedImage middle0Image = ImageIO.read(new File("src/images/Middlesex College-0.png"));
+        JLabel middle0 = new JLabel(new ImageIcon(middle0Image));
+
+        BufferedImage health1Image = ImageIO.read(new File("src/images/Health Sciences Building-1.png"));
+        JLabel health1 = new JLabel(new ImageIcon(health1Image));
+
+        //Create a scroll pane to hold the image
+        JScrollPane alumni0scrollPane = new JScrollPane(alumni0);
+        JScrollPane middle0scrollPane = new JScrollPane(middle0);
+        JScrollPane health1scrollPane = new JScrollPane(health1);
+
+        // Set the scroll pane properties
+        alumni0scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        alumni0scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        alumni0scrollPane.setPreferredSize(new Dimension(800, 600));
+
+        middle0scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        middle0scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        middle0scrollPane.setPreferredSize(new Dimension(800, 600));
+
+        health1scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        health1scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        health1scrollPane.setPreferredSize(new Dimension(800, 600));
     }
 
     /**
@@ -28,7 +62,6 @@ public class MainInterface extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         MiddlesexCollege = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
@@ -44,22 +77,15 @@ public class MainInterface extends javax.swing.JFrame {
 
         MiddlesexCollege.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ground Floor", "First Floor", "Second Floor", "Third Floor", "Fourth Floor" }));
-
         javax.swing.GroupLayout MiddlesexCollegeLayout = new javax.swing.GroupLayout(MiddlesexCollege);
         MiddlesexCollege.setLayout(MiddlesexCollegeLayout);
         MiddlesexCollegeLayout.setHorizontalGroup(
             MiddlesexCollegeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MiddlesexCollegeLayout.createSequentialGroup()
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(686, Short.MAX_VALUE))
+            .addGap(0, 802, Short.MAX_VALUE)
         );
         MiddlesexCollegeLayout.setVerticalGroup(
             MiddlesexCollegeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MiddlesexCollegeLayout.createSequentialGroup()
-                .addContainerGap(484, Short.MAX_VALUE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGap(0, 512, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Middlesex College", MiddlesexCollege);
@@ -203,6 +229,7 @@ public class MainInterface extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox6ActionPerformed
 
+    // User clicks on "Add POI" button
     private void btnAddPOIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPOIActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddPOIActionPerformed
@@ -237,7 +264,11 @@ public class MainInterface extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainInterface().setVisible(true);
+                try {
+                    new MainInterface().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -251,7 +282,6 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
