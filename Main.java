@@ -29,14 +29,44 @@ public class Main extends JFrame {
     
     private JFrame mainFrame;
     private HashMap<Integer,POI> poiMap;
+    private HashSet<POI> builtinPoiSet;
     private HashSet<POI> createdPoiSet;
     private HashSet<POI> favouritePoiSet;
     private int count;
     
     public Main() {
         poiMap = new HashMap<>();
+        builtinPoiSet = new HashSet<>();
         createdPoiSet = new HashSet<>();
         favouritePoiSet = new HashSet<>();
+        
+        Campus campus = new Campus("Western University", "1151 Richmond Street, London");
+        Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
+        Building healthsci = new Building("Health Sciences Building", "1151 Huron Drive, London");
+        Building alumni = new Building("Alumni Hall", "Lambton Dr, London");
+        Floor m0 = new Floor(0, middlesex, "");
+        Floor m1 = new Floor(1, middlesex, "");
+        Floor m2 = new Floor(2, middlesex, "");
+        Floor m3 = new Floor(3, middlesex, "");
+        Floor h1 = new Floor(1, healthsci, "");
+        Floor h2 = new Floor(2, healthsci, "");
+        Floor h3 = new Floor(3, healthsci, "");
+        Floor h4 = new Floor(4, healthsci, "");
+        Floor a0 = new Floor(0, alumni, "");
+        Floor a1 = new Floor(1, alumni, "");
+        Floor a2 = new Floor(2, alumni, "");
+        Layer mc = new Layer("Classrooms", true, m0);
+        Layer ml1= new Layer("Labs", true, m1);
+        Layer ml2= new Layer("Labs", true, m2);
+        Layer mcs2 = new Layer("Collaborative Spaces", true, m2);
+        Layer mcs3 = new Layer("Collaborative Spaces", true, m3);
+        Layer ms = new Layer("Stairwells & Elevators", true, m0);
+        Layer mr = new Layer("Restaurants", true, m0);
+        Layer mw0 = new Layer("Washrooms", true, m0);
+        Layer mw1 = new Layer("Washrooms", true, m1);
+        Layer mw2 = new Layer("Washrooms", true, m2);
+        Layer mw3 = new Layer("Washrooms", true, m3);
+
         // Load built in POIs from JSON
         JSONParser parser = new JSONParser();
         DefaultListModel<String> names = new DefaultListModel<>();           
@@ -58,6 +88,32 @@ public class Main extends JFrame {
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 names.addElement(newPoi.getName());
                 poiMap.put(count, newPoi);
+                if (builtIn) {
+                    builtinPoiSet.add(newPoi);
+                }
+                if (layerId == 0) {
+                    mc.addPoi(count, newPoi);
+                } else if (layerId == 1) {
+                    ml1.addPoi(count, newPoi);
+                } else if (layerId == 2) {
+                    ml2.addPoi(count, newPoi);
+                } else if (layerId == 3) {
+                    mcs2.addPoi(count, newPoi);
+                } else if (layerId == 4) {
+                    mcs3.addPoi(count, newPoi);
+                } else if (layerId == 5) {
+                    ms.addPoi(count, newPoi);
+                } else if (layerId == 6) {
+                    mr.addPoi(count, newPoi);
+                } else if (layerId == 7) {
+                    mw0.addPoi(count, newPoi);
+                } else if (layerId == 8) {
+                    mw1.addPoi(count, newPoi);
+                } else if (layerId == 9) {
+                    mw2.addPoi(count, newPoi);
+                } else if (layerId == 10) {
+                    mw3.addPoi(count, newPoi);
+                }
                 count++;
            }
         } catch(Exception e) {
@@ -146,9 +202,6 @@ public class Main extends JFrame {
         mainFrame.setSize(1200,800);//400 width and 500 height  
         mainFrame.setLayout(null);//using no layout managers  
         mainFrame.setVisible(true);//making the frame visible   
-
-        
-        Campus campus = new Campus("Western University", "1151 Richmond Street, London");
     }
        
     public Main(User user, HashSet<Integer> createdPoiId, HashSet<Integer> favouritePoiId, HashSet<Integer> activeLayerId) {
@@ -175,12 +228,12 @@ public class Main extends JFrame {
       return count;  
     }
     
-    public POI getPOI(int poiId) {
+    /*public POI getPOI(int poiId) {
         
     }
     
     public boolean deletePOI(int poiId) {
         return true;
-    }
+    }*/
     
 }

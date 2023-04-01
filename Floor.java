@@ -17,10 +17,14 @@ public class Floor {
     private String image;
     
     public Floor(int number, Building building, String image) {
-        layers = new HashMap<Integer,Layer>();
+        layers = new HashMap<>();
         this.number = number;
         this.building = building;
         this.image = image;
+    }
+    
+    public void addLayer(Layer layer) {
+        layers.put(number,layer);
     }
     
     public Map getLayers() {

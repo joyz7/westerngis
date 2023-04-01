@@ -17,7 +17,7 @@ public class Layer {
     private boolean active;
     private Floor floor;
     
-    private Layer(String name, boolean active, Floor floor) {
+    public Layer(String name, boolean active, Floor floor) {
         this.name = name;
         //this.id = 0;
         this.active = active;
