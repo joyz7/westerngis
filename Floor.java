@@ -16,7 +16,7 @@ public class Floor {
     private Building building;
     private String image;
     
-    private Floor(int number, Building building, String image) {
+    public Floor(int number, Building building, String image) {
         layers = new HashMap<Integer,Layer>();
         this.number = number;
         this.building = building;

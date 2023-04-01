@@ -145,6 +145,8 @@ public class Main extends JFrame {
 
         
         Campus campus = new Campus("Western University", "1151 Richmond Street, London");
+        
+        
 
 //        
 //        // Load user data from JSON
@@ -155,9 +157,9 @@ public class Main extends JFrame {
 //        
 //        // Load current layers
    
-        }
+       // }
     }
-    
+    /*
     public Main(User user, JSONArray createdPois, JSONArray favourites, JSONArray activeLayers) {
         
     } 
@@ -169,5 +171,5 @@ public class Main extends JFrame {
     public boolean deletePOI(int poiId) {
         return true;
     }
-    
+    */
 }

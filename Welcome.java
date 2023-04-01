@@ -20,12 +20,46 @@ public class Welcome extends JFrame implements ActionListener {
     private JFrame welcomeFrame;
     private JTextField user, password;
     private User newUser;
-    private static HashMap<Integer,User> users;
-    private static HashMap<Integer,JSONArray> createdPois;
-    private static HashMap<Integer,JSONArray> favourites;
-    private static HashMap<Integer,JSONArray> activeLayers;
+    private HashMap<String,String> users;
+    private HashMap<String,JSONArray> createdPois;
+    private HashMap<String,JSONArray> favourites;
+    private HashMap<String,JSONArray> activeLayers;
     
     public Welcome() {
+        users = new HashMap<>();
+        createdPois = new HashMap<>();
+        favourites = new HashMap<>();
+        activeLayers = new HashMap<>();
+        
+        JSONParser parser = new JSONParser();                        
+        try {
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/users.json"));
+           JSONObject jsonObject = (JSONObject)obj;
+           JSONArray array = (JSONArray) jsonObject.get("users");
+           
+           for(Object o : array) {
+                JSONObject user = (JSONObject) o;
+                
+                // Load user data from JSON
+                String username = (String)user.get("username");
+                String password = (String)user.get("password");
+                users.put(username,password);
+                
+                JSONArray poi = (JSONArray)user.get("createdpois");
+                createdPois.put(username,poi);
+
+                // Load favourites
+                JSONArray favourite = (JSONArray)user.get("favourites");
+                favourites.put(username,favourite);
+
+                // Load active layers
+                JSONArray layer = (JSONArray)user.get("activelayers");
+                activeLayers.put(username,layer);
+           }
+        } catch(Exception e) {
+           e.printStackTrace();
+        }
+        
         welcomeFrame = new JFrame(); //creating instance of JFrame    
         welcomeFrame.setSize(1200,800);//400 width and 500 height  
         welcomeFrame.setLayout(null);//using no layout managers  
@@ -54,12 +88,35 @@ public class Welcome extends JFrame implements ActionListener {
         JButton logIn = new JButton(new AbstractAction("Log In") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Check if user in user hashmap
-                
-                // If user in hashmap, check if password matches
-                
-                // If password doesn't match, pop up error message
-        
+                // Check if user in user hashmap and if password matches
+                if (users.containsKey(user.getText())) {
+                    if (users.get(user.getText()).equals(password.getText())) {
+                        User oldUser = new User(user.getText(),password.getText());
+                        
+                        JSONArray poiArray = createdPois.get(user.getText());
+                        HashSet<Integer> createdPoi = new HashSet<Integer>();
+                        for (Object o : poiArray) {
+                            createdPoi.add((int)o);
+                        }
+                        
+                        JSONArray favouriteArray = favourites.get(user.getText());
+                        HashSet<Integer> favourite = new HashSet<Integer>();
+                        for (Object o : favouriteArray) {
+                            favourite.add((int)o);
+                        }
+
+                        JSONArray layerArray = activeLayers.get(user.getText());
+                        HashSet<Integer> activeLayer = new HashSet<Integer>();
+                        for (Object o : layerArray) {
+                            activeLayer.add((int)o);
+                        }
+                        
+                        new Main(oldUser, createdPoi, favourite, activeLayer);
+                    } else {
+                    // If password doesn't match, pop up error message
+  
+                    }
+                }
             }
         });                        
         welcomeFrame.add(logIn);//adding button in JFrame
@@ -81,48 +138,6 @@ public class Welcome extends JFrame implements ActionListener {
     }
    
      public static void main(String[] args) {
-        users = new HashMap<>();
-        createdPois = new HashMap<>();
-        favourites = new HashMap<>();
-        activeLayers = new HashMap<>();
-
-        JSONParser parser = new JSONParser();
-                        
-        try {
-           Object obj = parser.parse(new FileReader("C:/Users/JOYZH/OneDrive/Documents/NetBeansProjects/WesternMap/src/main/java/com/cs2212/users.json"));
-           JSONObject jsonObject = (JSONObject)obj;
-           JSONArray array = (JSONArray) jsonObject.get("users");
-           
-           int id = 0;
-           for(Object o : array) {
-                JSONObject user = (JSONObject) o;
-                
-                // Load user data from JSON
-                String username = (String)user.get("layerid");
-                String password = (String)user.get("password");
-                User newUser = new User(username,password);
-                users.put(id,newUser);
-                
-                boolean consumer = (boolean)user.get("consumer");
-                if (consumer) {
-                    // Load user created POIs
-                    JSONArray poi = (JSONArray)user.get("createdpois");
-                    createdPois.put(id,poi);
-
-                    // Load favourites
-                    JSONArray favourite = (JSONArray)user.get("favourites");
-                    favourites.put(id,favourite);
-
-                    // Load active layers
-                    JSONArray layer = (JSONArray)user.get("activelayers");
-                    activeLayers.put(id,layer);
-                }
-                id++;
-           }
-        } catch(Exception e) {
-           e.printStackTrace();
-        }
-        
         new Welcome();
     }
 

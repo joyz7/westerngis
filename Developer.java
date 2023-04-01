@@ -13,7 +13,7 @@ public class Developer extends User {
     public Developer(String username, String password) {
         super(username, password);
     }
-    
+    /*
     public boolean addPOI(int layerID, int xCoord, int yCoord, String roomNum, String name, String description) {
         POI newPOI = new POI(layerID, xCoord, yCoord, roomNum, name, description, true);
     }
@@ -30,4 +30,5 @@ public class Developer extends User {
     public boolean deletePOI (int poiID) {
         main.deletePOI(poiID);
     } 
+*/
 }
