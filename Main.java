@@ -11,8 +11,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.DefaultListModel;
 
 import javax.swing.BorderFactory;
@@ -30,10 +28,16 @@ import javax.swing.JScrollPane;
 public class Main extends JFrame {
     
     private JFrame mainFrame;
+    private HashMap<Integer,POI> poiMap;
+    private HashSet<POI> createdPoiSet;
+    private HashSet<POI> favouritePoiSet;
+    private int count;
     
     public Main() {
-                
-//        // Load built in POIs from JSON
+        poiMap = new HashMap<>();
+        createdPoiSet = new HashSet<>();
+        favouritePoiSet = new HashSet<>();
+        // Load built in POIs from JSON
         JSONParser parser = new JSONParser();
         DefaultListModel<String> names = new DefaultListModel<>();           
         try {
@@ -51,15 +55,15 @@ public class Main extends JFrame {
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
   
-                POI newPoi = new POI(0, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
+                POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 names.addElement(newPoi.getName());
-                
+                poiMap.put(count, newPoi);
+                count++;
            }
         } catch(Exception e) {
-            System.out.println("error");
            e.printStackTrace();
         }
-        
+
         mainFrame = new JFrame();      
       
         Border blackBorder = BorderFactory.createLineBorder(Color.black);
@@ -145,31 +149,38 @@ public class Main extends JFrame {
 
         
         Campus campus = new Campus("Western University", "1151 Richmond Street, London");
-        
-        
-
-//        
-//        // Load user data from JSON
-//        
-//        // Load user creates POIs
-//        
-//        // Load favourites
-//        
-//        // Load current layers
-   
-       // }
     }
-    /*
-    public Main(User user, JSONArray createdPois, JSONArray favourites, JSONArray activeLayers) {
+       
+    public Main(User user, HashSet<Integer> createdPoiId, HashSet<Integer> favouritePoiId, HashSet<Integer> activeLayerId) {
+        new Main();
         
+        //Create set of user-created POIs
+        for (int o : createdPoiId) {
+            if (poiMap.containsKey(o)) {
+                createdPoiSet.add(poiMap.get(o));
+            }
+        }
+        
+        //Create set of favourite POIs
+        for (int o : favouritePoiId) {
+            if (poiMap.containsKey(o)) {
+                favouritePoiSet.add(poiMap.get(o));
+            }
+        }
+        
+        //Deal with active layers
     } 
-            
-//    public POI getPOI(int poiId) {
-//        
-//    }
+     
+    public int getCount() {
+      return count;  
+    }
+    
+    public POI getPOI(int poiId) {
+        
+    }
     
     public boolean deletePOI(int poiId) {
         return true;
     }
-    */
+    
 }
