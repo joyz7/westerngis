@@ -5,12 +5,16 @@
 package com.cs2212;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.Font;
+import java.awt.Color;
 import java.util.*;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 /**
  *
  * @author rrenv
@@ -18,7 +22,8 @@ import org.json.simple.parser.JSONParser;
 public class Welcome extends JFrame implements ActionListener {
 
     private JFrame welcomeFrame;
-    private JTextField user, password;
+    private JTextField user;
+    private JTextField password;
     private User newUser;
     private HashMap<String,String> users;
     private HashMap<String,JSONArray> createdPois;
@@ -66,9 +71,23 @@ public class Welcome extends JFrame implements ActionListener {
         welcomeFrame.setVisible(true);//making the frame visible 
         
         JLabel welcomeLabel = new JLabel("Welcome to Western Ontario GIS");
-        welcomeLabel.setBounds(500, 200, 500, 40);
+        welcomeLabel.setBounds(300, 200, 800, 40);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+
         welcomeFrame.add(welcomeLabel);
         
+        JLabel errorMessageLogin = new JLabel("Invalid email or password. Please try again.");
+        errorMessageLogin.setBounds(500, 250, 400, 30);
+        errorMessageLogin.setVisible(false);
+        errorMessageLogin.setForeground(Color.RED);
+        welcomeFrame.add(errorMessageLogin);
+        
+        JLabel errorMessageSignup = new JLabel("Username already exists. Please enter a different username.");
+        errorMessageSignup.setBounds(500, 250, 400, 30);
+        errorMessageSignup.setVisible(false);
+        errorMessageSignup.setForeground(Color.RED);
+        welcomeFrame.add(errorMessageSignup);
+
         JLabel usernameLabel = new JLabel("Username: ");
         usernameLabel.setBounds(400, 300, 100, 30);
         welcomeFrame.add(usernameLabel);
@@ -89,33 +108,37 @@ public class Welcome extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Check if user in user hashmap and if password matches
-                if (users.containsKey(user.getText())) {
-                    if (users.get(user.getText()).equals(password.getText())) {
-                        User oldUser = new User(user.getText(),password.getText());
-                        
-                        JSONArray poiArray = createdPois.get(user.getText());
-                        HashSet<Integer> createdPoiId = new HashSet<Integer>();
-                        for (Object o : poiArray) {
-                            createdPoiId.add((int)o);
-                        }
-                        
-                        JSONArray favouriteArray = favourites.get(user.getText());
-                        HashSet<Integer> favouritePoiId = new HashSet<Integer>();
-                        for (Object o : favouriteArray) {
-                            favouritePoiId.add((int)o);
-                        }
+                if (users.containsKey(user.getText()) && users.get(user.getText()).equals(password.getText())) {
+                    User oldUser = new User(user.getText(),password.getText());
 
-                        JSONArray layerArray = activeLayers.get(user.getText());
-                        HashSet<Long> activeLayerId = new HashSet<Long>();
-                        for (Object o : layerArray) {
-                            activeLayerId.add((long)o);
-                        }
-                        
-                        new Main(oldUser, createdPoiId, favouritePoiId, activeLayerId);
-                    } else {
-                    // If password doesn't match, pop up error message
-  
+                    JSONArray poiArray = createdPois.get(user.getText());
+                    HashSet<Integer> createdPoiId = new HashSet<Integer>();
+                    for (Object o : poiArray) {
+                        createdPoiId.add((int)o);
                     }
+
+                    JSONArray favouriteArray = favourites.get(user.getText());
+                    HashSet<Integer> favouritePoiId = new HashSet<Integer>();
+                    for (Object o : favouriteArray) {
+                        favouritePoiId.add((int)o);
+                    }
+
+                    JSONArray layerArray = activeLayers.get(user.getText());
+                    HashSet<Long> activeLayerId = new HashSet<Long>();
+                    for (Object o : layerArray) {
+                        activeLayerId.add((long)o);
+                    }
+
+                    try {
+                        new Main(oldUser, createdPoiId, favouritePoiId, activeLayerId);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                // If password doesn't match, pop up error message
+                        errorMessageLogin.setVisible(true);
+                        user.setText("");
+                        password.setText("");
                 }
             }
         });                        
@@ -127,10 +150,24 @@ public class Welcome extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Check if username already exists in hashmap
-                newUser = new User(user.getText(), password.getText());
-                welcomeFrame.setVisible(false);
-                welcomeFrame.dispose();
-                new Main();
+                String username = user.getText();
+                
+                if (users.containsKey(username)) {
+                    errorMessageSignup.setVisible(true);
+                    user.setText("");
+                    password.setText("");
+                } else {
+                    String newPassword = password.getText();
+                    newUser = new User(username, newPassword);
+                    users.put(username,newPassword);
+
+                    createdPois.put(username,null);
+                    favourites.put(username,null);
+                    activeLayers.put(username,null);
+                    welcomeFrame.setVisible(false);
+                    welcomeFrame.dispose();
+                    new Main();
+                }
             }
         });
         welcomeFrame.add(signUp);
