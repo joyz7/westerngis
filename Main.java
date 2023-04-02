@@ -201,13 +201,16 @@ public class Main extends JFrame {
 //        
 //        mainFrame.setSize(1200,800);//400 width and 500 height  
 //        mainFrame.setLayout(null);//using no layout managers  
-//        mainFrame.setVisible(true);//making the frame visible   
+//        mainFrame.setVisible(true);//making the frame visible 
+
+        try {
+            mainscreen homePage = new mainscreen();
+        } catch (IOException e) {    
+        }
     }
        
     public Main(User user, HashSet<Integer> createdPoiId, HashSet<Integer> favouritePoiId, HashSet<Long>activeLayerId) throws IOException {
         new Main();
-        MainInterface newInterace = new MainInterface();
-        newInterace.main();
         
         //Create set of user-created POIs
         for (int o : createdPoiId) {
