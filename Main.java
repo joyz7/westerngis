@@ -60,8 +60,8 @@ public class Main extends JFrame {
         Layer ml2= new Layer("Labs", true, m2);
         Layer mcs2 = new Layer("Collaborative Spaces", true, m2);
         Layer mcs3 = new Layer("Collaborative Spaces", true, m3);
-        Layer ms = new Layer("Stairwells & Elevators", true, m0);
-        Layer mr = new Layer("Restaurants", true, m0);
+        Layer ms = new Layer("Navigation", true, m0);
+        Layer mr = new Layer("Resturaunts", true, m0);
         Layer mw0 = new Layer("Washrooms", true, m0);
         Layer mw1 = new Layer("Washrooms", true, m1);
         Layer mw2 = new Layer("Washrooms", true, m2);
@@ -69,7 +69,12 @@ public class Main extends JFrame {
 
         // Load built in POIs from JSON
         JSONParser parser = new JSONParser();
-        DefaultListModel<String> names = new DefaultListModel<>();           
+        DefaultListModel<String> washrooms = new DefaultListModel<>();    
+        DefaultListModel<String> classrooms = new DefaultListModel<>();           
+        DefaultListModel<String> resturaunts = new DefaultListModel<>();           
+        DefaultListModel<String> navigation = new DefaultListModel<>();           
+        DefaultListModel<String> csSpecfic = new DefaultListModel<>();           
+
         try {
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
@@ -86,33 +91,44 @@ public class Main extends JFrame {
                 boolean builtIn = (boolean)poi.get("builtin");
   
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
-                names.addElement(newPoi.getName());
                 poiMap.put(count, newPoi);
                 if (builtIn) {
                     builtinPoiSet.add(newPoi);
                 }
                 if (layerId == 0) {
                     mc.addPoi(count, newPoi);
+                    classrooms.addElement(newPoi.getName());
                 } else if (layerId == 1) {
                     ml1.addPoi(count, newPoi);
+                    csSpecfic.addElement(newPoi.getName());
                 } else if (layerId == 2) {
                     ml2.addPoi(count, newPoi);
+                    csSpecfic.addElement(newPoi.getName());
                 } else if (layerId == 3) {
                     mcs2.addPoi(count, newPoi);
+                    csSpecfic.addElement(newPoi.getName());
                 } else if (layerId == 4) {
                     mcs3.addPoi(count, newPoi);
+                    csSpecfic.addElement(newPoi.getName());
                 } else if (layerId == 5) {
                     ms.addPoi(count, newPoi);
+                    navigation.addElement(newPoi.getName());
                 } else if (layerId == 6) {
                     mr.addPoi(count, newPoi);
+                    resturaunts.addElement(newPoi.getName());
                 } else if (layerId == 7) {
                     mw0.addPoi(count, newPoi);
+                    washrooms.addElement(newPoi.getName());
                 } else if (layerId == 8) {
                     mw1.addPoi(count, newPoi);
+                    washrooms.addElement(newPoi.getName());
                 } else if (layerId == 9) {
                     mw2.addPoi(count, newPoi);
+                    washrooms.addElement(newPoi.getName());
                 } else if (layerId == 10) {
                     mw3.addPoi(count, newPoi);
+                    washrooms.addElement(newPoi.getName());
+
                 }
                 count++;
            }
@@ -204,7 +220,7 @@ public class Main extends JFrame {
 //        mainFrame.setVisible(true);//making the frame visible 
 
         try {
-            mainscreen homePage = new mainscreen();
+            mainscreen homePage = new mainscreen(washrooms, classrooms, resturaunts, navigation, csSpecfic);     
         } catch (IOException e) {    
         }
     }

@@ -12,9 +12,22 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.swing.DefaultListModel;
 import javax.imageio.ImageIO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
  
 public class mainscreen {
 	
@@ -32,7 +45,7 @@ public class mainscreen {
 
     */
 
-    public mainscreen() throws IOException {
+    public mainscreen(DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
         System.out.println("hi");
 
       //Parse POI json
@@ -152,29 +165,89 @@ public class mainscreen {
         panelCenter.add("Health Sciences Building", health1scrollPane);
 
         //Create right check boxes
-        JPanel panelRight= new JPanel();
+        JPanel panelRight= new JPanel(new GridBagLayout());
         panelRight.setBackground(new Color(102, 0, 153));
-        //panelRight.setPreferredSize(new Dimension(300, 300));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+//        panelRight.setPreferredSize(new Dimension(300, 1200));
 
-        JCheckBox checkBox1 = new JCheckBox("Washrooms");
-        JCheckBox checkBox2 = new JCheckBox();
-        JCheckBox checkBox3 = new JCheckBox();
-        JCheckBox checkBox4 = new JCheckBox();
-        JCheckBox checkBox5 = new JCheckBox();
+        JCheckBox checkBox1 = new JCheckBox("Favourites");
+        JCheckBox checkBox2 = new JCheckBox("User Created");
+        JCheckBox checkBox3 = new JCheckBox("Washrooms");
+        JCheckBox checkBox4 = new JCheckBox("Classrooms");
+        JCheckBox checkBox5 = new JCheckBox("Navigation");
+        JCheckBox checkBox6 = new JCheckBox("Resturaunts");
+        JCheckBox checkBox7 = new JCheckBox("Gen Labs");
+        JCheckBox checkBox8 = new JCheckBox("CS Specfic");
 
+        JList favourites = new JList();
+        JList userCreated = new JList();
+        JList washrooms = new JList(washroomsList);
+        JList classrooms = new JList(classroomsList);
+        JList navigation = new JList(navigationList);
+        JList restauraunts = new JList(restaurantsList);
+        JList genLabs = new JList();
+        JList csSpecfic = new JList(csSpecficList);
+        
+        JScrollPane favouritesScrollPane = new JScrollPane(favourites);
+        JScrollPane userCreatedScrollPane = new JScrollPane(userCreated);
+        JScrollPane washroomsScrollPane = new JScrollPane(washrooms);
+        JScrollPane classroomsScrollPane = new JScrollPane(classrooms);
+        JScrollPane navigationScrollPane = new JScrollPane(navigation);
+        JScrollPane resturauntsScrollPane = new JScrollPane(restauraunts);
+        JScrollPane genLabsScrollPane = new JScrollPane(genLabs);
+        JScrollPane csSpecficScrollPane = new JScrollPane(csSpecfic);
+
+        // Set the scroll pane properties
+        favouritesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        favouritesScrollPane.setPreferredSize(new Dimension(200, 100));
+
+        userCreatedScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        userCreatedScrollPane.setPreferredSize(new Dimension(200, 100));
+
+        washroomsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        washroomsScrollPane.setPreferredSize(new Dimension(200, 100));
+        
+        classroomsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        classroomsScrollPane.setPreferredSize(new Dimension(200, 100));
+
+        navigationScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        navigationScrollPane.setPreferredSize(new Dimension(200, 100));
+
+        resturauntsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        resturauntsScrollPane.setPreferredSize(new Dimension(200, 100));
+        
+        genLabsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        genLabsScrollPane.setPreferredSize(new Dimension(200, 100));
+
+        csSpecficScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        csSpecficScrollPane.setPreferredSize(new Dimension(200, 100));
+        
         panelRight.add(checkBox1);
-        panelRight.add(checkBox2);
+        panelRight.add(favouritesScrollPane, gbc);
+         panelRight.add(checkBox2);
+        panelRight.add(userCreatedScrollPane, gbc);
         panelRight.add(checkBox3);
+        panelRight.add(washroomsScrollPane, gbc);
         panelRight.add(checkBox4);
+        panelRight.add(classroomsScrollPane,gbc);
         panelRight.add(checkBox5);
-
+        panelRight.add(navigationScrollPane, gbc);
+        panelRight.add(checkBox6);
+        panelRight.add(resturauntsScrollPane, gbc);
+        panelRight.add(checkBox7);
+        panelRight.add(genLabsScrollPane, gbc);
+        panelRight.add(checkBox8);
+        panelRight.add(csSpecficScrollPane, gbc);
+        
         JPanel panelBottom = new JPanel();
         panelBottom.setBackground(new Color(102, 0, 153));
         panelBottom.setPreferredSize(new Dimension(50, 50));
 
 
         //Random
-        JButton c=new JButton("Click Here");  
+        JButton c = new JButton("Click Here");  
         panelRight.add(c);
 
         JComboBox jComboBox1 = new JComboBox();
