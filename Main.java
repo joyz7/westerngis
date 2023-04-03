@@ -40,6 +40,7 @@ public class Main extends JFrame {
         createdPoiSet = new HashSet<>();
         favouritePoiSet = new HashSet<>();
         
+        // Create campus, building, and floor objects
         Campus campus = new Campus("Western University", "1151 Richmond Street, London");
         Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
         Building healthsci = new Building("Health Sciences Building", "1151 Huron Drive, London");
