@@ -65,29 +65,34 @@ public class Welcome extends JFrame implements ActionListener {
            e.printStackTrace();
         }
         
+        // Create the JFrame
         welcomeFrame = new JFrame(); //creating instance of JFrame    
-        welcomeFrame.setSize(1200,800);//400 width and 500 height  
+        welcomeFrame.setSize(1000,600);
+        welcomeFrame.setLocationRelativeTo(null); // center JFrame in the middle of the screen
         welcomeFrame.setLayout(null);//using no layout managers  
         welcomeFrame.setVisible(true);//making the frame visible 
         
+        // Title
         JLabel welcomeLabel = new JLabel("Welcome to Western Ontario GIS");
-        welcomeLabel.setBounds(300, 200, 800, 40);
+        welcomeLabel.setBounds(350, 150, 800, 40);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
-
         welcomeFrame.add(welcomeLabel);
         
+        // Error Message for Invalid Login
         JLabel errorMessageLogin = new JLabel("Invalid email or password. Please try again.");
         errorMessageLogin.setBounds(500, 250, 400, 30);
         errorMessageLogin.setVisible(false);
         errorMessageLogin.setForeground(Color.RED);
         welcomeFrame.add(errorMessageLogin);
         
+        // Error Message for Invalid Sign Up
         JLabel errorMessageSignup = new JLabel("Username already exists. Please enter a different username.");
         errorMessageSignup.setBounds(500, 250, 400, 30);
         errorMessageSignup.setVisible(false);
         errorMessageSignup.setForeground(Color.RED);
         welcomeFrame.add(errorMessageSignup);
 
+        // Text Field for Username
         JLabel usernameLabel = new JLabel("Username: ");
         usernameLabel.setBounds(400, 300, 100, 30);
         welcomeFrame.add(usernameLabel);

@@ -28,13 +28,26 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
- 
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class mainscreen {
 	
     static String searchText;
     static String poiJSON;
     static JSONArray pois;
-
+    boolean addPOI = false;
+    Component selectedComponent;
+    final int mainscreenWidth = 1200; // width of the JFrame
+    final int mainscreenHeight = 650; // height of the JFrame
+    // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
+    String[] alumniFloors = {"Basement", "Ground Floor", "Second Floor"}; // change to dynamically populate if have time
+    //String[] healthFloors = {"Ground Floor", "Second Floor", "Third Floor", "Fourth Floor"};
+    
+    
     /*
     public int searchPOI(JTextField searchField){
             searchText = searchField.getText();
@@ -46,7 +59,6 @@ public class mainscreen {
     */
 
     public mainscreen(DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
-        System.out.println("hi");
 
       //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
@@ -62,17 +74,27 @@ public class mainscreen {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
+        
+        // Create Jframe for the entire window
+        JFrame mainscreen = new JFrame("Map of Western University");
+        mainscreen.setLayout(null); // ENABLES PANELS TO BE ADDED WITHIN ONE ANOTHER
+        mainscreen.setSize(mainscreenWidth,mainscreenHeight); // make JFrame full screen
+        mainscreen.setLocationRelativeTo(null); // center JFrame in the middle of the screen
+        mainscreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         //Prepared map images
         BufferedImage alumni0Image = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\Alumni Hall-0.png"));
         JLabel alumni0 = new JLabel(new ImageIcon(alumni0Image));
+        alumni0.setBounds(0,30,970,550);
+        
 
         BufferedImage middle0Image = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\Middlesex College-0.png"));
         JLabel middle0 = new JLabel(new ImageIcon(middle0Image));
+        middle0.setBounds(0,30,970,550);
 
         BufferedImage health1Image = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\Health Sciences Building-1.png"));
         JLabel health1 = new JLabel(new ImageIcon(health1Image));
+        health1.setBounds(0,30,970,550);
 
         //Create a scroll pane to hold the image
         JScrollPane alumni0scrollPane = new JScrollPane(alumni0);
@@ -82,193 +104,99 @@ public class mainscreen {
         // Set the scroll pane properties
         alumni0scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         alumni0scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        alumni0scrollPane.setPreferredSize(new Dimension(800, 600));
+        alumni0scrollPane.setPreferredSize(new Dimension(970, 550));
 
         middle0scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         middle0scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        middle0scrollPane.setPreferredSize(new Dimension(800, 600));
+        middle0scrollPane.setPreferredSize(new Dimension(970, 550));
 
         health1scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         health1scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        health1scrollPane.setPreferredSize(new Dimension(800, 600));
-
-      //Search bar in the top panel
+        health1scrollPane.setPreferredSize(new Dimension(970, 550));
+        
+        // Set Scroll Bar speeds
+        alumni0scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        health1scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        middle0scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        
+        alumni0scrollPane.getHorizontalScrollBar().setUnitIncrement(20);
+        health1scrollPane.getHorizontalScrollBar().setUnitIncrement(20);
+        middle0scrollPane.getHorizontalScrollBar().setUnitIncrement(20);
+        
+       // JPanel for the top bar, that includes Search
         JPanel panelTop = new JPanel();
-
+        panelTop.setLayout(null);
+        panelTop.setBackground(Color.red);
+        panelTop.setBounds(0,0, 1200, 30);
+        
+        // Create search bar
         JTextField searchField = new JTextField(20);
+        searchField.setBounds(450,3,225,24);
         JButton searchButton = new JButton("Search");
-
-        //event listener that takes in text the user searches
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //searchPOI(searchField);
-
-                    searchText = searchField.getText();
-                System.out.println("Search query: " + searchText);
-
-                if (pois != null) {
-                    for (int i = 0; i < pois.size(); i++) {
-
-                        JSONObject poi = (JSONObject) pois.get(i);
-                        String name = (String) poi.get("name");
-                        long pid = (Long) poi.get("pid");
-                        String roomnum = (String) poi.get("roomnum");
-                        String description = (String) poi.get("description");
-
-
-                        if (searchText.equals((String) poi.get("roomnum"))) {
-                            System.out.println("Room number: " + (String) poi.get("roomnum"));
-                            System.out.println("POI ID: " +(Long) poi.get("pid"));
-                        }
-
-
-
-                        /*
-                        long xcoord = (Long) poi.get("xcoord");
-                        long ycoord = (Long) poi.get("ycoord");
-
-
-                        System.out.println("POI #" + pid);
-                        System.out.println("Name: " + name);
-                        //System.out.println("X coordinate: " + xcoord);
-                        //System.out.println("Y coordinate: " + ycoord);
-                        System.out.println("Room number: " + roomnum);
-                        System.out.println("Description: " + description);
-                        System.out.println();
-                        */
-
-
-                    }
-                }
-
-            }
-        });
-
+        searchButton.setBounds(685,3,100,25);
         panelTop.add(searchField);
         panelTop.add(searchButton);
-
-
-        //Create sidebar
-        JPanel panelLeft = new JPanel();
-        panelLeft.setBackground(new Color(102, 0, 153));
-        panelLeft.setPreferredSize(new Dimension(50, 50));
-
-
-        //Create center panel
-        JTabbedPane panelCenter = new JTabbedPane();
-        panelCenter.setBackground(new Color(102, 0, 153));
-        //panelTop.setPreferredSize(new Dimension(50, 50));
-
-
-        panelCenter.add("Alumni Hall", alumni0scrollPane);
-        panelCenter.add("Middlesex Collage", middle0scrollPane);
-        panelCenter.add("Health Sciences Building", health1scrollPane);
-
-        //Create right check boxes
-        JPanel panelRight= new JPanel(new GridBagLayout());
-        panelRight.setBackground(new Color(102, 0, 153));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        panelRight.setPreferredSize(new Dimension(300, 1200));
-
-        JCheckBox checkBox1 = new JCheckBox("Favourites");
-        JCheckBox checkBox2 = new JCheckBox("User Created");
-        JCheckBox checkBox3 = new JCheckBox("Washrooms");
-        JCheckBox checkBox4 = new JCheckBox("Classrooms");
-        JCheckBox checkBox5 = new JCheckBox("Navigation");
-        JCheckBox checkBox6 = new JCheckBox("Resturaunts");
-        JCheckBox checkBox7 = new JCheckBox("Gen Labs");
-        JCheckBox checkBox8 = new JCheckBox("CS Specfic");
-
-        JList favourites = new JList();
-        JList userCreated = new JList();
-        JList washrooms = new JList(washroomsList);
-        JList classrooms = new JList(classroomsList);
-        JList navigation = new JList(navigationList);
-        JList restauraunts = new JList(restaurantsList);
-        JList genLabs = new JList();
-        JList csSpecfic = new JList(csSpecficList);
         
-        JScrollPane favouritesScrollPane = new JScrollPane(favourites);
-        JScrollPane userCreatedScrollPane = new JScrollPane(userCreated);
-        JScrollPane washroomsScrollPane = new JScrollPane(washrooms);
-        JScrollPane classroomsScrollPane = new JScrollPane(classrooms);
-        JScrollPane navigationScrollPane = new JScrollPane(navigation);
-        JScrollPane resturauntsScrollPane = new JScrollPane(restauraunts);
-        JScrollPane genLabsScrollPane = new JScrollPane(genLabs);
-        JScrollPane csSpecficScrollPane = new JScrollPane(csSpecfic);
+       // Create dropdown to switch floors
+       JComboBox floors = new JComboBox(alumniFloors);
+       floors.setBounds(825,3,125,24);
+       panelTop.add(floors);
 
-        // Set the scroll pane properties
-        favouritesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        favouritesScrollPane.setPreferredSize(new Dimension(200, 100));
-
-        userCreatedScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        userCreatedScrollPane.setPreferredSize(new Dimension(200, 100));
-
-        washroomsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        washroomsScrollPane.setPreferredSize(new Dimension(200, 100));
         
-        classroomsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        classroomsScrollPane.setPreferredSize(new Dimension(200, 100));
-
-        navigationScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        navigationScrollPane.setPreferredSize(new Dimension(200, 100));
-
-        resturauntsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        resturauntsScrollPane.setPreferredSize(new Dimension(200, 100));
+       // JPanel for the map
+       JTabbedPane panelMap = new JTabbedPane();
+       panelMap.setBackground(Color.white);
+       panelMap.setBounds(0,30,970,620);
+       
+       // JPanel behind the tabbed panels
+       JPanel panelCenter = new JPanel();
+       panelCenter.setBackground(Color.white);
+       panelCenter.setBounds(0,30,970,620);
+       panelCenter.add(panelMap);
+       
+       // Create different tabs
+        panelMap.add("Alumni Hall", alumni0scrollPane);
+        panelMap.add("Middlesex College", middle0scrollPane);
+        panelMap.add("Health Sciences Building", health1scrollPane);
+       
+       // JPanel for the side bar
+       JPanel panelSideBar = new JPanel();
+       panelSideBar.setLayout(null);
+       panelSideBar.setBackground(Color.yellow);
+       panelSideBar.setBounds(970,30,230 , 620);
+       
+       // JPanel for the weather in the side bar
+       JPanel panelWeather = new JPanel();
+       panelWeather.setBackground(Color.green);
+       panelWeather.setBounds(0,0,230,50);
+       panelSideBar.add(panelWeather);
+       
+       // JPanel for the POIs
+       JPanel panelPOI = new JPanel();
+       panelPOI.setLayout(null);
+       panelPOI.setBackground(Color.blue);
+       panelPOI.setBounds(0,50,230,550);
+       panelSideBar.add(panelPOI);
+       
+        // Title for sidebar
+        JLabel POITitle = new JLabel("Points of Interest");
+        POITitle.setBounds(5, 5, 200, 20);
+        POITitle.setFont(new Font("Arial", Font.BOLD, 12));
+        POITitle.setBackground(Color.blue);
+        POITitle.setForeground(Color.black);
+        panelPOI.add(POITitle);
         
-        genLabsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        genLabsScrollPane.setPreferredSize(new Dimension(200, 100));
+        // Add a button to Add POIs
+        JButton addPOIBtn = new JButton("Add POI");
+        addPOIBtn.setBounds(120,5, 90, 20);
+        //addPOIBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        panelPOI.add(addPOIBtn);
+ 
+        // add all JPanels to the JFrame
+        mainscreen.add(panelTop); // add top bar
+        mainscreen.add(panelCenter); // add map
+        mainscreen.add(panelSideBar); // add side bar
+        mainscreen.setVisible(true);
 
-        csSpecficScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        csSpecficScrollPane.setPreferredSize(new Dimension(200, 100));
-        
-        panelRight.add(checkBox1);
-        panelRight.add(favouritesScrollPane, gbc);
-         panelRight.add(checkBox2);
-        panelRight.add(userCreatedScrollPane, gbc);
-        panelRight.add(checkBox3);
-        panelRight.add(washroomsScrollPane, gbc);
-        panelRight.add(checkBox4);
-        panelRight.add(classroomsScrollPane,gbc);
-        panelRight.add(checkBox5);
-        panelRight.add(navigationScrollPane, gbc);
-        panelRight.add(checkBox6);
-        panelRight.add(resturauntsScrollPane, gbc);
-        panelRight.add(checkBox7);
-        panelRight.add(genLabsScrollPane, gbc);
-        panelRight.add(checkBox8);
-        panelRight.add(csSpecficScrollPane, gbc);
-        
-        JPanel panelBottom = new JPanel();
-        panelBottom.setBackground(new Color(102, 0, 153));
-        panelBottom.setPreferredSize(new Dimension(50, 50));
-
-
-        //Random
-        JButton c = new JButton("Click Here");  
-        panelRight.add(c);
-
-        JComboBox jComboBox1 = new JComboBox();
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ground Floor", "First Floor", "Second Floor", "Third Floor", "Fourth Floor" }));
-        panelBottom.add(jComboBox1);
-
-
-        // main window
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        JFrame frame = new JFrame("Scroll Bar");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // add the Jpanel to the main window
-        frame.add(panelTop, BorderLayout.NORTH); 
-        frame.add(panelLeft, BorderLayout.WEST);
-        frame.add(panelCenter, BorderLayout.CENTER);
-        frame.add(panelRight, BorderLayout.EAST);
-        frame.add(panelBottom, BorderLayout.SOUTH);
-
-        frame.pack();
-        frame.setVisible(true);
-        //frame.setResizable(false);
     }
 }
