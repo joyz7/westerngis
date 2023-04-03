@@ -31,6 +31,8 @@ import javax.swing.border.EmptyBorder;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -80,7 +82,57 @@ public class mainscreen {
         mainscreen.setLayout(null); // ENABLES PANELS TO BE ADDED WITHIN ONE ANOTHER
         mainscreen.setSize(mainscreenWidth,mainscreenHeight); // make JFrame full screen
         mainscreen.setLocationRelativeTo(null); // center JFrame in the middle of the screen
-        mainscreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainscreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        mainscreen.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) { // Save JSON data
+                int count = 1; // Pass in from welcome + update when creating POIs
+                HashMap<Integer,POI> poiMap = new HashMap<>();
+                POI test = new POI(0,0,0,0,"MC 123", "Classroom", "class", true);
+                POI test1 = new POI(1,0,0,0,"MC 234", "Washroom", "wash", true);
+                poiMap.put(0,test);
+                poiMap.put(1,test1);
+                JSONArray pois = new JSONArray();
+                for (int i=0; i<=count; i++) {
+                    JSONObject poi = new JSONObject();
+                    poi.put("name", poiMap.get(i).getName());
+                    poi.put("xcoord", poiMap.get(i).getXCoord());
+                    poi.put("yoord", poiMap.get(i).getYCoord());
+                    poi.put("roomnum", poiMap.get(i).getRoomNum());
+                    poi.put("layerid", poiMap.get(i).getLayerId());
+                    poi.put("builtin", poiMap.get(i).isBuiltIn());  
+                    poi.put("description", poiMap.get(i).getDescription());
+                    pois.add(poi);
+                }
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("pois", pois);
+                try {
+                    FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
+                    file.write(jsonObject.toJSONString());
+                    file.close();
+                } catch (Exception error) {
+                    error.printStackTrace();
+                }
+                e.getWindow().dispose();
+            }
+        });
+
+        // JPanel for unsaved work
+        /*JPanel exitPanel = new JPanel();
+        LayoutManager layout = new FlowLayout();  
+        exitPanel.setLayout(layout);       
+        JButton button = new JButton("Click Me!");
+        button.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+              JOptionPane.showMessageDialog(mainscreen, "Do you want to save your work?",
+                 "Swing Tester", JOptionPane.ERROR_MESSAGE);
+           }
+        });
+
+        panel.add(button);
+        frame.getContentPane().add(panel, BorderLayout.CENTER);    
+   }  */
         
         //Prepared map images
         BufferedImage alumni0Image = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\Alumni Hall-0.png"));
