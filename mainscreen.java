@@ -215,7 +215,7 @@ public class mainscreen {
        JPanel panelSideBar = new JPanel();
        panelSideBar.setLayout(null);
        panelSideBar.setBackground(Color.yellow);
-       panelSideBar.setBounds(970,30,230 , 620);
+       panelSideBar.setBounds(970,30,230 , 600);
        
        // JPanel for the weather in the side bar
        JPanel panelWeather = new JPanel();
@@ -223,31 +223,48 @@ public class mainscreen {
        panelWeather.setBounds(0,0,230,50);
        panelSideBar.add(panelWeather);
        
-       // JPanel for the POIs
-       JPanel panelPOI = new JPanel();
-       panelPOI.setLayout(null);
-       panelPOI.setBackground(Color.blue);
-       panelPOI.setBounds(0,50,230,550);
-       panelSideBar.add(panelPOI);
+       // JPanel for the POI Title and Button
+       JPanel panelPOITitle = new JPanel();
+       panelPOITitle.setLayout(null);
+       panelPOITitle.setBackground(Color.blue);
+       panelPOITitle.setBounds(0,50,230,30);
+       panelSideBar.add(panelPOITitle);
        
+       // JPanel for the POIs
+       JPanel panelPOIs = new JPanel();
+       panelPOIs.setLayout(null);
+       panelPOIs.setBackground(Color.red);
+       panelPOIs.setBounds(0,80,230,520);
+       panelSideBar.add(panelPOIs);
+       
+       JScrollPane panelPOIScroll = new JScrollPane();
+       panelPOIs.setLayout(null);
+       panelPOIs.setBackground(Color.pink);
+       panelPOIs.setBounds(0,80,230,520);    
+       panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+       panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
+       panelSideBar.add(panelPOIScroll); 
+       
+      
         // Title for sidebar
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
         POITitle.setFont(new Font("Arial", Font.BOLD, 12));
         POITitle.setBackground(Color.blue);
         POITitle.setForeground(Color.black);
-        panelPOI.add(POITitle);
+        panelPOITitle.add(POITitle);
         
         // Add a button to Add POIs
         JButton addPOIBtn = new JButton("Add POI");
         addPOIBtn.setBounds(120,5, 90, 20);
         //addPOIBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        panelPOI.add(addPOIBtn);
+        panelPOITitle.add(addPOIBtn);
  
         // add all JPanels to the JFrame
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
         mainscreen.add(panelSideBar); // add side bar
+        mainscreen.setResizable(false);
         mainscreen.setVisible(true);
 
     }
