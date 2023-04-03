@@ -40,9 +40,9 @@ public class Welcome extends JFrame implements ActionListener {
         try {
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/users.json"));
            JSONObject jsonObject = (JSONObject)obj;
-           JSONArray array = (JSONArray) jsonObject.get("users");
+           JSONArray userArray = (JSONArray) jsonObject.get("users");
            
-           for(Object o : array) {
+           for(Object o : userArray) {
                 JSONObject user = (JSONObject) o;
                 
                 // Load user data from JSON

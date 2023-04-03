@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 import javax.swing.DefaultListModel;
 import javax.imageio.ImageIO;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ActionListener;  
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -108,8 +108,7 @@ public class mainscreen {
         mainscreen.setLayout(null); // ENABLES PANELS TO BE ADDED WITHIN ONE ANOTHER
         mainscreen.setSize(1000,600); // make JFrame full screen
         mainscreen.setLocationRelativeTo(null); // center JFrame in the middle of the screen
-        mainscreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
        // JPanel for the top bar, that includes Search
         JPanel panelTop = new JPanel();
         panelTop.setBackground(Color.red);
