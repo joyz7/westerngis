@@ -14,23 +14,8 @@ import org.json.simple.JSONObject;
 
 import javax.swing.DefaultListModel;
 import javax.imageio.ImageIO;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.EmptyBorder;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.event.ChangeEvent;
@@ -260,6 +245,97 @@ public class mainscreen {
         //addPOIBtn.setHorizontalAlignment(SwingConstants.LEFT);
         panelPOITitle.add(addPOIBtn);
  
+        //Jacky Added Code --- POI Stuff -----------------------------
+
+                //button action listener to toggle on the poi adding mode
+        addPOIBtn.addActionListener(e -> {
+            
+            addPOI = !addPOI; // Toggle the boolean variable
+            if (addPOI == true){
+                addPOIBtn.setText("Adding POI...");
+            }
+            else{
+                addPOIBtn.setText("Add POI");                
+            }
+        });
+        // Declare a MouseListener instance
+        final MouseListener mouseListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Handle mouse click event here...
+                System.out.println("asldkjasdojk");
+            }
+        };
+        
+        
+                // Get the currently selected component
+        selectedComponent = panelMap.getSelectedComponent();
+        
+         
+        
+        panelMap.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
+        
+                // Get the currently selected component
+                Component selectedComponent = tabbedPane.getSelectedComponent();
+
+                // Remove the MouseListener from the previously selected component (if any)
+                // This is necessary to avoid adding the same listener multiple times
+                // and potentially causing memory leaks or unexpected behavior.
+                Component[] components = tabbedPane.getComponents();
+                for (Component component : components) {
+                    if (component != selectedComponent && component instanceof JComponent) {
+                        ((JComponent) component).removeMouseListener(mouseListener);
+                    }   
+                }
+                // Add a MouseListener to the selected component
+//                selectedComponent.addMouseListener(mouseListener);
+                
+                // Add a MouseListener to the selected component
+                selectedComponent.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        // Handle mouse click event here...
+                        System.out.println(e.getX()+","+e.getY());
+                    }
+                });
+                
+                
+//                // Get the currently active tab's component
+//                JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
+//                selectedComponent = tabbedPane.getSelectedComponent();
+//                System.out.println("yomama  "+tabbedPane.getSelectedIndex());
+            }
+        });
+        
+        panelMap.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Get the currently active tab's component
+//                selectedComponent= panelCenter.getSelectedComponent();
+                // Update the selected component variable
+                System.out.println("boijoiiybh");
+            }
+        });
+        
+        //intial mouse listener?
+        selectedComponent.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Get the mouse click location
+                System.out.println("-----mmmmmmmmm");
+                if (addPOI == true){
+                    newPoiAdd(mainscreen,e.getX(),e.getY());
+                    addPOI = false; //Turn off the clicking
+                    addPOIBtn.setText("Add POI");
+                }
+
+            }
+        });
+        
+        
         // add all JPanels to the JFrame
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
@@ -267,5 +343,57 @@ public class mainscreen {
         mainscreen.setResizable(false);
         mainscreen.setVisible(true);
 
+    }
+     
+    //Method of adding POI
+    //creating a popup menu of getting poi info, and updating the user of adding
+    //the poi or not
+    private static void newPoiAdd(JFrame frame, long xCoord, long yCoord){
+            // Create a panel with a grid layout for the input boxes
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+
+        // Add labels and text fields for point name, room number, and description
+        panel.add(new JLabel("Point name:"));
+        JTextField pointNameField = new JTextField();
+        panel.add(pointNameField);
+
+        panel.add(new JLabel("Room number:"));
+        JTextField roomNumberField = new JTextField();
+        panel.add(roomNumberField);
+
+        panel.add(new JLabel("Description:"));
+        JTextField descriptionField = new JTextField();
+        panel.add(descriptionField);
+
+        // Show the input dialog with the panel as the message
+        int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
+
+        // Check if the user clicked OK and get the input values
+        if (result == JOptionPane.OK_OPTION) {
+          String name = pointNameField.getText();
+          String roomNum = roomNumberField.getText();
+          String description = descriptionField.getText();
+
+          // Verify the inputs
+          System.out.println("Point name: " + name);
+          System.out.println("Room number: " + roomNum);
+          System.out.println("Description: " + description);
+          
+          if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
+            
+          //Create POI
+          //POI temp = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+          //Hasmap.put(temp)
+              JOptionPane.showMessageDialog(null, "Successfully added");
+          }
+          else{
+              
+            JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
+          }
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
+
+        }
     }
 }
