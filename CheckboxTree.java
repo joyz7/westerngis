@@ -167,7 +167,12 @@ public class CheckboxTree extends JTree {
                 TreePath tp = selfPointer.getPathForLocation(arg0.getX(), arg0.getY());
                 if (tp == null) {
                     return;
+                } else {
+                    DefaultMutableTreeNode poi = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                    System.out.println(poi);
+                    // PASS POI NODE TO MAIN
                 }
+                
                 boolean checkMode = ! nodesCheckingState.get(tp).isSelected;
                 checkSubTree(tp, checkMode);
                 updatePredecessorsWithCheckMode(tp, checkMode);

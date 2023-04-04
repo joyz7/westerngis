@@ -340,7 +340,7 @@ public class mainscreen {
        JPanel panelSideBar = new JPanel();
        panelSideBar.setLayout(null);
        panelSideBar.setBackground(Color.white);
-       panelSideBar.setBounds(970,30,230 , 600);
+       panelSideBar.setBounds(970,30,230 , 580);
        
        // JPanel for the weather in the side bar
        JPanel panelWeather = new JPanel();
@@ -363,7 +363,7 @@ public class mainscreen {
        JPanel panelPOIs = new JPanel();
        panelPOIs.setLayout(new BorderLayout());
        panelPOIs.setBackground(Color.red);
-       panelPOIs.setBounds(0,80,230,520);
+       panelPOIs.setBounds(0,80,230,500);
        panelSideBar.add(panelPOIs);
        
        
@@ -396,7 +396,7 @@ public class mainscreen {
              
        JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIScroll.setBackground(Color.white);
-       panelPOIScroll.setBounds(0,80,230,520);    
+       panelPOIScroll.setBounds(0,80,230,500);    
        panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
        panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
        panelPOIs.add(panelPOIScroll); // add scroll pane to side bar
@@ -449,6 +449,7 @@ public class mainscreen {
         panelPOITitle.add(addPOIBtn);
  
         //Jacky Added Code --- POI Stuff -----------------------------
+//Jacky Added Code --- POI Stuff -----------------------------
 
                 //button action listener to toggle on the poi adding mode
         addPOIBtn.addActionListener(e -> {
@@ -519,30 +520,22 @@ public class mainscreen {
             }
         });
         
-        panelMap.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Get the currently active tab's component
-//                selectedComponent= panelCenter.getSelectedComponent();
-                // Update the selected component variable
-                System.out.println("boijoiiybh");
-            }
-        });
         
         //intial mouse listener?
         selectedComponent.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // Get the mouse click location
-                System.out.println("-----mmmmmmmmm");
                 if (addPOI == true){
-                    newPoiAdd(main, mainscreen,e.getX(),e.getY());
+                    newPoiAdd(e.getX(),e.getY(),floors);
                     addPOI = false; //Turn off the clicking
                     addPOIBtn.setText("Add POI");
                 }
 
             }
         });
+        
+        
         // add all JPanels to the JFrame
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
@@ -551,11 +544,11 @@ public class mainscreen {
         mainscreen.setVisible(true);
     }
 
-     
+    
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
-    private void newPoiAdd(Main main, JFrame frame, long xCoord, long yCoord){
+    private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB){
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -580,17 +573,21 @@ public class mainscreen {
           String name = pointNameField.getText();
           String roomNum = roomNumberField.getText();
           String description = descriptionField.getText();
-
+          
           // Verify the inputs
           System.out.println("Point name: " + name);
           System.out.println("Room number: " + roomNum);
           System.out.println("Description: " + description);
-          
+         
+          Integer selectedFloor = (Integer) floorCB.getSelectedItem();
+           System.out.println("Selected floor: " + selectedFloor);
+
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
-            
-          // Create POI
-          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
-          main.addPOI(newPOI);
+              System.out.println(xCoord + " " + yCoord);
+//          Create POI
+//          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+//          main.addPOI(newPOI);
+          //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
           else{      
@@ -616,10 +613,7 @@ public class mainscreen {
         String favOption = ""; // Text variable to change between favourite and unfavourite
         String[] buttons = {favOption, "Edit", "Delete"};
         boolean isDev = false; // Changes to true if user is a developer
-        
-        // grab HashSet of favourite POIs
-                
-        
+                        
         // Check if user is developer
         for (Map.Entry<String, String> entry : developerMap.entrySet()) {
             String username = entry.getKey();
@@ -628,7 +622,7 @@ public class mainscreen {
             }
         }
         
-        System.out.println(isDev);
+        // Create pop up panel
         JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
         // Display Name
         POIPopUp.add(new JLabel("Name:"));
@@ -643,6 +637,8 @@ public class mainscreen {
         JLabel POIDescription = new JLabel(poi.getDescription());
         POIPopUp.add(POIDescription);
         
+
+        // create option pane
         JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
         // Check if built-in or created
         // Favourite/Unfavourite button
@@ -653,3 +649,4 @@ public class mainscreen {
         // Editing - cannot create duplicate POI
     }
 }
+
