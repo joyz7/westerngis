@@ -22,7 +22,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class mainscreen {
-	
+    
+    private Main main;
     static String searchText;
     static String poiJSON;
     static JSONArray pois;
@@ -45,11 +46,12 @@ public class mainscreen {
 
     */
 
-    public mainscreen(DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
+    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
 
-      //Parse POI json
+        this.main = main;
+      
+        //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
-
 
         try {
             //Parse and print out each of the different results 
@@ -70,35 +72,9 @@ public class mainscreen {
         mainscreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainscreen.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) { // Save JSON data
-                int count = 1; // Pass in from welcome + update when creating POIs
-                HashMap<Integer,POI> poiMap = new HashMap<>();
-                POI test = new POI(0,0,0,0,"MC 123", "Classroom", "class", true);
-                POI test1 = new POI(1,0,0,0,"MC 234", "Washroom", "wash", true);
-                poiMap.put(0,test);
-                poiMap.put(1,test1);
-                JSONArray pois = new JSONArray();
-                for (int i=0; i<=count; i++) {
-                    JSONObject poi = new JSONObject();
-                    poi.put("name", poiMap.get(i).getName());
-                    poi.put("xcoord", poiMap.get(i).getXCoord());
-                    poi.put("yoord", poiMap.get(i).getYCoord());
-                    poi.put("roomnum", poiMap.get(i).getRoomNum());
-                    poi.put("layerid", poiMap.get(i).getLayerId());
-                    poi.put("builtin", poiMap.get(i).isBuiltIn());  
-                    poi.put("description", poiMap.get(i).getDescription());
-                    pois.add(poi);
-                }
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("pois", pois);
-                try {
-                    FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
-                    file.write(jsonObject.toJSONString());
-                    file.close();
-                } catch (Exception error) {
-                    error.printStackTrace();
-                }
+            public void windowClosing(WindowEvent e) {
                 e.getWindow().dispose();
+                main.logOut();
             }
         });
 
@@ -327,7 +303,7 @@ public class mainscreen {
                 // Get the mouse click location
                 System.out.println("-----mmmmmmmmm");
                 if (addPOI == true){
-                    newPoiAdd(mainscreen,e.getX(),e.getY());
+                    newPoiAdd(main, mainscreen,e.getX(),e.getY());
                     addPOI = false; //Turn off the clicking
                     addPOIBtn.setText("Add POI");
                 }
@@ -348,7 +324,7 @@ public class mainscreen {
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
-    private static void newPoiAdd(JFrame frame, long xCoord, long yCoord){
+    private void newPoiAdd(Main main, JFrame frame, long xCoord, long yCoord){
             // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -381,19 +357,17 @@ public class mainscreen {
           
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
             
-          //Create POI
-          //POI temp = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+//          Create POI
+          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+          main.addPOI(newPOI);
           //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
-          else{
-              
+          else{      
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
-          }
-            
+          }            
         } else {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
-
         }
     }
 }
