@@ -36,7 +36,7 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
-
+    JPanel panelTop;
     JTabbedPane panelMap;
     JScrollPane alumniScrollPane;
     JScrollPane middlesexScrollPane;
@@ -51,7 +51,8 @@ public class mainscreen {
     }
 
     */
-    public void createMap (String building, int floor) throws IOException {
+    
+    public void createMap(String building, int floor) throws IOException {
         try {
             //Prepared map images
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
@@ -90,7 +91,24 @@ public class mainscreen {
         }
     }
     
-    public void changeFloor(String building, int floor) throws IOException {
+    public void changeFloor(Building building) {
+        // Create dropdown to switch floors
+        JComboBox floors = new JComboBox(building.getFloorsArray());
+        floors.setBounds(915,3,125,24);
+        panelTop.add(floors);
+        floors.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                try {
+                    if (event.getStateChange() == ItemEvent.SELECTED) {
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(); 
+                }
+            }
+        });
+    }
+    public void changeFloorImage(String building, int floor) throws IOException {
         try {
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -111,6 +129,7 @@ public class mainscreen {
     public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
         this.main = main;
         panelMap = new JTabbedPane();
+        panelTop = new JPanel();
       
         //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
@@ -163,7 +182,6 @@ public class mainscreen {
         createMap("Health Sciences Building",1);
 
        // JPanel for the top bar, that includes Search
-        JPanel panelTop = new JPanel();
         panelTop.setLayout(null);
         panelTop.setBackground(Color.red);
         panelTop.setBounds(0,0, 1200, 30);
@@ -269,7 +287,7 @@ public class mainscreen {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloor("Alumni Hall", (int) event.getItem());
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
