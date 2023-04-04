@@ -26,6 +26,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 public class mainscreen {
     
@@ -38,6 +41,8 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
+    JPanel panelTop;
+
     final Color mediumGrey = new Color(202,203,204);
     final Color lightGrey = new Color(232,232,232);
     final Color darkGrey = new Color(88,89,89);
@@ -56,7 +61,8 @@ public class mainscreen {
     }
 
     */
-    public void createMap (String building, int floor) throws IOException {
+    
+    public void createMap(String building, int floor) throws IOException {
         try {
             //Prepared map images
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
@@ -95,7 +101,24 @@ public class mainscreen {
         }
     }
     
-    public void changeFloor(String building, int floor) throws IOException {
+    public void changeFloor(Building building) {
+        // Create dropdown to switch floors
+        JComboBox floors = new JComboBox(building.getFloorsArray());
+        floors.setBounds(915,3,125,24);
+        panelTop.add(floors);
+        floors.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                try {
+                    if (event.getStateChange() == ItemEvent.SELECTED) {
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(); 
+                }
+            }
+        });
+    }
+    public void changeFloorImage(String building, int floor) throws IOException {
         try {
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -112,10 +135,11 @@ public class mainscreen {
             e.printStackTrace();
         }
     }
-    
-    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList, HashMap<String,String> developerMap, HashSet<POI> favouritePoiObjects) throws IOException {
+   
+    public mainscreen(Main main, TreeModel layers, HashMap<String,String> developerMap, HashSet<POI> favouritePoiObjects) throws IOException {
         this.main = main;
         panelMap = new JTabbedPane();
+        panelTop = new JPanel();
       
         //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
@@ -168,7 +192,6 @@ public class mainscreen {
         createMap("Health Sciences Building",1);
 
        // JPanel for the top bar, that includes Search
-        JPanel panelTop = new JPanel();
         panelTop.setLayout(null);
         panelTop.setBackground(mediumGrey);
         panelTop.setBounds(0,0, 1200, 30);
@@ -274,7 +297,7 @@ public class mainscreen {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloor("Alumni Hall", (int) event.getItem());
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
@@ -353,6 +376,24 @@ public class mainscreen {
        // CHANGES START HERE ----------------------------------------------
        
        CheckboxTree POIList = new CheckboxTree(); 
+       POIList.setShowsRootHandles(true);
+       POIList.setRootVisible(false);
+       POIList.setModel(layers);
+       /*TreePath path = new TreePath("Node");
+       if (POIList.getCheckedPaths() != null) {
+           path = new TreePath(POIList.getCheckedPaths());
+           System.out.println((DefaultMutableTreeNode) path.getLastPathComponent());
+       }
+     
+               /*addTreeSelectionListener((TreeSelectionListener) new MyTreeSelectionListener() {
+           @Override
+            public void valueChanged(TreeSelectionEvent e) {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) POIList.getLastSelectedPathComponent();
+            System.out.println(selectedNode);
+            Object selectedNodeValue = selectedNode.getUserObject();
+    }*/
+       //});
+             
        JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIScroll.setBackground(Color.white);
        panelPOIScroll.setBounds(0,80,230,520);    
@@ -547,10 +588,9 @@ public class mainscreen {
           
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
             
-//          Create POI
+          // Create POI
           POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
           main.addPOI(newPOI);
-          //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
           else{      
@@ -562,14 +602,14 @@ public class mainscreen {
     }
     
     // ADDED CODE HERE
-    private DefaultMutableTreeNode createTree(HashMap layer) {
+    /*private DefaultMutableTreeNode createTree(HashMap layer) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
         root.add(new DefaultMutableTreeNode("child 1"));
         root.add(new DefaultMutableTreeNode("child 2"));
        //TreeModel model = new DefaultTreeModel(createTree());
-       //POIList.setModel(POLIList);
+       //POIList.setModel(list);
         return root;
-    }
+    }*/
     
     // Display POI info when location markers are clicked on
     private void displayPOIInfo(POI poi, User user, HashMap<String,String> developerMap, HashSet<POI> favourites) {
