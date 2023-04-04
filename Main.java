@@ -34,7 +34,7 @@ public class Main extends JFrame {
     private HashSet<POI> favouritePoiSet;
     private int count;
     
-    public Main() {
+    public Main() { //User newUser, HashMap users, HashMap createdPois, HashMap favourites, HashMap activeLayers
         poiMap = new HashMap<>();
         builtinPoiSet = new HashSet<>();
         createdPoiSet = new HashSet<>();

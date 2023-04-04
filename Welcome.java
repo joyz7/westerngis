@@ -135,7 +135,7 @@ public class Welcome extends JFrame implements ActionListener {
                     }
 
                     try {
-                        new Main(oldUser, users, createdPoiId, favouritePoiId, activeLayerId);
+                        new Main(oldUser, createdPoiId, favouritePoiId, activeLayerId);
                     } catch (IOException ex) {
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -171,7 +171,8 @@ public class Welcome extends JFrame implements ActionListener {
                     activeLayers.put(username,null);
                     welcomeFrame.setVisible(false);
                     welcomeFrame.dispose();
-                    new Main(newUser, users, createdPois, favourites, activeLayers);
+                    new Main();
+                    //new Main(newUser, users, createdPois, favourites, activeLayers);
                 }
             }
         });
