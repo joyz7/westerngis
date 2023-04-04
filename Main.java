@@ -205,7 +205,7 @@ public class Main extends JFrame {
         }
 
         try {
-            mainscreen homePage = new mainscreen(this, washrooms, classrooms, resturaunts, navigation, csSpecfic);     
+            mainscreen homePage = new mainscreen(this, washrooms, classrooms, resturaunts, navigation, csSpecfic,developerMap, favouritePoiObjects);     
         } catch (IOException e) {    
         }
     }
