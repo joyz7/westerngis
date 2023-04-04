@@ -38,8 +38,11 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
+<<<<<<< HEAD
     JPanel panelTop;
 
+=======
+>>>>>>> 63ffdb0e79c9c6e4c835d66f04a9468d35ef723f
     final Color mediumGrey = new Color(202,203,204);
     final Color lightGrey = new Color(232,232,232);
     final Color darkGrey = new Color(88,89,89);
