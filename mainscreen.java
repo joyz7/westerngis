@@ -48,7 +48,6 @@ public class mainscreen {
     }
 
     */
-<<<<<<< HEAD
     public void createMap (String building, int floor) throws IOException {
         try {
             //Prepared map images
@@ -109,13 +108,7 @@ public class mainscreen {
     public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
         this.main = main;
         panelMap = new JTabbedPane();
-=======
-
-    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
-
-        this.main = main;
       
->>>>>>> c770e1123c503cb2103e22f2b3d82312eb4480fb
         //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
 
@@ -439,12 +432,6 @@ public class mainscreen {
 
             }
         });
-                
-<<<<<<< HEAD
-=======
-        
->>>>>>> c770e1123c503cb2103e22f2b3d82312eb4480fb
-        
         // add all JPanels to the JFrame
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
