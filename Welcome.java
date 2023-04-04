@@ -167,11 +167,12 @@ public class Welcome extends JFrame implements ActionListener {
                 // Check if username already exists in hashmap
                 String username = user.getText();
                 
+                /* Uncomment later
                 if (consumers.containsKey(username)) {
                     errorMessageSignup.setVisible(true);
                     user.setText("");
                     password.setText("");
-                } else {
+                } else {*/
                     String newPassword = password.getText();
                     newUser = new User(username, newPassword);
                     consumers.put(username,newPassword);
@@ -187,7 +188,7 @@ public class Welcome extends JFrame implements ActionListener {
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }
+            //}
         });
         welcomeFrame.add(signUp);
         signUp.setBounds(500, 400, 130, 40);

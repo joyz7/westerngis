@@ -274,6 +274,27 @@ public class mainscreen {
             }
         });
         
+       //Help icon for users to click
+       JButton helpIcon = new JButton("Help");
+       helpIcon.setBounds(1050,3,125,24);
+       panelTop.add(helpIcon);
+
+       //Event listener so that when the help icon is clicked the PDF is opened
+       helpIcon.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+               try {
+                   File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
+                   if (pdfFile.exists()) {
+                       Desktop.getDesktop().open(pdfFile);
+                   } else {
+                       System.out.println("The PDF file does not exist.");
+                   }
+               } catch (IOException ex) {
+                   ex.printStackTrace();
+               }
+           }
+       });
+       
        // JPanel for the map
        panelMap.setBackground(Color.white);
        panelMap.setBounds(0,30,970,620);
@@ -297,7 +318,7 @@ public class mainscreen {
        panelSideBar.add(panelWeather);
        
        Weather newWeather = new Weather("London");
-       JLabel weatherString = new JLabel(newWeather.getCity() + "" + newWeather.getCurrWeather() + "°C " + newWeather.getCurrCondition());
+       JLabel weatherString = new JLabel(newWeather.getCity() + ": " + newWeather.getCurrWeather() + "°C " + newWeather.getCurrCondition());
        panelWeather.add(weatherString);
 
        // JPanel for the POI Title and Button
@@ -366,7 +387,7 @@ public class mainscreen {
         };
         
         
-                // Get the currently selected component
+        // Get the currently selected component
         selectedComponent = panelMap.getSelectedComponent();
         
          
