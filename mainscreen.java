@@ -20,6 +20,10 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
 
 public class mainscreen {
     
@@ -32,8 +36,7 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
-    //String[] alumniFloors = {"Basement", "Ground Floor", "Second Floor"}; // change to dynamically populate if have time
-    //String[] healthFloors = {"Ground Floor", "Second Floor", "Third Floor", "Fourth Floor"};
+
     JTabbedPane panelMap;
     JScrollPane alumniScrollPane;
     JScrollPane middlesexScrollPane;
@@ -330,20 +333,55 @@ public class mainscreen {
        
        // JPanel for the POIs
        JPanel panelPOIs = new JPanel();
-       panelPOIs.setLayout(null);
+       panelPOIs.setLayout(new BorderLayout());
        panelPOIs.setBackground(Color.red);
        panelPOIs.setBounds(0,80,230,520);
        panelSideBar.add(panelPOIs);
        
-       JScrollPane panelPOIScroll = new JScrollPane();
+       // CHANGES START HERE ----------------------------------------------
+       
+       CheckboxTree tree = new CheckboxTree(); 
+       JScrollPane panelPOIScroll = new JScrollPane(tree); // add tree to scroll pane
+       //panelPOIScroll.setLayout(null);
+       panelPOIScroll.setBackground(Color.white);
+       panelPOIScroll.setBounds(0,80,230,520);    
+       panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+       panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
+       panelPOIs.add(panelPOIScroll); // add scroll pane to side bar
+       
+       // ai ya
+       /*
+       CheckboxTree POIList = new CheckboxTree();
+       DefaultTreeModel model = new DefaultTreeModel(createTree());
+       POIList.setModel(model);
+       POIList.setRootVisible(true);
+       
+       POIList.addCheckChangeEventListener(new CheckboxTree.CheckChangeEventListener() {
+            public void checkStateChanged(CheckboxTree.CheckChangeEvent event) {
+                System.out.println("event");
+                TreePath[] paths = POIList.getCheckedPaths();
+                for (TreePath tp : paths) {
+                    for (Object pathPart : tp.getPath()) {
+                        System.out.print(pathPart + ",");
+                    }                   
+                    System.out.println();
+                }
+            }           
+        }); 
+       
+       */
+       /*
+       JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIs.setLayout(null);
        panelPOIs.setBackground(Color.pink);
        panelPOIs.setBounds(0,80,230,520);    
        panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
        panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
-       panelSideBar.add(panelPOIScroll); 
-       
-      
+       panelSideBar.add(panelPOIScroll); // add scroll pane to side bar
+       //panelSideBar.repaint();
+*/
+                    // CHANGES END HERE ------------------------------------------------    
+                    
         // Title for sidebar
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
@@ -457,9 +495,10 @@ public class mainscreen {
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
         mainscreen.add(panelSideBar); // add side bar
-        mainscreen.setResizable(false);
+        //mainscreen.setResizable(false);
         mainscreen.setVisible(true);
     }
+
      
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
