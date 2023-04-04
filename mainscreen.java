@@ -449,6 +449,7 @@ public class mainscreen {
         panelPOITitle.add(addPOIBtn);
  
         //Jacky Added Code --- POI Stuff -----------------------------
+//Jacky Added Code --- POI Stuff -----------------------------
 
                 //button action listener to toggle on the poi adding mode
         addPOIBtn.addActionListener(e -> {
@@ -519,30 +520,22 @@ public class mainscreen {
             }
         });
         
-        panelMap.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Get the currently active tab's component
-//                selectedComponent= panelCenter.getSelectedComponent();
-                // Update the selected component variable
-                System.out.println("boijoiiybh");
-            }
-        });
         
         //intial mouse listener?
         selectedComponent.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // Get the mouse click location
-                System.out.println("-----mmmmmmmmm");
                 if (addPOI == true){
-                    newPoiAdd(main, mainscreen,e.getX(),e.getY());
+                    newPoiAdd(e.getX(),e.getY(),floors);
                     addPOI = false; //Turn off the clicking
                     addPOIBtn.setText("Add POI");
                 }
 
             }
         });
+        
+        
         // add all JPanels to the JFrame
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
@@ -551,11 +544,11 @@ public class mainscreen {
         mainscreen.setVisible(true);
     }
 
-     
+    
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
-    private void newPoiAdd(Main main, JFrame frame, long xCoord, long yCoord){
+    private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB){
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -580,17 +573,21 @@ public class mainscreen {
           String name = pointNameField.getText();
           String roomNum = roomNumberField.getText();
           String description = descriptionField.getText();
-
+          
           // Verify the inputs
           System.out.println("Point name: " + name);
           System.out.println("Room number: " + roomNum);
           System.out.println("Description: " + description);
-          
+         
+          Integer selectedFloor = (Integer) floorCB.getSelectedItem();
+           System.out.println("Selected floor: " + selectedFloor);
+
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
-            
-          // Create POI
-          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
-          main.addPOI(newPOI);
+              System.out.println(xCoord + " " + yCoord);
+//          Create POI
+//          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+//          main.addPOI(newPOI);
+          //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
           else{      
@@ -651,3 +648,4 @@ public class mainscreen {
         // Editing - cannot create duplicate POI
     }
 }
+
