@@ -19,14 +19,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+
 public class CheckboxTree extends JTree {
 
-    private static final long serialVersionUID = -4194122328392241790L;
-
     CheckboxTree selfPointer = this;
-
-
-
+    
     // Defining data structure that will enable to fast check-indicate the state of each node
     // It totally replaces the "selection" mechanism of the JTree
     private class CheckedNode {
@@ -212,8 +209,10 @@ public class CheckboxTree extends JTree {
             }
             // If at least one child is selected, selecting also the parent
             if (childCheckedNode.isSelected) {
-                parentCheckedNode.isSelected = true;
+                parentCheckedNode.isSelected = false;
             }
+            // ADD LATER - If all child nodes are selected, select parent node
+            
         }
         if (parentCheckedNode.isSelected) {
             checkedPaths.add(parentPath);
@@ -223,7 +222,7 @@ public class CheckboxTree extends JTree {
         // Go to upper predecessor
         updatePredecessorsWithCheckMode(parentPath, check);
     }
-
+    
     // Recursively checks/unchecks a subtree
     protected void checkSubTree(TreePath tp, boolean check) {
         CheckedNode cn = nodesCheckingState.get(tp);
