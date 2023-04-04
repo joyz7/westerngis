@@ -170,6 +170,7 @@ public class CheckboxTree extends JTree {
                 } else {
                     DefaultMutableTreeNode poi = (DefaultMutableTreeNode) tp.getLastPathComponent();
                     System.out.println(poi);
+                    // PASS POI NODE TO MAIN
                 }
                 
                 boolean checkMode = ! nodesCheckingState.get(tp).isSelected;
