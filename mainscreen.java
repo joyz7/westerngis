@@ -24,6 +24,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 public class mainscreen {
     
@@ -36,6 +41,11 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
+    JPanel panelTop;
+
+    final Color mediumGrey = new Color(202,203,204);
+    final Color lightGrey = new Color(232,232,232);
+    final Color darkGrey = new Color(88,89,89);
 
     JTabbedPane panelMap;
     JScrollPane alumniScrollPane;
@@ -51,7 +61,8 @@ public class mainscreen {
     }
 
     */
-    public void createMap (String building, int floor) throws IOException {
+    
+    public void createMap(String building, int floor) throws IOException {
         try {
             //Prepared map images
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
@@ -90,7 +101,24 @@ public class mainscreen {
         }
     }
     
-    public void changeFloor(String building, int floor) throws IOException {
+    public void changeFloor(Building building) {
+        // Create dropdown to switch floors
+        JComboBox floors = new JComboBox(building.getFloorsArray());
+        floors.setBounds(915,3,125,24);
+        panelTop.add(floors);
+        floors.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                try {
+                    if (event.getStateChange() == ItemEvent.SELECTED) {
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(); 
+                }
+            }
+        });
+    }
+    public void changeFloorImage(String building, int floor) throws IOException {
         try {
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -107,10 +135,11 @@ public class mainscreen {
             e.printStackTrace();
         }
     }
-    
-    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
+   
+    public mainscreen(Main main, TreeModel layers, HashMap<String,String> developerMap, HashSet<POI> favouritePoiObjects) throws IOException {
         this.main = main;
         panelMap = new JTabbedPane();
+        panelTop = new JPanel();
       
         //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
@@ -163,9 +192,8 @@ public class mainscreen {
         createMap("Health Sciences Building",1);
 
        // JPanel for the top bar, that includes Search
-        JPanel panelTop = new JPanel();
         panelTop.setLayout(null);
-        panelTop.setBackground(Color.red);
+        panelTop.setBackground(mediumGrey);
         panelTop.setBounds(0,0, 1200, 30);
         
         // Create search bar
@@ -269,7 +297,7 @@ public class mainscreen {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloor("Alumni Hall", (int) event.getItem());
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
@@ -311,12 +339,12 @@ public class mainscreen {
        // JPanel for the side bar
        JPanel panelSideBar = new JPanel();
        panelSideBar.setLayout(null);
-       panelSideBar.setBackground(Color.yellow);
+       panelSideBar.setBackground(Color.white);
        panelSideBar.setBounds(970,30,230 , 600);
        
        // JPanel for the weather in the side bar
        JPanel panelWeather = new JPanel();
-       panelWeather.setBackground(Color.green);
+       panelWeather.setBackground(lightGrey);
        panelWeather.setBounds(0,0,230,50);
        panelSideBar.add(panelWeather);
        
@@ -327,7 +355,7 @@ public class mainscreen {
        // JPanel for the POI Title and Button
        JPanel panelPOITitle = new JPanel();
        panelPOITitle.setLayout(null);
-       panelPOITitle.setBackground(Color.blue);
+       panelPOITitle.setBackground(darkGrey);
        panelPOITitle.setBounds(0,50,230,30);
        panelSideBar.add(panelPOITitle);
        
@@ -338,11 +366,35 @@ public class mainscreen {
        panelPOIs.setBounds(0,80,230,520);
        panelSideBar.add(panelPOIs);
        
+       
+       // TEST CASE: POI POP UP
+       User testUser = new User("bob","bob");
+       POI testPOI = new POI(5, 4, 250,250,"AH 24", "Alumni Hall Classroom", "Male washroom in the basement of MC, located by the southside stairwell. Non-accessible washroom.", true);
+       displayPOIInfo(testPOI, testUser, developerMap, favouritePoiObjects);
+       
+       
        // CHANGES START HERE ----------------------------------------------
        
-       CheckboxTree tree = new CheckboxTree(); 
-       JScrollPane panelPOIScroll = new JScrollPane(tree); // add tree to scroll pane
-       //panelPOIScroll.setLayout(null);
+       CheckboxTree POIList = new CheckboxTree(); 
+       POIList.setShowsRootHandles(true);
+       POIList.setRootVisible(false);
+       POIList.setModel(layers);
+       /*TreePath path = new TreePath("Node");
+       if (POIList.getCheckedPaths() != null) {
+           path = new TreePath(POIList.getCheckedPaths());
+           System.out.println((DefaultMutableTreeNode) path.getLastPathComponent());
+       }
+     
+               /*addTreeSelectionListener((TreeSelectionListener) new MyTreeSelectionListener() {
+           @Override
+            public void valueChanged(TreeSelectionEvent e) {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) POIList.getLastSelectedPathComponent();
+            System.out.println(selectedNode);
+            Object selectedNodeValue = selectedNode.getUserObject();
+    }*/
+       //});
+             
+       JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIScroll.setBackground(Color.white);
        panelPOIScroll.setBounds(0,80,230,520);    
        panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -386,8 +438,8 @@ public class mainscreen {
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
         POITitle.setFont(new Font("Arial", Font.BOLD, 12));
-        POITitle.setBackground(Color.blue);
-        POITitle.setForeground(Color.black);
+        POITitle.setBackground(darkGrey);
+        POITitle.setForeground(Color.white);
         panelPOITitle.add(POITitle);
         
         // Add a button to Add POIs
@@ -536,10 +588,9 @@ public class mainscreen {
           
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
             
-//          Create POI
+          // Create POI
           POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
           main.addPOI(newPOI);
-          //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
           else{      
@@ -548,5 +599,57 @@ public class mainscreen {
         } else {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
         }
+    }
+    
+    // ADDED CODE HERE
+    /*private DefaultMutableTreeNode createTree(HashMap layer) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        root.add(new DefaultMutableTreeNode("child 1"));
+        root.add(new DefaultMutableTreeNode("child 2"));
+       //TreeModel model = new DefaultTreeModel(createTree());
+       //POIList.setModel(list);
+        return root;
+    }*/
+    
+    // Display POI info when location markers are clicked on
+    private void displayPOIInfo(POI poi, User user, HashMap<String,String> developerMap, HashSet<POI> favourites) {
+        String favOption = ""; // Text variable to change between favourite and unfavourite
+        String[] buttons = {favOption, "Edit", "Delete"};
+        boolean isDev = false; // Changes to true if user is a developer
+        
+        // grab HashSet of favourite POIs
+                
+        
+        // Check if user is developer
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            if (username.equals(user.getUsername())) {
+                isDev = true;
+            }
+        }
+        
+        System.out.println(isDev);
+        JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
+        // Display Name
+        POIPopUp.add(new JLabel("Name:"));
+        JLabel POIName = new JLabel(poi.getName());
+        POIPopUp.add(POIName);
+        // Display Room Number
+        POIPopUp.add(new JLabel("Room Number:"));
+        JLabel POIRoom = new JLabel(poi.getRoomNum());
+        POIPopUp.add(POIRoom);
+        // Display Description
+        POIPopUp.add(new JLabel("Description:"));
+        JLabel POIDescription = new JLabel(poi.getDescription());
+        POIPopUp.add(POIDescription);
+        
+        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
+        // Check if built-in or created
+        // Favourite/Unfavourite button
+        // If developer, add edit and delete buttons, also display layer
+        // Take list of user's favourites and verify which POI they have clicked on
+        // If it is not a favourited POI, then the second button will say Favourite and clicking on it will add it to the favourites HashSet
+        // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
+        // Editing - cannot create duplicate POI
     }
 }

@@ -20,6 +20,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.JScrollPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -97,19 +100,32 @@ public class Main extends JFrame {
         // Create campus, building, and floor objects
         Campus campus = new Campus("Western University", "1151 Richmond Street, London");
         Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
-        Building healthsci = new Building("Health Sciences Building", "1151 Huron Drive, London");
+        Building health = new Building("Health Sciences Building", "1151 Huron Drive, London");
         Building alumni = new Building("Alumni Hall", "Lambton Dr, London");
         Floor m0 = new Floor(0, middlesex, "src/main/java/com/cs2212/images/Middlesex College-0.png");
         Floor m1 = new Floor(1, middlesex, "src/main/java/com/cs2212/images/Middlesex College-1.png");
         Floor m2 = new Floor(2, middlesex, "src/main/java/com/cs2212/images/Middlesex College-2.png");
         Floor m3 = new Floor(3, middlesex, "src/main/java/com/cs2212/images/Middlesex College-3.png");
-        Floor h1 = new Floor(1, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
-        Floor h2 = new Floor(2, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
-        Floor h3 = new Floor(3, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
-        Floor h4 = new Floor(4, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
+        Floor m4 = new Floor(4, middlesex, "src/main/java/com/cs2212/images/Middlesex College-4.png");
+        middlesex.addFloor(m0);
+        middlesex.addFloor(m1);
+        middlesex.addFloor(m2);
+        middlesex.addFloor(m3);
+        middlesex.addFloor(m4);
+        Floor h1 = new Floor(1, health, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
+        Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
+        Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
+        Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
+        health.addFloor(h1);
+        health.addFloor(h2);
+        health.addFloor(h3);
+        health.addFloor(h4);
         Floor a0 = new Floor(0, alumni, "src/main/java/com/cs2212/images/Alumni Hall-0.png");
         Floor a1 = new Floor(1, alumni, "src/main/java/com/cs2212/images/Alumni Hall-1.png");
         Floor a2 = new Floor(2, alumni, "src/main/java/com/cs2212/images/Alumni Hall-2.png");
+        alumni.addFloor(a0);
+        alumni.addFloor(a1);
+        alumni.addFloor(a2);
         Layer mc = new Layer("Classrooms", true, m0);
         Layer ml1= new Layer("Labs", true, m1);
         Layer ml2= new Layer("Labs", true, m2);
@@ -122,14 +138,22 @@ public class Main extends JFrame {
         Layer mw2 = new Layer("Washrooms", true, m2);
         Layer mw3 = new Layer("Washrooms", true, m3);
 
-        // Load built in POIs from JSON
+        // Create tree of layers
         JSONParser parser = new JSONParser();
-        DefaultListModel<String> washrooms = new DefaultListModel<>();    
-        DefaultListModel<String> classrooms = new DefaultListModel<>();           
-        DefaultListModel<String> resturaunts = new DefaultListModel<>();           
-        DefaultListModel<String> navigation = new DefaultListModel<>();           
-        DefaultListModel<String> csSpecfic = new DefaultListModel<>();           
-
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        TreeModel layers = new DefaultTreeModel(root);
+        DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
+        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
+        DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
+        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
+        DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
+        root.add(classroom);
+        root.add(csSpecific);
+        root.add(navigation);
+        root.add(restaurant);
+        root.add(washroom);
+        
+        // Load POIs from JSON
         try {
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
@@ -147,43 +171,43 @@ public class Main extends JFrame {
   
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put(count, newPoi);
+                // Load built in POIs from JSON
                 if (builtIn) {
                     builtinPoiObjects.add(newPoi);
                 }
                 if (layerId == 0) {
                     mc.addPoi(count, newPoi);
-                    classrooms.addElement(newPoi.getName());
+                    classroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 1) {
                     ml1.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 2) {
                     ml2.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 3) {
                     mcs2.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 4) {
                     mcs3.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 5) {
                     ms.addPoi(count, newPoi);
-                    navigation.addElement(newPoi.getName());
+                    navigation.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 6) {
                     mr.addPoi(count, newPoi);
-                    resturaunts.addElement(newPoi.getName());
+                    restaurant.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 7) {
                     mw0.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 8) {
                     mw1.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 9) {
                     mw2.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 10) {
                     mw3.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
-
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 }
                 count++;
            }
@@ -192,7 +216,7 @@ public class Main extends JFrame {
         }
 
         try {
-            mainscreen homePage = new mainscreen(this, washrooms, classrooms, resturaunts, navigation, csSpecfic);     
+            mainscreen homePage = new mainscreen(this, layers, developerMap, favouritePoiObjects);     
         } catch (IOException e) {    
         }
     }
@@ -281,12 +305,12 @@ public class Main extends JFrame {
       return count;  
     }
     
-    /*public POI getPOI(int poiId) {
-        
+    public HashMap getPoiMap() {
+        return poiMap;
     }
     
     public boolean deletePOI(int poiId) {
         return true;
-    }*/
+    }
     
 }
