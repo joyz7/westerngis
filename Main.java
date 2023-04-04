@@ -20,6 +20,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.JScrollPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -135,14 +138,22 @@ public class Main extends JFrame {
         Layer mw2 = new Layer("Washrooms", true, m2);
         Layer mw3 = new Layer("Washrooms", true, m3);
 
-        // Load built in POIs from JSON
+        // Create tree of layers
         JSONParser parser = new JSONParser();
-        DefaultListModel<String> washrooms = new DefaultListModel<>();    
-        DefaultListModel<String> classrooms = new DefaultListModel<>();           
-        DefaultListModel<String> resturaunts = new DefaultListModel<>();           
-        DefaultListModel<String> navigation = new DefaultListModel<>();           
-        DefaultListModel<String> csSpecfic = new DefaultListModel<>();           
-
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        TreeModel layers = new DefaultTreeModel(root);
+        DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
+        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
+        DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
+        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
+        DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
+        root.add(classroom);
+        root.add(csSpecific);
+        root.add(navigation);
+        root.add(restaurant);
+        root.add(washroom);
+        
+        // Load POIs from JSON
         try {
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
@@ -160,43 +171,43 @@ public class Main extends JFrame {
   
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put(count, newPoi);
+                // Load built in POIs from JSON
                 if (builtIn) {
                     builtinPoiObjects.add(newPoi);
                 }
                 if (layerId == 0) {
                     mc.addPoi(count, newPoi);
-                    classrooms.addElement(newPoi.getName());
+                    classroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 1) {
                     ml1.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 2) {
                     ml2.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 3) {
                     mcs2.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 4) {
                     mcs3.addPoi(count, newPoi);
-                    csSpecfic.addElement(newPoi.getName());
+                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 5) {
                     ms.addPoi(count, newPoi);
-                    navigation.addElement(newPoi.getName());
+                    navigation.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 6) {
                     mr.addPoi(count, newPoi);
-                    resturaunts.addElement(newPoi.getName());
+                    restaurant.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 7) {
                     mw0.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 8) {
                     mw1.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 9) {
                     mw2.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 } else if (layerId == 10) {
                     mw3.addPoi(count, newPoi);
-                    washrooms.addElement(newPoi.getName());
-
+                    washroom.add(new DefaultMutableTreeNode(newPoi));
                 }
                 count++;
            }
@@ -205,7 +216,7 @@ public class Main extends JFrame {
         }
 
         try {
-            mainscreen homePage = new mainscreen(this, washrooms, classrooms, resturaunts, navigation, csSpecfic);     
+            mainscreen homePage = new mainscreen(this, layers);     
         } catch (IOException e) {    
         }
     }
@@ -294,12 +305,12 @@ public class Main extends JFrame {
       return count;  
     }
     
-    /*public POI getPOI(int poiId) {
-        
+    public HashMap getPoiMap() {
+        return poiMap;
     }
     
     public boolean deletePOI(int poiId) {
         return true;
-    }*/
+    }
     
 }

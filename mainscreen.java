@@ -26,6 +26,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 public class mainscreen {
     
@@ -128,7 +131,7 @@ public class mainscreen {
         }
     }
     
-    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
+    public mainscreen(Main main, TreeModel layers) throws IOException {
         this.main = main;
         panelMap = new JTabbedPane();
         panelTop = new JPanel();
@@ -361,6 +364,24 @@ public class mainscreen {
        // CHANGES START HERE ----------------------------------------------
        
        CheckboxTree POIList = new CheckboxTree(); 
+       POIList.setShowsRootHandles(true);
+       POIList.setRootVisible(false);
+       POIList.setModel(layers);
+       /*TreePath path = new TreePath("Node");
+       if (POIList.getCheckedPaths() != null) {
+           path = new TreePath(POIList.getCheckedPaths());
+           System.out.println((DefaultMutableTreeNode) path.getLastPathComponent());
+       }
+     
+               /*addTreeSelectionListener((TreeSelectionListener) new MyTreeSelectionListener() {
+           @Override
+            public void valueChanged(TreeSelectionEvent e) {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) POIList.getLastSelectedPathComponent();
+            System.out.println(selectedNode);
+            Object selectedNodeValue = selectedNode.getUserObject();
+    }*/
+       //});
+             
        JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIScroll.setBackground(Color.white);
        panelPOIScroll.setBounds(0,80,230,520);    
@@ -555,10 +576,9 @@ public class mainscreen {
           
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
             
-//          Create POI
+          // Create POI
           POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
           main.addPOI(newPOI);
-          //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
           else{      
@@ -570,12 +590,12 @@ public class mainscreen {
     }
     
     // ADDED CODE HERE
-    private DefaultMutableTreeNode createTree(HashMap layer) {
+    /*private DefaultMutableTreeNode createTree(HashMap layer) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
         root.add(new DefaultMutableTreeNode("child 1"));
         root.add(new DefaultMutableTreeNode("child 2"));
        //TreeModel model = new DefaultTreeModel(createTree());
-       //POIList.setModel(POLIList);
+       //POIList.setModel(list);
         return root;
-    }
+    }*/
 }
