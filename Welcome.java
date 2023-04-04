@@ -25,13 +25,15 @@ public class Welcome extends JFrame implements ActionListener {
     private JTextField user;
     private JTextField password;
     private User newUser;
-    private HashMap<String,String> users;
+    private HashMap<String,String> consumers;
+    private HashMap<String,String> developers;
     private HashMap<String,JSONArray> createdPois;
     private HashMap<String,JSONArray> favourites;
     private HashMap<String,JSONArray> activeLayers;
     
     public Welcome() {
-        users = new HashMap<>();
+        consumers = new HashMap<>();
+        developers = new HashMap<>();
         createdPois = new HashMap<>();
         favourites = new HashMap<>();
         activeLayers = new HashMap<>();
@@ -43,23 +45,30 @@ public class Welcome extends JFrame implements ActionListener {
            JSONArray userArray = (JSONArray) jsonObject.get("users");
            
            for(Object o : userArray) {
+               
                 JSONObject user = (JSONObject) o;
-                
+                               
                 // Load user data from JSON
                 String username = (String)user.get("username");
                 String password = (String)user.get("password");
-                users.put(username,password);
                 
-                JSONArray poi = (JSONArray)user.get("createdpois");
-                createdPois.put(username,poi);
+                if ((boolean)user.get("consumer")) {
 
-                // Load favourites
-                JSONArray favourite = (JSONArray)user.get("favourites");
-                favourites.put(username,favourite);
+                    consumers.put(username,password);
 
-                // Load active layers
-                JSONArray layer = (JSONArray)user.get("activelayers");
-                activeLayers.put(username,layer);
+                    JSONArray poi = (JSONArray)user.get("createdpois");
+                    createdPois.put(username,poi);
+
+                    // Load favourites
+                    JSONArray favourite = (JSONArray)user.get("favourites");
+                    favourites.put(username,favourite);
+
+                    // Load active layers
+                    JSONArray layer = (JSONArray)user.get("activelayers");
+                    activeLayers.put(username,layer);
+                } else {
+                    developers.put(username, password);
+                }
            }
         } catch(Exception e) {
            e.printStackTrace();
@@ -74,7 +83,7 @@ public class Welcome extends JFrame implements ActionListener {
         
         // Title
         JLabel welcomeLabel = new JLabel("Welcome to Western Ontario GIS");
-        welcomeLabel.setBounds(350, 150, 800, 40);
+        welcomeLabel.setBounds(200, 150, 800, 40);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
         welcomeFrame.add(welcomeLabel);
         
@@ -94,48 +103,30 @@ public class Welcome extends JFrame implements ActionListener {
 
         // Text Field for Username
         JLabel usernameLabel = new JLabel("Username: ");
-        usernameLabel.setBounds(400, 300, 100, 30);
+        usernameLabel.setBounds(300, 300, 100, 30);
         welcomeFrame.add(usernameLabel);
 
         user = new JTextField();
-        user.setBounds(500,300,300,20);
+        user.setBounds(400,300,300,20);
         welcomeFrame.add(user);
 
         JLabel passwordLabel = new JLabel("Password: ");
-        passwordLabel.setBounds(400, 400, 100, 30);
+        passwordLabel.setBounds(300, 350, 100, 30);
         welcomeFrame.add(passwordLabel);
 
-        password = new JTextField();
-        password.setBounds(500,400,300,20);
+        password = new JPasswordField ();
+        password.setBounds(400,350,300,20);
         welcomeFrame.add(password);
         
-        JButton logIn = new JButton(new AbstractAction("Log In") {
+        JButton logInConsumer = new JButton(new AbstractAction("Log In") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Check if user in user hashmap and if password matches
-                if (users.containsKey(user.getText()) && users.get(user.getText()).equals(password.getText())) {
+                if (consumers.containsKey(user.getText()) && consumers.get(user.getText()).equals(password.getText())) {
                     User oldUser = new User(user.getText(),password.getText());
 
-                    JSONArray poiArray = createdPois.get(user.getText());
-                    HashSet<Integer> createdPoiId = new HashSet<Integer>();
-                    for (Object o : poiArray) {
-                        createdPoiId.add((int)o);
-                    }
-
-                    JSONArray favouriteArray = favourites.get(user.getText());
-                    HashSet<Integer> favouritePoiId = new HashSet<Integer>();
-                    for (Object o : favouriteArray) {
-                        favouritePoiId.add((int)o);
-                    }
-
-                    JSONArray layerArray = activeLayers.get(user.getText());
-                    HashSet<Long> activeLayerId = new HashSet<Long>();
-                    for (Object o : layerArray) {
-                        activeLayerId.add((long)o);
-                    }
-
                     try {
-                        new Main(oldUser, createdPoiId, favouritePoiId, activeLayerId);
+                        Main main = new Main(oldUser, false, createdPois, favourites, activeLayers, consumers, developers);
                     } catch (IOException ex) {
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -147,8 +138,27 @@ public class Welcome extends JFrame implements ActionListener {
                 }
             }
         });                        
-        welcomeFrame.add(logIn);//adding button in JFrame
-        logIn.setBounds(450,500,100, 40);//x axis, y axis, width, height          
+        welcomeFrame.add(logInConsumer);//adding button in JFrame
+        logInConsumer.setBounds(350,400,130, 40);//x axis, y axis, width, height 
+        
+        JButton logInDeveloper = new JButton(new AbstractAction("Developer Log In") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Check if user in user hashmap and if password matches
+            if (developers.containsKey(user.getText()) && developers.get(user.getText()).equals(password.getText())) {
+                User oldUser = new User(user.getText(),password.getText());
+                new DeveloperMain();
+                welcomeFrame.dispose();
+            } else {
+            // If password doesn't match, pop up error message
+                    errorMessageLogin.setVisible(true);
+                    user.setText("");
+                    password.setText("");
+                }
+            }
+        });                        
+        welcomeFrame.add(logInDeveloper); //adding button in JFrame
+        logInDeveloper.setBounds(420,450,150, 40);//x axis, y axis, width, height 
         
         JButton signUp = new JButton(new AbstractAction("Sign Up") {//creating instance of JButton
             
@@ -157,27 +167,30 @@ public class Welcome extends JFrame implements ActionListener {
                 // Check if username already exists in hashmap
                 String username = user.getText();
                 
-                if (users.containsKey(username)) {
+                if (consumers.containsKey(username)) {
                     errorMessageSignup.setVisible(true);
                     user.setText("");
                     password.setText("");
                 } else {
                     String newPassword = password.getText();
                     newUser = new User(username, newPassword);
-                    users.put(username,newPassword);
+                    consumers.put(username,newPassword);
 
                     createdPois.put(username,null);
                     favourites.put(username,null);
                     activeLayers.put(username,null);
                     welcomeFrame.setVisible(false);
                     welcomeFrame.dispose();
-                    new Main();
-                    //new Main(newUser, users, createdPois, favourites, activeLayers);
+                    try {
+                        Main main = new Main(newUser, true, createdPois, favourites, activeLayers,  consumers, developers);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
         welcomeFrame.add(signUp);
-        signUp.setBounds(600, 500, 100, 40);
+        signUp.setBounds(500, 400, 130, 40);
     }
    
      public static void main(String[] args) {
