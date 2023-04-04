@@ -21,6 +21,10 @@ public class Campus {
         this.address = address;
     }
     
+    public void addBuilding(int index, Building building) {
+        buildings.put(index,building);
+    }
+    
     public Map getBuildings() {
         return buildings;
     }

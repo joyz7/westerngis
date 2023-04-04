@@ -17,6 +17,7 @@ public class POI {
     private String name;
     private String description;
     private boolean builtIn;
+    private boolean isActive;
     
     public POI(int id, long layerId, long xCoord, long yCoord, String roomNum, String name, String description, boolean builtIn) {
         this.id = id;
@@ -27,6 +28,7 @@ public class POI {
         this.name = name;
         this.description = description;
         this.builtIn = builtIn;
+        this.isActive = false;
     }
     
     public int getId() {
@@ -85,8 +87,11 @@ public class POI {
         description = desc;
     }
     
-    @Override
-    public String toString() {
-        return name;
+    public boolean isActive() {
+        return isActive;
+    }
+    
+    public void setActive() {
+        isActive = !isActive;
     }
 }

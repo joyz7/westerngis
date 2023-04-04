@@ -36,6 +36,10 @@ public class mainscreen {
     static String searchText;
     static String poiJSON;
     static JSONArray pois;
+    private Campus campus;
+    private Building currBuilding;
+    private Floor currFloor;
+    private int poiCount;
     boolean addPOI = false;
     Component selectedComponent;
     final int mainscreenWidth = 1200; // width of the JFrame
@@ -61,6 +65,14 @@ public class mainscreen {
     }
 
     */
+    
+    public Floor getCurrFloor() {
+        return currFloor;
+    }
+    
+    public void setCurrFloor(Floor floor) {
+        currFloor = floor;
+    }
     
     public void createMap(String building, int floor) throws IOException {
         try {
@@ -110,7 +122,8 @@ public class mainscreen {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloorImage("Alumni Hall", (int) event.getItem());
+                        changeFloorImage(building.getName(), (int) event.getItem());
+                        setCurrFloor((Floor) building.getFloors().get((int) event.getItem()));
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
@@ -136,8 +149,10 @@ public class mainscreen {
         }
     }
    
-    public mainscreen(Main main, TreeModel layers, HashMap<String,String> developerMap, HashSet<POI> favouritePoiObjects) throws IOException {
+    public mainscreen(Main main, Campus campus, HashMap<Integer,POI> poiMap, TreeModel layers, HashMap<String,String> developerMap, HashSet<POI> favouritePoiObjects) throws IOException {
         this.main = main;
+        this.campus = campus;
+        poiCount = poiMap.size();
         panelMap = new JTabbedPane();
         panelTop = new JPanel();
       
@@ -191,6 +206,9 @@ public class mainscreen {
         createMap("Middlesex College",0);
         createMap("Health Sciences Building",1);
 
+        // Sets current building as Alumni Hall
+        currBuilding = (Building) campus.getBuildings().get(0);
+        
        // JPanel for the top bar, that includes Search
         panelTop.setLayout(null);
         panelTop.setBackground(mediumGrey);
@@ -279,25 +297,15 @@ public class mainscreen {
         	}
         });
         
-        Campus campus = new Campus("Western University", "1151 Richmond Street, London");
-        /*Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
-        Building healthsci = new Building("Health Sciences Building", "1151 Huron Drive, London");*/
-        Building alumni = new Building("Alumni Hall", "Lambton Dr, London");
-        Floor a0 = new Floor(0, alumni, "src/main/java/com/cs2212/images/Alumni Hall-0.png");
-        Floor a1 = new Floor(1, alumni, "src/main/java/com/cs2212/images/Alumni Hall-1.png");
-        Floor a2 = new Floor(2, alumni, "src/main/java/com/cs2212/images/Alumni Hall-2.png");
-        alumni.addFloor(a0);
-        alumni.addFloor(a1);
-        alumni.addFloor(a2);
         // Create dropdown to switch floors
-        JComboBox floors = new JComboBox(alumni.getFloorsArray());
+        JComboBox floors = new JComboBox(currBuilding.getFloorsArray());
         floors.setBounds(915,3,125,24);
         panelTop.add(floors);
         floors.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloorImage("Alumni Hall", (int) event.getItem());
+                        changeFloorImage(currBuilding.getName(), (int) event.getItem());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
@@ -481,16 +489,17 @@ public class mainscreen {
         // Get the currently selected component
         selectedComponent = panelMap.getSelectedComponent();
         
-         
-        
         panelMap.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
-        
+                
+                // Set building from selected pane
+                currBuilding = (Building) campus.getBuildings().get(tabbedPane.getSelectedIndex());
+                
                 // Get the currently selected component
                 Component selectedComponent = tabbedPane.getSelectedComponent();
-
+              
                 // Remove the MouseListener from the previously selected component (if any)
                 // This is necessary to avoid adding the same listener multiple times
                 // and potentially causing memory leaks or unexpected behavior.
@@ -498,6 +507,8 @@ public class mainscreen {
                 for (Component component : components) {
                     if (component != selectedComponent && component instanceof JComponent) {
                         ((JComponent) component).removeMouseListener(mouseListener);
+                        panelTop.remove(floors);
+                        changeFloor(currBuilding);
                     }   
                 }
                 // Add a MouseListener to the selected component
@@ -583,11 +594,11 @@ public class mainscreen {
            System.out.println("Selected floor: " + selectedFloor);
 
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
-              System.out.println(xCoord + " " + yCoord);
-//          Create POI
-//          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
-//          main.addPOI(newPOI);
-          //Hasmap.put(temp)
+          System.out.println(xCoord + " " + yCoord);
+          //Create POI !!!!!
+          POI newPOI = new POI(poiCount,6,xCoord,yCoord,roomNum,name,description,false);
+          main.addPOI(newPOI);
+          //Hashmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
           else{      

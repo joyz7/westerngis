@@ -43,6 +43,8 @@ public class Main extends JFrame {
     private User user;
     private int count;
     private boolean newUser;
+    DefaultMutableTreeNode usercreatedLayer;
+    DefaultMutableTreeNode favouriteLayer;
     
     public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
@@ -102,6 +104,9 @@ public class Main extends JFrame {
         Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
         Building health = new Building("Health Sciences Building", "1151 Huron Drive, London");
         Building alumni = new Building("Alumni Hall", "Lambton Dr, London");
+        campus.addBuilding(0,alumni);
+        campus.addBuilding(1,middlesex);
+        campus.addBuilding(2,health);
         Floor m0 = new Floor(0, middlesex, "src/main/java/com/cs2212/images/Middlesex College-0.png");
         Floor m1 = new Floor(1, middlesex, "src/main/java/com/cs2212/images/Middlesex College-1.png");
         Floor m2 = new Floor(2, middlesex, "src/main/java/com/cs2212/images/Middlesex College-2.png");
@@ -127,8 +132,8 @@ public class Main extends JFrame {
         alumni.addFloor(a1);
         alumni.addFloor(a2);
         Layer mc = new Layer("Classrooms", true, m0);
-        Layer ml1= new Layer("Labs", true, m1);
-        Layer ml2= new Layer("Labs", true, m2);
+        Layer ml1 = new Layer("Labs", true, m1);
+        Layer ml2 = new Layer("Labs", true, m2);
         Layer mcs2 = new Layer("Collaborative Spaces", true, m2);
         Layer mcs3 = new Layer("Collaborative Spaces", true, m3);
         Layer ms = new Layer("Navigation", true, m0);
@@ -147,6 +152,10 @@ public class Main extends JFrame {
         DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
         DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
         DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
+        usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
+        favouriteLayer = new DefaultMutableTreeNode("Favourites");
+        root.add(favouriteLayer);
+        root.add(usercreatedLayer);
         root.add(classroom);
         root.add(csSpecific);
         root.add(navigation);
@@ -178,6 +187,7 @@ public class Main extends JFrame {
                 if (layerId == 0) {
                     mc.addPoi(count, newPoi);
                     classroom.add(new DefaultMutableTreeNode(newPoi));
+//                    newPoi.setText(newPoi.getName());
                 } else if (layerId == 1) {
                     ml1.addPoi(count, newPoi);
                     csSpecific.add(new DefaultMutableTreeNode(newPoi));
@@ -216,19 +226,50 @@ public class Main extends JFrame {
         }
 
         try {
-            mainscreen homePage = new mainscreen(this, layers, developerMap, favouritePoiObjects);     
+            mainscreen homePage = new mainscreen(this, campus, poiMap, layers, developerMap, favouritePoiObjects);     
         } catch (IOException e) {    
         }
     }
     
+    
+    /*public checkLayer(Floor floor) {
+        HashMap<Integer, Layer> layerMap = (HashMap) floor.getLayers();
+        for (int i=0; i<layerMap.size(); i++) {
+            Layer layer = layerMap.get(i);
+            for (POI j : layer.getPois()) {
+                if (j.getLayerId() == ) {
+                    System.out.println(j.isActive());
+                    //Show POI on map
+                }
+            }
+        }
+    }*/
+    
+    public void togglePOI(POI poi) {
+        if (poi.isActive()) {
+            //Show
+        } else {
+            //Delete
+        }
+        System.out.println(poi.isActive());
+    }
+    
     public void addPOI(POI newPOI) {
+        poiMap.put(count, newPOI); //Add to local hashmap
         createdPoiObjects.add(newPOI);
+        /* error?
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
         poi.put("pid", count);
         count += 1;
         poiArray.add(poi);
-        createdPois.put(user.getUsername(), poiArray);
+        createdPois.put(user.getUsername(), poiArray);*/
+        addPOItoSidebar(newPOI);
+    }
+    
+    public void addPOItoSidebar(POI poi) {
+        usercreatedLayer.add(new DefaultMutableTreeNode(poi)); //BROKEN
+        System.out.println(poi);
     }
     
     public void logOut() {
