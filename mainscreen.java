@@ -24,6 +24,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 public class mainscreen {
     
@@ -358,9 +360,8 @@ public class mainscreen {
        
        // CHANGES START HERE ----------------------------------------------
        
-       CheckboxTree tree = new CheckboxTree(); 
-       JScrollPane panelPOIScroll = new JScrollPane(tree); // add tree to scroll pane
-       //panelPOIScroll.setLayout(null);
+       CheckboxTree POIList = new CheckboxTree(); 
+       JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIScroll.setBackground(Color.white);
        panelPOIScroll.setBounds(0,80,230,520);    
        panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -566,5 +567,15 @@ public class mainscreen {
         } else {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
         }
+    }
+    
+    // ADDED CODE HERE
+    private DefaultMutableTreeNode createTree(HashMap layer) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        root.add(new DefaultMutableTreeNode("child 1"));
+        root.add(new DefaultMutableTreeNode("child 2"));
+       //TreeModel model = new DefaultTreeModel(createTree());
+       //POIList.setModel(POLIList);
+        return root;
     }
 }
