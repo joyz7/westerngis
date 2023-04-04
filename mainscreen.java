@@ -38,6 +38,9 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
+    final Color mediumGrey = new Color(202,203,204);
+    final Color lightGrey = new Color(232,232,232);
+    final Color darkGrey = new Color(88,89,89);
 
     JTabbedPane panelMap;
     JScrollPane alumniScrollPane;
@@ -110,7 +113,7 @@ public class mainscreen {
         }
     }
     
-    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
+    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList, HashMap<String,String> developerMap, HashSet<POI> favouritePoiObjects) throws IOException {
         this.main = main;
         panelMap = new JTabbedPane();
       
@@ -167,7 +170,7 @@ public class mainscreen {
        // JPanel for the top bar, that includes Search
         JPanel panelTop = new JPanel();
         panelTop.setLayout(null);
-        panelTop.setBackground(Color.red);
+        panelTop.setBackground(mediumGrey);
         panelTop.setBounds(0,0, 1200, 30);
         
         // Create search bar
@@ -313,12 +316,12 @@ public class mainscreen {
        // JPanel for the side bar
        JPanel panelSideBar = new JPanel();
        panelSideBar.setLayout(null);
-       panelSideBar.setBackground(Color.yellow);
+       panelSideBar.setBackground(Color.white);
        panelSideBar.setBounds(970,30,230 , 600);
        
        // JPanel for the weather in the side bar
        JPanel panelWeather = new JPanel();
-       panelWeather.setBackground(Color.green);
+       panelWeather.setBackground(lightGrey);
        panelWeather.setBounds(0,0,230,50);
        panelSideBar.add(panelWeather);
        
@@ -329,7 +332,7 @@ public class mainscreen {
        // JPanel for the POI Title and Button
        JPanel panelPOITitle = new JPanel();
        panelPOITitle.setLayout(null);
-       panelPOITitle.setBackground(Color.blue);
+       panelPOITitle.setBackground(darkGrey);
        panelPOITitle.setBounds(0,50,230,30);
        panelSideBar.add(panelPOITitle);
        
@@ -339,6 +342,13 @@ public class mainscreen {
        panelPOIs.setBackground(Color.red);
        panelPOIs.setBounds(0,80,230,520);
        panelSideBar.add(panelPOIs);
+       
+       
+       // TEST CASE: POI POP UP
+       User testUser = new User("bob","bob");
+       POI testPOI = new POI(5, 4, 250,250,"AH 24", "Alumni Hall Classroom", "Male washroom in the basement of MC, located by the southside stairwell. Non-accessible washroom.", true);
+       displayPOIInfo(testPOI, testUser, developerMap, favouritePoiObjects);
+       
        
        // CHANGES START HERE ----------------------------------------------
        
@@ -387,8 +397,8 @@ public class mainscreen {
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
         POITitle.setFont(new Font("Arial", Font.BOLD, 12));
-        POITitle.setBackground(Color.blue);
-        POITitle.setForeground(Color.black);
+        POITitle.setBackground(darkGrey);
+        POITitle.setForeground(Color.white);
         panelPOITitle.add(POITitle);
         
         // Add a button to Add POIs
@@ -559,5 +569,47 @@ public class mainscreen {
        //TreeModel model = new DefaultTreeModel(createTree());
        //POIList.setModel(POLIList);
         return root;
+    }
+    
+    // Display POI info when location markers are clicked on
+    private void displayPOIInfo(POI poi, User user, HashMap<String,String> developerMap, HashSet<POI> favourites) {
+        String favOption = ""; // Text variable to change between favourite and unfavourite
+        String[] buttons = {favOption, "Edit", "Delete"};
+        boolean isDev = false; // Changes to true if user is a developer
+        
+        // grab HashSet of favourite POIs
+                
+        
+        // Check if user is developer
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            if (username.equals(user.getUsername())) {
+                isDev = true;
+            }
+        }
+        
+        System.out.println(isDev);
+        JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
+        // Display Name
+        POIPopUp.add(new JLabel("Name:"));
+        JLabel POIName = new JLabel(poi.getName());
+        POIPopUp.add(POIName);
+        // Display Room Number
+        POIPopUp.add(new JLabel("Room Number:"));
+        JLabel POIRoom = new JLabel(poi.getRoomNum());
+        POIPopUp.add(POIRoom);
+        // Display Description
+        POIPopUp.add(new JLabel("Description:"));
+        JLabel POIDescription = new JLabel(poi.getDescription());
+        POIPopUp.add(POIDescription);
+        
+        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
+        // Check if built-in or created
+        // Favourite/Unfavourite button
+        // If developer, add edit and delete buttons, also display layer
+        // Take list of user's favourites and verify which POI they have clicked on
+        // If it is not a favourited POI, then the second button will say Favourite and clicking on it will add it to the favourites HashSet
+        // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
+        // Editing - cannot create duplicate POI
     }
 }
