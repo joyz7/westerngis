@@ -83,7 +83,7 @@ public class Welcome extends JFrame implements ActionListener {
         
         // Title
         JLabel welcomeLabel = new JLabel("Welcome to Western Ontario GIS");
-        welcomeLabel.setBounds(350, 150, 800, 40);
+        welcomeLabel.setBounds(200, 150, 800, 40);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
         welcomeFrame.add(welcomeLabel);
         
@@ -103,22 +103,22 @@ public class Welcome extends JFrame implements ActionListener {
 
         // Text Field for Username
         JLabel usernameLabel = new JLabel("Username: ");
-        usernameLabel.setBounds(400, 300, 100, 30);
+        usernameLabel.setBounds(300, 300, 100, 30);
         welcomeFrame.add(usernameLabel);
 
         user = new JTextField();
-        user.setBounds(500,300,300,20);
+        user.setBounds(400,300,300,20);
         welcomeFrame.add(user);
 
         JLabel passwordLabel = new JLabel("Password: ");
-        passwordLabel.setBounds(400, 400, 100, 30);
+        passwordLabel.setBounds(300, 350, 100, 30);
         welcomeFrame.add(passwordLabel);
 
-        password = new JTextField();
-        password.setBounds(500,400,300,20);
+        password = new JPasswordField ();
+        password.setBounds(400,350,300,20);
         welcomeFrame.add(password);
         
-        JButton logIn = new JButton(new AbstractAction("Log In") {
+        JButton logInConsumer = new JButton(new AbstractAction("Log In") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Check if user in user hashmap and if password matches
@@ -138,8 +138,27 @@ public class Welcome extends JFrame implements ActionListener {
                 }
             }
         });                        
-        welcomeFrame.add(logIn);//adding button in JFrame
-        logIn.setBounds(450,500,100, 40);//x axis, y axis, width, height          
+        welcomeFrame.add(logInConsumer);//adding button in JFrame
+        logInConsumer.setBounds(350,400,130, 40);//x axis, y axis, width, height 
+        
+        JButton logInDeveloper = new JButton(new AbstractAction("Developer Log In") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Check if user in user hashmap and if password matches
+            if (developers.containsKey(user.getText()) && developers.get(user.getText()).equals(password.getText())) {
+                User oldUser = new User(user.getText(),password.getText());
+                new DeveloperMain();
+                welcomeFrame.dispose();
+            } else {
+            // If password doesn't match, pop up error message
+                    errorMessageLogin.setVisible(true);
+                    user.setText("");
+                    password.setText("");
+                }
+            }
+        });                        
+        welcomeFrame.add(logInDeveloper); //adding button in JFrame
+        logInDeveloper.setBounds(420,450,150, 40);//x axis, y axis, width, height 
         
         JButton signUp = new JButton(new AbstractAction("Sign Up") {//creating instance of JButton
             
@@ -171,7 +190,7 @@ public class Welcome extends JFrame implements ActionListener {
             }
         });
         welcomeFrame.add(signUp);
-        signUp.setBounds(600, 500, 100, 40);
+        signUp.setBounds(500, 400, 130, 40);
     }
    
      public static void main(String[] args) {

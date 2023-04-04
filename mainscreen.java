@@ -310,6 +310,7 @@ public class mainscreen {
 
             }
         });
+                
         
         
         // add all JPanels to the JFrame
@@ -325,7 +326,7 @@ public class mainscreen {
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(Main main, JFrame frame, long xCoord, long yCoord){
-            // Create a panel with a grid layout for the input boxes
+        // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
         // Add labels and text fields for point name, room number, and description
