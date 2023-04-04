@@ -29,33 +29,100 @@ public class Main extends JFrame {
     
     private JFrame mainFrame;
     private HashMap<Integer,POI> poiMap;
-    private HashSet<POI> builtinPoiSet;
-    private HashSet<POI> createdPoiSet;
-    private HashSet<POI> favouritePoiSet;
+    private HashSet<POI> builtinPoiObjects;
+    private HashSet<POI> createdPoiObjects;
+    private HashSet<POI> favouritePoiObjects;
+    private HashMap<String,JSONArray> createdPois;
+    private HashMap<String,JSONArray> favourites;
+    private HashMap<String,JSONArray> activeLayers;
+    private HashMap<String,String> consumerMap;
+    private HashMap<String,String> developerMap;
+    private User user;
     private int count;
+    private boolean newUser;
     
-    public Main() { //User newUser, HashMap users, HashMap createdPois, HashMap favourites, HashMap activeLayers
+    public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
+        
+        this.newUser = newUser;
+        this.user = user;
+        this.createdPois = createdPois;
+        this.favourites = favourites;
+        this.activeLayers = activeLayers;
+        this.consumerMap = consumers;
+        this.developerMap = developers;
         poiMap = new HashMap<>();
-        builtinPoiSet = new HashSet<>();
-        createdPoiSet = new HashSet<>();
-        favouritePoiSet = new HashSet<>();
+        builtinPoiObjects = new HashSet<>();
+        createdPoiObjects = new HashSet<>();
+        favouritePoiObjects = new HashSet<>();
+        
+        if (!newUser) {
+            JSONArray poiArray = createdPois.get(user.getUsername());
+            HashSet<Integer> createdPoiId = new HashSet<Integer>();
+            for (Object o : poiArray) {
+                createdPoiId.add((int)o);
+            }
+
+            JSONArray favouriteArray = favourites.get(user.getUsername());
+            HashSet<Integer> favouritePoiId = new HashSet<Integer>();
+            for (Object o : favouriteArray) {
+                favouritePoiId.add((int)o);
+            }
+
+            JSONArray layerArray = activeLayers.get(user.getUsername());
+            HashSet<Long> activeLayerId = new HashSet<Long>();
+            for (Object o : layerArray) {
+                activeLayerId.add((long)o);
+            }
+
+            //Create set of user-created POIs
+            for (int o : createdPoiId) {
+                if (poiMap.containsKey(o)) {
+                    createdPoiObjects.add(poiMap.get(o));
+                }
+            }
+
+            //Create set of favourite POIs
+            for (int o : favouritePoiId) {
+                if (poiMap.containsKey(o)) {
+                    favouritePoiObjects.add(poiMap.get(o));
+                }
+            }
+        }
+        
+        loadPOIs();
+    } 
+    
+    public void loadPOIs() {
         
         // Create campus, building, and floor objects
         Campus campus = new Campus("Western University", "1151 Richmond Street, London");
         Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
-        Building healthsci = new Building("Health Sciences Building", "1151 Huron Drive, London");
+        Building health = new Building("Health Sciences Building", "1151 Huron Drive, London");
         Building alumni = new Building("Alumni Hall", "Lambton Dr, London");
         Floor m0 = new Floor(0, middlesex, "src/main/java/com/cs2212/images/Middlesex College-0.png");
         Floor m1 = new Floor(1, middlesex, "src/main/java/com/cs2212/images/Middlesex College-1.png");
         Floor m2 = new Floor(2, middlesex, "src/main/java/com/cs2212/images/Middlesex College-2.png");
         Floor m3 = new Floor(3, middlesex, "src/main/java/com/cs2212/images/Middlesex College-3.png");
-        Floor h1 = new Floor(1, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
-        Floor h2 = new Floor(2, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
-        Floor h3 = new Floor(3, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
-        Floor h4 = new Floor(4, healthsci, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
+        Floor m4 = new Floor(4, middlesex, "src/main/java/com/cs2212/images/Middlesex College-4.png");
+        middlesex.addFloor(m0);
+        middlesex.addFloor(m1);
+        middlesex.addFloor(m2);
+        middlesex.addFloor(m3);
+        middlesex.addFloor(m4);
+        Floor h1 = new Floor(1, health, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
+        Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
+        Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
+        Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
+        health.addFloor(h1);
+        health.addFloor(h2);
+        health.addFloor(h3);
+        health.addFloor(h4);
         Floor a0 = new Floor(0, alumni, "src/main/java/com/cs2212/images/Alumni Hall-0.png");
         Floor a1 = new Floor(1, alumni, "src/main/java/com/cs2212/images/Alumni Hall-1.png");
         Floor a2 = new Floor(2, alumni, "src/main/java/com/cs2212/images/Alumni Hall-2.png");
+        alumni.addFloor(a0);
+        alumni.addFloor(a1);
+        alumni.addFloor(a2);
         Layer mc = new Layer("Classrooms", true, m0);
         Layer ml1= new Layer("Labs", true, m1);
         Layer ml2= new Layer("Labs", true, m2);
@@ -94,7 +161,7 @@ public class Main extends JFrame {
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put(count, newPoi);
                 if (builtIn) {
-                    builtinPoiSet.add(newPoi);
+                    builtinPoiObjects.add(newPoi);
                 }
                 if (layerId == 0) {
                     mc.addPoi(count, newPoi);
@@ -137,115 +204,92 @@ public class Main extends JFrame {
            e.printStackTrace();
         }
 
-//        mainFrame = new JFrame();      
-//      
-//        Border blackBorder = BorderFactory.createLineBorder(Color.black);
-//
-//        JPanel favourites = new JPanel(new BorderLayout());
-//        favourites.setBounds(900,0,300,80);
-//        favourites.setBorder(blackBorder);
-//        JLabel favouritesLabel = new JLabel("Favourites");
-//        favouritesLabel.setBounds(900, 0, 20, 20);
-//        JList<String> favouritesList = new JList<>(names);
-//        favouritesList.setBounds(900, 20, 300, 80);
-//        favourites.add(favouritesLabel);
-//        favourites.add(favouritesList);
-//        mainFrame.add(favourites);
-//             
-//        JPanel created = new JPanel();
-//        created.setBounds(900,80,300,80);
-//        created.setBorder(blackBorder);
-//        JLabel createdLabel = new JLabel("Created POIs");
-//        createdLabel.setBounds(900, 80, 20, 20);
-//        created.add(createdLabel);
-//        mainFrame.add(created);
-//        
-//        JPanel classrooms = new JPanel();
-//        classrooms.setBounds(900,160,300,80);
-//        classrooms.setBorder(blackBorder);
-//        JLabel classroomLabel = new JLabel("Classrooms");
-//        classroomLabel.setBounds(900, 160, 20, 20);
-//        classrooms.add(classroomLabel);
-//        mainFrame.add(classrooms);
-//        
-//        JPanel navigation = new JPanel();
-//        navigation.setBounds(900,240,300,80);
-//        navigation.setBorder(blackBorder);
-//        JLabel navigationLabel = new JLabel("Navigation");
-//        navigationLabel.setBounds(1000, 240, 20, 20);
-//        navigation.add(navigationLabel);
-//        mainFrame.add(navigation);
-//        
-//        JPanel washrooms = new JPanel();
-//        washrooms.setBounds(900,320,300,80);
-//        washrooms.setBorder(blackBorder);
-//        JLabel washroomLabel = new JLabel("Washrooms");
-//        washroomLabel.setBounds(1000, 320, 20, 20);
-//        washrooms.add(washroomLabel);
-//        mainFrame.add(washrooms);
-//        
-//        JPanel entryExit = new JPanel();
-//        entryExit.setBounds(900,400,300,80);
-//        entryExit.setBorder(blackBorder);
-//        JLabel entryExitLabel = new JLabel("Entry and Exit Points");
-//        entryExitLabel.setBounds(1000, 400, 20, 20);
-//        entryExit.add(entryExitLabel);
-//        mainFrame.add(entryExit);
-//        
-//        JPanel genLabs = new JPanel();
-//        genLabs.setBounds(900,480,300,80);
-//        genLabs.setBorder(blackBorder);
-//        JLabel genLabLabel = new JLabel("GenLabs");
-//        genLabLabel.setBounds(1000, 480, 20, 20);
-//        genLabs.add(genLabLabel);
-//        mainFrame.add(genLabs);
-//        
-//        JPanel resturaunts = new JPanel();
-//        resturaunts.setBounds(900,560,300,80);
-//        resturaunts.setBorder(blackBorder);
-//        JLabel resturauntLabel = new JLabel("Resturaunts");
-//        resturauntLabel.setBounds(1000, 560, 20, 20);
-//        resturaunts.add(resturauntLabel);
-//        mainFrame.add(resturaunts);
-//        
-//        JPanel csSpecfic = new JPanel();
-//        csSpecfic.setBounds(900,640,300,80);
-//        csSpecfic.setBorder(blackBorder);
-//        JLabel csSpecficLabel = new JLabel("CS Specfic");
-//        csSpecficLabel.setBounds(1000, 640, 20, 20);
-//        csSpecfic.add(csSpecficLabel);
-//        mainFrame.add(csSpecfic);
-//        
-//        mainFrame.setSize(1200,800);//400 width and 500 height  
-//        mainFrame.setLayout(null);//using no layout managers  
-//        mainFrame.setVisible(true);//making the frame visible 
-
         try {
-            mainscreen homePage = new mainscreen(washrooms, classrooms, resturaunts, navigation, csSpecfic);     
+            mainscreen homePage = new mainscreen(this, washrooms, classrooms, resturaunts, navigation, csSpecfic);     
         } catch (IOException e) {    
         }
     }
-       
-    public Main(User user, HashSet<Integer> createdPoiId, HashSet<Integer> favouritePoiId, HashSet<Long>activeLayerId) throws IOException {
-        new Main();
-        
-        //Create set of user-created POIs
-        for (int o : createdPoiId) {
-            if (poiMap.containsKey(o)) {
-                createdPoiSet.add(poiMap.get(o));
-            }
+    
+    public void addPOI(POI newPOI) {
+        createdPoiObjects.add(newPOI);
+        JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
+        JSONObject poi = new JSONObject();
+        poi.put("pid", count);
+        count += 1;
+        poiArray.add(poi);
+        createdPois.put(user.getUsername(), poiArray);
+    }
+    
+    public void logOut() {
+        // Save POI data
+        JSONArray pois = new JSONArray();
+        for (Map.Entry<Integer, POI> entry : poiMap.entrySet()) {
+            Integer id = entry.getKey();
+            POI poiObject = entry.getValue();
+            JSONObject poi = new JSONObject();
+            poi.put("pid", id);
+            poi.put("name", poiObject.getName());
+            poi.put("xcoord", poiObject.getXCoord());
+            poi.put("yoord", poiObject.getYCoord());
+            poi.put("roomnum", poiObject.getRoomNum());
+            poi.put("layerid", poiObject.getLayerId());
+            poi.put("builtin", poiObject.isBuiltIn());  
+            poi.put("description", poiObject.getDescription());
+            pois.add(poi);
+        }
+        JSONObject poiJSON = new JSONObject();
+        poiJSON.put("pois", pois);
+        try {
+            FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
+            file.write(poiJSON.toJSONString());
+            file.close();
+        } catch (Exception error) {
+            error.printStackTrace();
         }
         
-        //Create set of favourite POIs
-        for (int o : favouritePoiId) {
-            if (poiMap.containsKey(o)) {
-                favouritePoiSet.add(poiMap.get(o));
-            }
+        // Load user data
+        int numUsers = 0;
+        JSONArray users = new JSONArray();
+        for (Map.Entry<String, String> entry : consumerMap.entrySet()) {
+            String username = entry.getKey();
+            Object password = entry.getValue();
+            JSONObject consumer = new JSONObject();
+            consumer.put("userid", numUsers);
+            consumer.put("username", username);
+            consumer.put("password", password);
+            consumer.put("consumer", true);
+            consumer.put("createdpois", createdPois.get(username));
+            consumer.put("favourites", favourites.get(username));
+            consumer.put("activelayers", activeLayers.get(username));  
+            users.add(consumer);
+            numUsers += 1;
         }
         
-        //Deal with active layers
-    } 
-     
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            Object password = entry.getValue();
+            JSONObject developer = new JSONObject();
+            developer.put("userid", numUsers);
+            developer.put("username", username);
+            developer.put("password", password);
+            developer.put("consumer", false);
+            developer.put("createdpois", null);
+            developer.put("favourites", null);
+            developer.put("activelayers", null);  
+            users.add(developer);
+            numUsers += 1;
+        }
+        JSONObject userJSON = new JSONObject();
+        userJSON.put("users", users);
+        try {
+            FileWriter file = new FileWriter("src/main/java/com/cs2212/users.json");
+            file.write(userJSON.toJSONString());
+            file.close();
+        } catch (Exception error) {
+            error.printStackTrace();
+        }
+ 
+    }
     public int getCount() {
       return count;  
     }

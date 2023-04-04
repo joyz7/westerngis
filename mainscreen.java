@@ -20,9 +20,16 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 public class mainscreen {
-	
+    
+    private Main main;
     static String searchText;
     static String poiJSON;
     static JSONArray pois;
@@ -31,8 +38,7 @@ public class mainscreen {
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
-    //String[] alumniFloors = {"Basement", "Ground Floor", "Second Floor"}; // change to dynamically populate if have time
-    //String[] healthFloors = {"Ground Floor", "Second Floor", "Third Floor", "Fourth Floor"};
+    JPanel panelTop;
     JTabbedPane panelMap;
     JScrollPane alumniScrollPane;
     JScrollPane middlesexScrollPane;
@@ -47,7 +53,8 @@ public class mainscreen {
     }
 
     */
-    public void createMap (String building, int floor) throws IOException {
+    
+    public void createMap(String building, int floor) throws IOException {
         try {
             //Prepared map images
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
@@ -86,7 +93,24 @@ public class mainscreen {
         }
     }
     
-    public void changeFloor(String building, int floor) throws IOException {
+    public void changeFloor(Building building) {
+        // Create dropdown to switch floors
+        JComboBox floors = new JComboBox(building.getFloorsArray());
+        floors.setBounds(915,3,125,24);
+        panelTop.add(floors);
+        floors.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                try {
+                    if (event.getStateChange() == ItemEvent.SELECTED) {
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(); 
+                }
+            }
+        });
+    }
+    public void changeFloorImage(String building, int floor) throws IOException {
         try {
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -104,11 +128,13 @@ public class mainscreen {
         }
     }
     
-    public mainscreen(DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
+    public mainscreen(Main main, DefaultListModel washroomsList, DefaultListModel classroomsList, DefaultListModel restaurantsList, DefaultListModel navigationList, DefaultListModel csSpecficList) throws IOException {
+        this.main = main;
         panelMap = new JTabbedPane();
-      //Parse POI json
+        panelTop = new JPanel();
+      
+        //Parse POI json
         String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
-
 
         try {
             //Parse and print out each of the different results 
@@ -129,35 +155,9 @@ public class mainscreen {
         mainscreen.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainscreen.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) { // Save JSON data
-                int count = 1; // Pass in from welcome + update when creating POIs
-                HashMap<Integer,POI> poiMap = new HashMap<>();
-                POI test = new POI(0,0,0,0,"MC 123", "Classroom", "class", true);
-                POI test1 = new POI(1,0,0,0,"MC 234", "Washroom", "wash", true);
-                poiMap.put(0,test);
-                poiMap.put(1,test1);
-                JSONArray pois = new JSONArray();
-                for (int i=0; i<=count; i++) {
-                    JSONObject poi = new JSONObject();
-                    poi.put("name", poiMap.get(i).getName());
-                    poi.put("xcoord", poiMap.get(i).getXCoord());
-                    poi.put("yoord", poiMap.get(i).getYCoord());
-                    poi.put("roomnum", poiMap.get(i).getRoomNum());
-                    poi.put("layerid", poiMap.get(i).getLayerId());
-                    poi.put("builtin", poiMap.get(i).isBuiltIn());  
-                    poi.put("description", poiMap.get(i).getDescription());
-                    pois.add(poi);
-                }
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("pois", pois);
-                try {
-                    FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
-                    file.write(jsonObject.toJSONString());
-                    file.close();
-                } catch (Exception error) {
-                    error.printStackTrace();
-                }
+            public void windowClosing(WindowEvent e) {
                 e.getWindow().dispose();
+                main.logOut();
             }
         });
 
@@ -184,7 +184,6 @@ public class mainscreen {
         createMap("Health Sciences Building",1);
 
        // JPanel for the top bar, that includes Search
-        JPanel panelTop = new JPanel();
         panelTop.setLayout(null);
         panelTop.setBackground(Color.red);
         panelTop.setBounds(0,0, 1200, 30);
@@ -224,11 +223,8 @@ public class mainscreen {
             	searchText = searchField.getText();
                 System.out.println("Search query: " + searchText);
 
-                
                 if (pois != null) {
                 	for (int i = 0; i < pois.size(); i++) {
-                		
-                	
                         JSONObject poi = (JSONObject) pois.get(i);
                         String name = (String) poi.get("name");
                         long pid = (Long) poi.get("pid");
@@ -240,8 +236,7 @@ public class mainscreen {
                         if (searchText.equals(roomnum)) {
                         	System.out.println("Room number: " + roomnum);
                         	System.out.println("POI ID: " + pid);
-                        	searchResultsList.addElement(name);
-                        	
+                        	searchResultsList.addElement(name);	
                         }
                         
                       //Search for name
@@ -261,13 +256,10 @@ public class mainscreen {
                             	searchResultsList.addElement(name);
                             }
                         }
-                       
                     }
                 	panelTop.setBounds(0,0, 1200, 100);
                 	resultScrollPane.setVisible(true);
-                	
                 }
-                
             }
         });
         
@@ -297,7 +289,7 @@ public class mainscreen {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloor("Alumni Hall", (int) event.getItem());
+                        changeFloorImage("Alumni Hall", (int) event.getItem());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
@@ -305,8 +297,28 @@ public class mainscreen {
             }
         });
         
+       //Help icon for users to click
+       JButton helpIcon = new JButton("Help");
+       helpIcon.setBounds(1050,3,125,24);
+       panelTop.add(helpIcon);
+
+       //Event listener so that when the help icon is clicked the PDF is opened
+       helpIcon.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+               try {
+                   File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
+                   if (pdfFile.exists()) {
+                       Desktop.getDesktop().open(pdfFile);
+                   } else {
+                       System.out.println("The PDF file does not exist.");
+                   }
+               } catch (IOException ex) {
+                   ex.printStackTrace();
+               }
+           }
+       });
+       
        // JPanel for the map
-       //JTabbedPane panelMap = new JTabbedPane();
        panelMap.setBackground(Color.white);
        panelMap.setBounds(0,30,970,620);
        
@@ -316,11 +328,6 @@ public class mainscreen {
        panelCenter.setBounds(0,30,970,620);
        panelCenter.add(panelMap);
        
-       // Create different tabs
-        /*panelMap.add("Alumni Hall", alumni0scrollPane);
-        panelMap.add("Middlesex College", middle0scrollPane);
-        panelMap.add("Health Sciences Building", health1scrollPane);
-       */
        // JPanel for the side bar
        JPanel panelSideBar = new JPanel();
        panelSideBar.setLayout(null);
@@ -334,7 +341,7 @@ public class mainscreen {
        panelSideBar.add(panelWeather);
        
        Weather newWeather = new Weather("London");
-       JLabel weatherString = new JLabel(newWeather.getCity() + "" + newWeather.getCurrWeather() + "°C " + newWeather.getCurrCondition());
+       JLabel weatherString = new JLabel(newWeather.getCity() + ": " + newWeather.getCurrWeather() + "°C " + newWeather.getCurrCondition());
        panelWeather.add(weatherString);
 
        // JPanel for the POI Title and Button
@@ -346,20 +353,54 @@ public class mainscreen {
        
        // JPanel for the POIs
        JPanel panelPOIs = new JPanel();
-       panelPOIs.setLayout(null);
+       panelPOIs.setLayout(new BorderLayout());
        panelPOIs.setBackground(Color.red);
        panelPOIs.setBounds(0,80,230,520);
        panelSideBar.add(panelPOIs);
        
-       JScrollPane panelPOIScroll = new JScrollPane();
+       // CHANGES START HERE ----------------------------------------------
+       
+       CheckboxTree POIList = new CheckboxTree(); 
+       JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
+       panelPOIScroll.setBackground(Color.white);
+       panelPOIScroll.setBounds(0,80,230,520);    
+       panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+       panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
+       panelPOIs.add(panelPOIScroll); // add scroll pane to side bar
+       
+       // ai ya
+       /*
+       CheckboxTree POIList = new CheckboxTree();
+       DefaultTreeModel model = new DefaultTreeModel(createTree());
+       POIList.setModel(model);
+       POIList.setRootVisible(true);
+       
+       POIList.addCheckChangeEventListener(new CheckboxTree.CheckChangeEventListener() {
+            public void checkStateChanged(CheckboxTree.CheckChangeEvent event) {
+                System.out.println("event");
+                TreePath[] paths = POIList.getCheckedPaths();
+                for (TreePath tp : paths) {
+                    for (Object pathPart : tp.getPath()) {
+                        System.out.print(pathPart + ",");
+                    }                   
+                    System.out.println();
+                }
+            }           
+        }); 
+       
+       */
+       /*
+       JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIs.setLayout(null);
        panelPOIs.setBackground(Color.pink);
        panelPOIs.setBounds(0,80,230,520);    
        panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
        panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
-       panelSideBar.add(panelPOIScroll); 
-       
-      
+       panelSideBar.add(panelPOIScroll); // add scroll pane to side bar
+       //panelSideBar.repaint();
+*/
+                    // CHANGES END HERE ------------------------------------------------    
+                    
         // Title for sidebar
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
@@ -403,7 +444,7 @@ public class mainscreen {
         };
         
         
-                // Get the currently selected component
+        // Get the currently selected component
         selectedComponent = panelMap.getSelectedComponent();
         
          
@@ -462,29 +503,27 @@ public class mainscreen {
                 // Get the mouse click location
                 System.out.println("-----mmmmmmmmm");
                 if (addPOI == true){
-                    newPoiAdd(mainscreen,e.getX(),e.getY());
+                    newPoiAdd(main, mainscreen,e.getX(),e.getY());
                     addPOI = false; //Turn off the clicking
                     addPOIBtn.setText("Add POI");
                 }
 
             }
         });
-        
-        
         // add all JPanels to the JFrame
         mainscreen.add(panelTop); // add top bar
         mainscreen.add(panelCenter); // add map
         mainscreen.add(panelSideBar); // add side bar
-        mainscreen.setResizable(false);
+        //mainscreen.setResizable(false);
         mainscreen.setVisible(true);
-
     }
+
      
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
-    private static void newPoiAdd(JFrame frame, long xCoord, long yCoord){
-            // Create a panel with a grid layout for the input boxes
+    private void newPoiAdd(Main main, JFrame frame, long xCoord, long yCoord){
+        // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
         // Add labels and text fields for point name, room number, and description
@@ -516,19 +555,27 @@ public class mainscreen {
           
           if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
             
-          //Create POI
-          //POI temp = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+//          Create POI
+          POI newPOI = new POI(42069,42069,xCoord,yCoord,roomNum,name,description,false);
+          main.addPOI(newPOI);
           //Hasmap.put(temp)
               JOptionPane.showMessageDialog(null, "Successfully added");
           }
-          else{
-              
+          else{      
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
-          }
-            
+          }            
         } else {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
-
         }
+    }
+    
+    // ADDED CODE HERE
+    private DefaultMutableTreeNode createTree(HashMap layer) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        root.add(new DefaultMutableTreeNode("child 1"));
+        root.add(new DefaultMutableTreeNode("child 2"));
+       //TreeModel model = new DefaultTreeModel(createTree());
+       //POIList.setModel(POLIList);
+        return root;
     }
 }
