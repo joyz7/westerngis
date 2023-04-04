@@ -368,7 +368,7 @@ public class mainscreen {
        
        
        // TEST CASE: POI POP UP
-       User testUser = new User("bob","bob");
+       User testUser = new User("bob","bob"); // is a developer
        POI testPOI = new POI(5, 4, 250,250,"AH 24", "Alumni Hall Classroom", "Male washroom in the basement of MC, located by the southside stairwell. Non-accessible washroom.", true);
        displayPOIInfo(testPOI, testUser, developerMap, favouritePoiObjects);
        
@@ -640,6 +640,7 @@ public class mainscreen {
         JLabel POIDescription = new JLabel(poi.getDescription());
         POIPopUp.add(POIDescription);
         
+        // create option pane
         JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
         // Check if built-in or created
         // Favourite/Unfavourite button
