@@ -47,9 +47,9 @@ public class Weather {
                 String city = (String)location.get("name");
                 */
                 JSONObject current = (JSONObject) jsonObject.get("current");
-                double currWeather = (double)current.get("temp_c");
+                currWeather = (double)current.get("temp_c");
                 JSONObject condition = (JSONObject)current.get("condition");
-                String currCondition = (String)condition.get("text");
+                currCondition = (String)condition.get("text");
             }
         } catch (Exception e) {
             e.printStackTrace();
