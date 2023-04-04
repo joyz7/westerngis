@@ -340,7 +340,7 @@ public class mainscreen {
        JPanel panelSideBar = new JPanel();
        panelSideBar.setLayout(null);
        panelSideBar.setBackground(Color.white);
-       panelSideBar.setBounds(970,30,230 , 600);
+       panelSideBar.setBounds(970,30,230 , 580);
        
        // JPanel for the weather in the side bar
        JPanel panelWeather = new JPanel();
@@ -363,7 +363,7 @@ public class mainscreen {
        JPanel panelPOIs = new JPanel();
        panelPOIs.setLayout(new BorderLayout());
        panelPOIs.setBackground(Color.red);
-       panelPOIs.setBounds(0,80,230,520);
+       panelPOIs.setBounds(0,80,230,500);
        panelSideBar.add(panelPOIs);
        
        
@@ -396,7 +396,7 @@ public class mainscreen {
              
        JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
        panelPOIScroll.setBackground(Color.white);
-       panelPOIScroll.setBounds(0,80,230,520);    
+       panelPOIScroll.setBounds(0,80,230,500);    
        panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
        panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
        panelPOIs.add(panelPOIScroll); // add scroll pane to side bar
@@ -615,10 +615,7 @@ public class mainscreen {
     private void displayPOIInfo(POI poi, User user, HashMap<String,String> developerMap, HashSet<POI> favourites) {
         String favOption = ""; // Text variable to change between favourite and unfavourite
         String[] buttons = {favOption, "Edit", "Delete"};
-        boolean isDev = false; // Changes to true if user is a developer
-        
-        // grab HashSet of favourite POIs
-                
+        boolean isDev = false; // Changes to true if user is a developer      
         
         // Check if user is developer
         for (Map.Entry<String, String> entry : developerMap.entrySet()) {
@@ -628,7 +625,7 @@ public class mainscreen {
             }
         }
         
-        System.out.println(isDev);
+        // Create pop up panel
         JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
         // Display Name
         POIPopUp.add(new JLabel("Name:"));

@@ -6,7 +6,7 @@ package com.cs2212;
  * @author sophi
  */
 public class CheckBoxNode {
-   private final String text;
+   private String text;
    private boolean selected;
 
    public CheckBoxNode(String text, boolean selected) {
@@ -16,6 +16,10 @@ public class CheckBoxNode {
 
    public String getText() {
       return text;
+   }
+   
+   public void setText(String text) {
+       this.text = text;
    }
 
    public boolean isSelected() {

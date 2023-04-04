@@ -84,4 +84,9 @@ public class POI {
     private void setDescription(String desc) {
         description = desc;
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }
