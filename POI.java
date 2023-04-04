@@ -61,27 +61,27 @@ public class POI {
         return builtIn;
     }
     
-    private void setLayerId(long id) {
+    public void setLayerId(long id) {
         layerId = id;
     }
     
-    private void setXCoord(long x) {
+    public void setXCoord(long x) {
         xcoord = x;
     }
     
-    private void setYCoord(long y) {
+    public void setYCoord(long y) {
         ycoord = y;
     }
     
-    private void setRoomNum(String num) {
+    public void setRoomNum(String num) {
         roomNum = num;
     }
     
-    private void setName(String n) {
+    public void setName(String n) {
         name = n;
     }
     
-    private void setDescription(String desc) {
+    public void setDescription(String desc) {
         description = desc;
     }
     
