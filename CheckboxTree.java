@@ -127,16 +127,27 @@ public class CheckboxTree extends JTree {
                 boolean selected, boolean expanded, boolean leaf, int row,
                 boolean hasFocus) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-            Object obj = node.getUserObject();          
+            Object obj = node.getUserObject(); 
             TreePath tp = new TreePath(node.getPath());
             CheckedNode cn = nodesCheckingState.get(tp);
             if (cn == null) {
                 return this;
+            }    
+            try {            
+                // If obj can be successfully casted as a POI object
+                if ((POI)obj instanceof POI) {
+                    POI POIobj = (POI)obj;
+                    checkBox.setSelected(cn.isSelected);
+                    checkBox.setText(POIobj.toString());
+                    checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
+                }
+            } catch (Exception e) {
+                // If obj cannot be successfully casted as a POI object, it is a String object
+                checkBox.setSelected(cn.isSelected);
+                checkBox.setText(obj.toString());
+                checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);              
             }
-            checkBox.setSelected(cn.isSelected);
-            checkBox.setText(obj.toString());
-            checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
-            return this;
+        return this;
         }       
     }
 
