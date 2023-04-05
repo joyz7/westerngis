@@ -20,7 +20,6 @@ public class mainscreen {
     private Main main;
     static String searchText;
     static String poiJSON;
-    private JComboBox floors;
     static JSONArray pois;
     private Campus campus;
     private Building currBuilding;
@@ -42,6 +41,7 @@ public class mainscreen {
     JScrollPane middlesexScrollPane;
     JScrollPane healthScrollPane;
     JComboBox floors;
+    JPanel panelSideBar;
     /*
     public int searchPOI(JTextField searchField){
             searchText = searchField.getText();
@@ -114,6 +114,7 @@ public class mainscreen {
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
                         TreeModel newTree = main.makeTree(newFloor);
+                        mainscreen.remove(panelSideBar);
                         generateSideBar(newTree);
                     }
                 } catch (IOException e) {
@@ -368,7 +369,7 @@ public class mainscreen {
     public void generateSideBar(TreeModel layers) {
 
         // JPanel for the side bar
-        JPanel panelSideBar = new JPanel();
+        panelSideBar = new JPanel();
         panelSideBar.setLayout(null);
         panelSideBar.setBackground(Color.white);
         panelSideBar.setBounds(970, 30, 230, 580);
@@ -395,19 +396,12 @@ public class mainscreen {
         POIList.setRootVisible(false);
         POIList.setModel(layers);
 
-        // JPanel for the POIs
-        JPanel panelPOIs = new JPanel();
-        panelPOIs.setLayout(new BorderLayout());
-        panelPOIs.setBackground(Color.red);
-        panelPOIs.setBounds(0, 80, 230, 500);
-        panelSideBar.add(panelPOIs);
-
         JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
         panelPOIScroll.setBackground(Color.white);
         panelPOIScroll.setBounds(0, 80, 230, 500);
         panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
-        panelPOIs.add(panelPOIScroll); // add scroll pane to side bar
+        panelSideBar.add(panelPOIScroll); // add scroll pane to side bar
 
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
