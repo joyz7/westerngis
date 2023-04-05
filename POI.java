@@ -94,4 +94,9 @@ public class POI {
     public void setActive() {
         isActive = !isActive;
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }
