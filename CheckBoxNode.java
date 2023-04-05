@@ -29,9 +29,4 @@ public class CheckBoxNode {
    public void setSelected(boolean selected) {
       this.selected = selected;
    }
-
-   @Override
-   public String toString() {
-      return text;
-   } 
 }
