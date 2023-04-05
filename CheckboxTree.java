@@ -172,13 +172,13 @@ public class CheckboxTree extends JTree {
                         if (poiNode.getUserObject() instanceof POI) {
                             POI poi = (POI) poiNode.getUserObject();
                             poi.setActive();
-                            togglePOI(poi);
+//                            togglePOI(poi);
                         } else {
                             for (int i=0; i<poiNode.getChildCount(); i++) {
                                 DefaultMutableTreeNode poi = (DefaultMutableTreeNode) poiNode.getChildAt(i);
                                 POI p = (POI) poi.getUserObject();
                                 p.setActive();
-                                togglePOI(poi);
+//                                togglePOI(poi);
                             }
                         }
                 }
