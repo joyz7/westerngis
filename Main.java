@@ -257,13 +257,12 @@ public class Main extends JFrame {
     public void addPOI(POI newPOI) {
         poiMap.put(count, newPOI); //Add to local hashmap
         createdPoiObjects.add(newPOI);
-        /* error?
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
         poi.put("pid", count);
         count += 1;
         poiArray.add(poi);
-        createdPois.put(user.getUsername(), poiArray);*/
+        createdPois.put(user.getUsername(), poiArray);
         addPOItoSidebar(newPOI);
     }
     

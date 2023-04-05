@@ -55,6 +55,7 @@ public class mainscreen {
     JScrollPane alumniScrollPane;
     JScrollPane middlesexScrollPane;
     JScrollPane healthScrollPane;
+    JComboBox floors;
     
     /*
     public int searchPOI(JTextField searchField){
@@ -115,15 +116,14 @@ public class mainscreen {
     
     public void changeFloor(Building building) {
         // Create dropdown to switch floors
-        JComboBox floors = new JComboBox(building.getFloorsArray());
+        floors = new JComboBox(building.getFloorsArray());
         floors.setBounds(915,3,125,24);
         panelTop.add(floors);
         floors.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloorImage(building.getName(), (int) event.getItem());
-                        setCurrFloor((Floor) building.getFloors().get((int) event.getItem()));
+                        changeFloorImage(currBuilding.getName(), (int) event.getItem());
                     }
                 } catch (IOException e) {
                     e.printStackTrace(); 
@@ -131,6 +131,7 @@ public class mainscreen {
             }
         });
     }
+    
     public void changeFloorImage(String building, int floor) throws IOException {
         try {
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
@@ -208,6 +209,7 @@ public class mainscreen {
 
         // Sets current building as Alumni Hall
         currBuilding = (Building) campus.getBuildings().get(0);
+        changeFloor(currBuilding);
         
        // JPanel for the top bar, that includes Search
         panelTop.setLayout(null);
@@ -295,22 +297,6 @@ public class mainscreen {
         		resultScrollPane.setVisible(false);
         		panelTop.setBounds(0,0, 1200, 30);
         	}
-        });
-        
-        // Create dropdown to switch floors
-        JComboBox floors = new JComboBox(currBuilding.getFloorsArray());
-        floors.setBounds(915,3,125,24);
-        panelTop.add(floors);
-        floors.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent event) {
-                try {
-                    if (event.getStateChange() == ItemEvent.SELECTED) {
-                        changeFloorImage(currBuilding.getName(), (int) event.getItem());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace(); 
-                }
-            }
         });
         
        //Help icon for users to click
@@ -507,10 +493,10 @@ public class mainscreen {
                 for (Component component : components) {
                     if (component != selectedComponent && component instanceof JComponent) {
                         ((JComponent) component).removeMouseListener(mouseListener);
-                        panelTop.remove(floors);
-                        changeFloor(currBuilding);
                     }   
                 }
+                panelTop.remove(floors);
+                changeFloor(currBuilding);
                 // Add a MouseListener to the selected component
 //                selectedComponent.addMouseListener(mouseListener);
                 
