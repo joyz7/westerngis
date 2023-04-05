@@ -40,6 +40,7 @@ public class Main extends JFrame {
     private HashMap<String,JSONArray> activeLayers;
     private HashMap<String,String> consumerMap;
     private HashMap<String,String> developerMap;
+    private Campus campus;
     private User user;
     private int count;
     private boolean newUser;
@@ -74,9 +75,9 @@ public class Main extends JFrame {
             }
 
             JSONArray layerArray = activeLayers.get(user.getUsername());
-            HashSet<Long> activeLayerId = new HashSet<Long>();
+            HashSet<String> activeLayerId = new HashSet<String>();
             for (Object o : layerArray) {
-                activeLayerId.add((long)o);
+                activeLayerId.add((String)o);
             }
 
             //Create set of user-created POIs
@@ -94,83 +95,15 @@ public class Main extends JFrame {
             }
         }
         
-        loadPOIs();
-    } 
-    
-    public void loadPOIs() {
-        
-        // Create campus, building, and floor objects
-        Campus campus = new Campus("Western University", "1151 Richmond Street, London");
-        Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London");
-        Building health = new Building("Health Sciences Building", "1151 Huron Drive, London");
-        Building alumni = new Building("Alumni Hall", "Lambton Dr, London");
-        campus.addBuilding(0,alumni);
-        campus.addBuilding(1,middlesex);
-        campus.addBuilding(2,health);
-        Floor m0 = new Floor(0, middlesex, "src/main/java/com/cs2212/images/Middlesex College-0.png");
-        Floor m1 = new Floor(1, middlesex, "src/main/java/com/cs2212/images/Middlesex College-1.png");
-        Floor m2 = new Floor(2, middlesex, "src/main/java/com/cs2212/images/Middlesex College-2.png");
-        Floor m3 = new Floor(3, middlesex, "src/main/java/com/cs2212/images/Middlesex College-3.png");
-        Floor m4 = new Floor(4, middlesex, "src/main/java/com/cs2212/images/Middlesex College-4.png");
-        middlesex.addFloor(m0);
-        middlesex.addFloor(m1);
-        middlesex.addFloor(m2);
-        middlesex.addFloor(m3);
-        middlesex.addFloor(m4);
-        Floor h1 = new Floor(1, health, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
-        Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
-        Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
-        Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
-        health.addFloor(h1);
-        health.addFloor(h2);
-        health.addFloor(h3);
-        health.addFloor(h4);
-        Floor a0 = new Floor(0, alumni, "src/main/java/com/cs2212/images/Alumni Hall-0.png");
-        Floor a1 = new Floor(1, alumni, "src/main/java/com/cs2212/images/Alumni Hall-1.png");
-        Floor a2 = new Floor(2, alumni, "src/main/java/com/cs2212/images/Alumni Hall-2.png");
-        alumni.addFloor(a0);
-        alumni.addFloor(a1);
-        alumni.addFloor(a2);
-        Layer mc = new Layer("Classrooms", true, m0);
-        Layer ml1 = new Layer("Labs", true, m1);
-        Layer ml2 = new Layer("Labs", true, m2);
-        Layer mcs2 = new Layer("Collaborative Spaces", true, m2);
-        Layer mcs3 = new Layer("Collaborative Spaces", true, m3);
-        Layer ms = new Layer("Navigation", true, m0);
-        Layer mr = new Layer("Resturaunts", true, m0);
-        Layer mw0 = new Layer("Washrooms", true, m0);
-        Layer mw1 = new Layer("Washrooms", true, m1);
-        Layer mw2 = new Layer("Washrooms", true, m2);
-        Layer mw3 = new Layer("Washrooms", true, m3);
-
-        // Create tree of layers
-        JSONParser parser = new JSONParser();
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
-        TreeModel layers = new DefaultTreeModel(root);
-        DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
-        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
-        DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
-        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
-        DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
-        usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
-        favouriteLayer = new DefaultMutableTreeNode("Favourites");
-        root.add(favouriteLayer);
-        root.add(usercreatedLayer);
-        root.add(classroom);
-        root.add(csSpecific);
-        root.add(navigation);
-        root.add(restaurant);
-        root.add(washroom);
-        
-        // Load POIs from JSON
         try {
+           JSONParser parser = new JSONParser();
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
-           for(Object o : pois) {
+            for(Object o : pois) {
                 JSONObject poi = (JSONObject) o;
-                long layerId = (long)poi.get("layerid");
+                String layerId = (String)poi.get("layerid");
                 long xCoord = (long)poi.get("xcoord");
                 long yCoord = (long)poi.get("ycoord");
                 String roomNum = (String)poi.get("roomnum");
@@ -184,53 +117,151 @@ public class Main extends JFrame {
                 if (builtIn) {
                     builtinPoiObjects.add(newPoi);
                 }
-                if (layerId == 0) {
-                    mc.addPoi(count, newPoi);
-                    classroom.add(new DefaultMutableTreeNode(newPoi));
-//                    newPoi.setText(newPoi.getName());
-                } else if (layerId == 1) {
-                    ml1.addPoi(count, newPoi);
-                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 2) {
-                    ml2.addPoi(count, newPoi);
-                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 3) {
-                    mcs2.addPoi(count, newPoi);
-                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 4) {
-                    mcs3.addPoi(count, newPoi);
-                    csSpecific.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 5) {
-                    ms.addPoi(count, newPoi);
-                    navigation.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 6) {
-                    mr.addPoi(count, newPoi);
-                    restaurant.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 7) {
-                    mw0.addPoi(count, newPoi);
-                    washroom.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 8) {
-                    mw1.addPoi(count, newPoi);
-                    washroom.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 9) {
-                    mw2.addPoi(count, newPoi);
-                    washroom.add(new DefaultMutableTreeNode(newPoi));
-                } else if (layerId == 10) {
-                    mw3.addPoi(count, newPoi);
-                    washroom.add(new DefaultMutableTreeNode(newPoi));
-                }
-                count++;
+                count += 1;
            }
-        } catch(Exception e) {
+        } catch (Exception e) {
            e.printStackTrace();
         }
+        createLayers();
+        mainscreen mainscreen = new mainscreen(this, campus, poiMap);
 
-        try {
-            mainscreen homePage = new mainscreen(this, campus, poiMap, layers, developerMap, favouritePoiObjects);     
-        } catch (IOException e) {    
+    } 
+    
+    public void createLayers() {
+        
+        // Create campus, building, and floor objects
+        campus = new Campus("Western University", "1151 Richmond Street, London");
+        Building middlesex = new Building("Middlesex College", "1151 Richmond Street, London", 5);
+        Building health = new Building("Health Sciences Building", "1151 Huron Drive, London", 4);
+        Building alumni = new Building("Alumni Hall", "Lambton Dr, London", 3);
+        campus.addBuilding(0,alumni);
+        campus.addBuilding(1,middlesex);
+        campus.addBuilding(2,health);
+        Floor m0 = new Floor(0, middlesex, "src/main/java/com/cs2212/images/Middlesex College-0.png");
+        Floor m1 = new Floor(1, middlesex, "src/main/java/com/cs2212/images/Middlesex College-1.png");
+        Floor m2 = new Floor(2, middlesex, "src/main/java/com/cs2212/images/Middlesex College-2.png");
+        Floor m3 = new Floor(3, middlesex, "src/main/java/com/cs2212/images/Middlesex College-3.png");
+        Floor m4 = new Floor(4, middlesex, "src/main/java/com/cs2212/images/Middlesex College-4.png");
+        middlesex.addFloor(m0);
+        middlesex.addFloor(m1);
+        middlesex.addFloor(m2);
+        middlesex.addFloor(m3);
+        middlesex.addFloor(m4);
+        Floor h0 = new Floor(0, health, "");
+        Floor h1 = new Floor(1, health, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
+        Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
+        Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
+        Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
+        health.addFloor(h0);
+        health.addFloor(h1);
+        health.addFloor(h2);
+        health.addFloor(h3);
+        health.addFloor(h4);
+        Floor a0 = new Floor(0, alumni, "src/main/java/com/cs2212/images/Alumni Hall-0.png");
+        Floor a1 = new Floor(1, alumni, "src/main/java/com/cs2212/images/Alumni Hall-1.png");
+        Floor a2 = new Floor(2, alumni, "src/main/java/com/cs2212/images/Alumni Hall-2.png");
+        alumni.addFloor(a0);
+        alumni.addFloor(a1);
+        alumni.addFloor(a2);
+        
+        HashMap<Character, String> layerTypes = new HashMap<>();
+        layerTypes.put('f', "Favourites");
+        layerTypes.put('u', "User Created");
+        layerTypes.put('c', "Classrooms");
+        layerTypes.put('r', "Resturaunts");
+        layerTypes.put('n', "Navigation");
+        layerTypes.put('e', "Entry Exit Points");
+        layerTypes.put('g', "Gen Labs");
+        layerTypes.put('w', "Washrooms");
+        layerTypes.put('s', "CS Specfic");
+        for (Object building : campus.getBuildings().values()) {
+            Building currBuilding = (Building) building;
+            char buildingKey = currBuilding.getName().charAt(0);
+            Integer numFloors = currBuilding.getNumFloors();
+            
+            int i;
+            if (buildingKey == 'H') {
+                i = 1;
+            } else {
+                i = 0;
+            }
+            for (Object floor : currBuilding.getArray()) {
+                Floor currFloor = (Floor) floor;
+                Integer floorNum = currFloor.getNumber();
+                for (Map.Entry<Character, String> entry : layerTypes.entrySet()) {
+                    Character layerKey = entry.getKey();
+                    String layerName = entry.getValue();
+                    Layer newLayer = new Layer(layerName, true, currFloor, buildingKey + Integer.toString(floorNum) + layerKey);
+                }
+            }
         }
     }
+        
+    public TreeModel makeTree(Floor floor) {
+        
+        Integer floorNum = floor.getNumber();
+        char buildingKey = Character.toLowerCase(floor.getBuilding().getName().charAt(0));     
+        // Create tree of layers
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        
+        TreeModel layers = new DefaultTreeModel(root);
+        DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
+        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
+        DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
+        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
+        DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
+        DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry Exit");
+        DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Gen Labs");
+        usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
+        favouriteLayer = new DefaultMutableTreeNode("Favourites");
+        root.add(favouriteLayer);
+        root.add(usercreatedLayer);
+        root.add(classroom);
+        root.add(csSpecific);
+        root.add(navigation);
+        root.add(restaurant);
+        root.add(washroom);
+        
+        for (Object poi : poiMap.values()) {
+            POI currPOI = (POI) poi;
+            String layerId = currPOI.getLayerId();
+            char poiBuilding = layerId.charAt(0);
+            Integer poiFloor = Character.getNumericValue(layerId.charAt(1));
+            char layerType =  layerId.charAt(2);
+            if (poiBuilding == buildingKey && poiFloor == floorNum) {
+                if (layerType == 'f') {
+                    favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 'u') {
+                    usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 'c') {
+                    classroom.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 'e') {
+                    entryExit.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 'r') {
+                    restaurant.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 'g') {
+                    genLabs.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 'n') {
+                    navigation.add(new DefaultMutableTreeNode(currPOI));
+                } else if (layerType == 's') {
+                    csSpecific.add(new DefaultMutableTreeNode(currPOI));
+                } else {
+                    washroom.add(new DefaultMutableTreeNode(currPOI));
+                }
+            }
+       }
+        String tree = getTreeText(layers, root, "");
+        System.out.println(tree);
+        return layers;
+    }
     
+    private String getTreeText(TreeModel model, Object object, String indent) {
+        String myRow = indent + object + "\n";
+        for (int i = 0; i < model.getChildCount(object); i++) {
+            myRow += getTreeText(model, model.getChild(object, i), indent + "  ");
+        }
+        return myRow;
+    }
     
     /*public checkLayer(Floor floor) {
         HashMap<Integer, Layer> layerMap = (HashMap) floor.getLayers();
