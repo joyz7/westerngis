@@ -20,7 +20,6 @@ public class mainscreen {
     private Main main;
     static String searchText;
     static String poiJSON;
-    private JComboBox floors;
     static JSONArray pois;
     private Campus campus;
     private Building currBuilding;
@@ -42,7 +41,8 @@ public class mainscreen {
     JScrollPane alumniScrollPane;
     JScrollPane middlesexScrollPane;
     JScrollPane healthScrollPane;
-
+    JComboBox floors;
+    JPanel panelSideBar;
     /*
     public int searchPOI(JTextField searchField){
             searchText = searchField.getText();
@@ -116,6 +116,7 @@ public class mainscreen {
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
                         TreeModel newTree = main.makeTree(newFloor);
+                        mainscreen.remove(panelSideBar);
                         generateSideBar(newTree);
                         floors.revalidate(); // Trigger a new layout pass
                         floors.repaint(); // Repaint the combobox 
@@ -231,10 +232,7 @@ public class mainscreen {
         currBuilding = (Building) campus.getBuildings().get(0);
         changeFloor(currBuilding);
         setCurrFloor(currBuilding.getArray().get(0));
-           
-        
-        
-
+                   
         // JPanel for the top bar, that includes Search
         panelTop.setLayout(null);
         panelTop.setBackground(mediumGrey);
@@ -324,36 +322,36 @@ public class mainscreen {
         });
         
         //Help icon for users to click
-            JButton helpIcon = new JButton("Help");
-            helpIcon.setBounds(1050, 3, 125, 24);
-            panelTop.add(helpIcon);
+        JButton helpIcon = new JButton("Help");
+        helpIcon.setBounds(1050, 3, 125, 24);
+        panelTop.add(helpIcon);
 
-            //Event listener so that when the help icon is clicked the PDF is opened
-            helpIcon.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
-                        if (pdfFile.exists()) {
-                            Desktop.getDesktop().open(pdfFile);
-                        } else {
-                            System.out.println("The PDF file does not exist.");
-                        }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+        //Event listener so that when the help icon is clicked the PDF is opened
+        helpIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
+                    if (pdfFile.exists()) {
+                        Desktop.getDesktop().open(pdfFile);
+                    } else {
+                        System.out.println("The PDF file does not exist.");
                     }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
-            });
+            }
+        });
 
-            // JPanel for the map
-            panelMap.setBackground(Color.white);
-            panelMap.setBounds(0, 30, 970, 620);
+        // JPanel for the map
+        panelMap.setBackground(Color.white);
+        panelMap.setBounds(0, 30, 970, 620);
 
-            // JPanel behind the tabbed panels
-            JPanel panelCenter = new JPanel();
-            panelCenter.setBackground(Color.white);
-            panelCenter.setBounds(0, 30, 970, 620);
-            panelCenter.add(panelMap);
-            mainscreen.add(panelCenter); // add map
+        // JPanel behind the tabbed panels
+        JPanel panelCenter = new JPanel();
+        panelCenter.setBackground(Color.white);
+        panelCenter.setBounds(0, 30, 970, 620);
+        panelCenter.add(panelMap);
+        mainscreen.add(panelCenter); // add map
 
         final MouseListener mouseListener = new MouseAdapter() {
             @Override
@@ -422,7 +420,7 @@ public class mainscreen {
     public void generateSideBar(TreeModel layers) {
 
         // JPanel for the side bar
-        JPanel panelSideBar = new JPanel();
+        panelSideBar = new JPanel();
         panelSideBar.setLayout(null);
         panelSideBar.setBackground(Color.white);
         panelSideBar.setBounds(970, 30, 230, 580);
@@ -448,19 +446,12 @@ public class mainscreen {
         POIList.setRootVisible(false);
         POIList.setModel(layers);
 
-        // JPanel for the POIs
-        JPanel panelPOIs = new JPanel();
-        panelPOIs.setLayout(new BorderLayout());
-        panelPOIs.setBackground(Color.red);
-        panelPOIs.setBounds(0, 80, 230, 500);
-        panelSideBar.add(panelPOIs);
-
         JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
         panelPOIScroll.setBackground(Color.white);
         panelPOIScroll.setBounds(0, 80, 230, 500);
         panelPOIScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panelPOIScroll.getVerticalScrollBar().setUnitIncrement(20);
-        panelPOIs.add(panelPOIScroll); // add scroll pane to side bar
+        panelSideBar.add(panelPOIScroll); // add scroll pane to side bar
 
         JLabel POITitle = new JLabel("Points of Interest");
         POITitle.setBounds(5, 5, 200, 20);
