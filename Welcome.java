@@ -71,7 +71,7 @@ public class Welcome extends JFrame implements ActionListener {
                 }
            }
         } catch(Exception e) {
-           e.printStackTrace();
+           System.out.println("Error with the initial file");
         }
         
         // Create the JFrame
@@ -184,7 +184,7 @@ public class Welcome extends JFrame implements ActionListener {
                     welcomeFrame.dispose();
                     try {
                         Main main = new Main(newUser, true, createdPois, favourites, activeLayers,  consumers, developers);
-                    } catch (IOException ex) {
+                    } catch (IOException ex){
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

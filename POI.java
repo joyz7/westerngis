@@ -39,7 +39,7 @@ public class POI {
         this.builtIn = builtIn;
         this.isActive = false;
         try {
-            BufferedImage POI_IMG = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\poi.png"));
+            BufferedImage POI_IMG = ImageIO.read(new File("src/main/java/com/cs2212/images/poi.png"));
             Image SCALED_POI_IMG = POI_IMG.getScaledInstance(25, 40, Image.SCALE_SMOOTH);
         // Create a label to hold the POI image and set its bounds
             POILbl = new JLabel(new ImageIcon(SCALED_POI_IMG));
