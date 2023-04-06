@@ -63,7 +63,7 @@ public class mainscreen {
     public void createMap(String building, int floor) throws IOException {
         try {
             //Prepared map images
-            BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
+            BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
             image.setBounds(0, 30, 970, 550);
             System.out.println(building);
@@ -131,7 +131,7 @@ public class mainscreen {
 
     public void changeFloorImage(String building, int floor) throws IOException {
         try {
-            BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
+            BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
             image.setBounds(0, 30, 970, 550);
             //Create a scroll pane to hold the image
@@ -197,8 +197,8 @@ public class mainscreen {
         panelTop = new JPanel();
 
         //Parse POI json
-        String filename = ".\\src\\main\\java\\com\\cs2212\\POI.json";
-
+        String filename = "src/main/java/com/cs2212/poi.json";
+        
         try {
             //Parse and print out each of the different results 
             JSONParser parser = new JSONParser();
@@ -223,7 +223,7 @@ public class mainscreen {
                 main.logOut();
             }
         });
-
+        
         // Create building maps
         createMap("Alumni Hall", 0);
         createMap("Middlesex College", 0);

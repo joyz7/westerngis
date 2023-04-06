@@ -110,7 +110,6 @@ public class Main extends JFrame {
                 String name = (String)poi.get("name");
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
-  
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put(count, newPoi);
                 // Load built in POIs from JSON
