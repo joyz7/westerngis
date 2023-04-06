@@ -44,8 +44,6 @@ public class Main extends JFrame {
     private User user;
     private int count;
     private boolean newUser;
-    DefaultMutableTreeNode usercreatedLayer;
-    DefaultMutableTreeNode favouriteLayer;
     
     public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
@@ -205,6 +203,8 @@ public class Main extends JFrame {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
         
         TreeModel layers = new DefaultTreeModel(root);
+        DefaultMutableTreeNode favouriteLayer = new DefaultMutableTreeNode("Favourites");
+        DefaultMutableTreeNode usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
         DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
         DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
         DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
@@ -212,8 +212,6 @@ public class Main extends JFrame {
         DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
         DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry Exit");
         DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Gen Labs");
-        usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
-        favouriteLayer = new DefaultMutableTreeNode("Favourites");
         root.add(favouriteLayer);
         root.add(usercreatedLayer);
         root.add(classroom);
@@ -287,19 +285,20 @@ public class Main extends JFrame {
     
     public void addPOI(POI newPOI) {
         poiMap.put(count, newPOI); //Add to local hashmap
+        System.out.println(poiMap.get(count).getLayerId());
         createdPoiObjects.add(newPOI);
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
         poi.put("pid", count);
         count += 1;
-        poiArray.add(poi);
-        createdPois.put(user.getUsername(), poiArray);
-        addPOItoSidebar(newPOI);
-    }
-    
-    public void addPOItoSidebar(POI poi) {
-        usercreatedLayer.add(new DefaultMutableTreeNode(poi)); //BROKEN
-        System.out.println(poi);
+        if (poiArray != null) {
+            poiArray.add(poi);
+            createdPois.put(user.getUsername(), poiArray);
+        } else {
+            JSONArray newPoiArray = new JSONArray();
+            newPoiArray.add(poi);
+            createdPois.put(user.getUsername(), newPoiArray);
+        }
     }
     
     public void logOut() {

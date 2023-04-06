@@ -27,7 +27,7 @@ public class mainscreen {
     private int poiCount;
     boolean addPOI = false;
     Component activeScrollComponent;
-    CheckboxTree POIList = new CheckboxTree();
+    CheckboxTree POIList;
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
@@ -66,7 +66,6 @@ public class mainscreen {
             BufferedImage mapImage = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
             image.setBounds(0, 30, 970, 550);
-            System.out.println(building);
             if (building.equals("Alumni Hall")) {
                 //Create a scroll pane to hold the image
                 alumniScrollPane = new JScrollPane(image);
@@ -98,7 +97,13 @@ public class mainscreen {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("helo");
+    }
+    
+    public void repaintUI(TreeModel newTree) {
+        mainscreen.remove(panelSideBar);
+        generateSideBar(newTree);
+        floors.revalidate(); // Trigger a new layout pass
+        floors.repaint(); // Repaint the combobox
     }
 
     public void changeFloor(Building building) {
@@ -116,10 +121,7 @@ public class mainscreen {
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
                         TreeModel newTree = main.makeTree(newFloor);
-                        mainscreen.remove(panelSideBar);
-                        generateSideBar(newTree);
-                        floors.revalidate(); // Trigger a new layout pass
-                        floors.repaint(); // Repaint the combobox 
+                        repaintUI(newTree); 
                         drawPOIs();//drawing the poits
                     }
                 } catch (IOException e) {
@@ -441,7 +443,8 @@ public class mainscreen {
         panelPOITitle.setBackground(darkGrey);
         panelPOITitle.setBounds(0, 50, 230, 30);
         panelSideBar.add(panelPOITitle);
-
+        
+        POIList = new CheckboxTree();
         POIList.setShowsRootHandles(true);
         POIList.setRootVisible(false);
         POIList.setModel(layers);
@@ -543,9 +546,10 @@ public class mainscreen {
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 System.out.println(xCoord + " " + yCoord);
                 //Create POI !!!!!
-                POI newPOI = new POI(poiCount, currBuilding.getName().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
+                POI newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
                 main.addPOI(newPOI);
-                //Hashmap.put(temp)
+                TreeModel newTree = main.makeTree(currFloor);
+                repaintUI(newTree);
                 JOptionPane.showMessageDialog(null, "Successfully added");
             } else {
                 JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
