@@ -172,7 +172,6 @@ public class CheckboxTree extends JTree {
                         if (poiNode.getUserObject() instanceof POI) {
                             POI poi = (POI) poiNode.getUserObject();
                             poi.setActive();
-//                            togglePOI(poi);
                         } else {
                             for (int i=0; i<poiNode.getChildCount(); i++) {
                                 DefaultMutableTreeNode poi = (DefaultMutableTreeNode) poiNode.getChildAt(i);
@@ -182,6 +181,7 @@ public class CheckboxTree extends JTree {
                             }
                         }
                 }
+                System.out.println("stark industries");
                 
                 boolean checkMode = ! nodesCheckingState.get(tp).isSelected;
                 checkSubTree(tp, checkMode);
@@ -195,8 +195,10 @@ public class CheckboxTree extends JTree {
             }           
             public void mouseExited(MouseEvent arg0) {              
             }
-            public void mousePressed(MouseEvent arg0) {             
+            public void mousePressed(MouseEvent arg0) {      
+                System.out.println("obama");
             }
+            
             public void mouseReleased(MouseEvent arg0) {
             }           
         });
