@@ -43,6 +43,7 @@ public class mainscreen {
     JScrollPane healthScrollPane;
     JComboBox floors;
     JPanel panelSideBar;
+    JScrollPane resultScrollPane;
     /*
     public int searchPOI(JTextField searchField){
             searchText = searchField.getText();
@@ -247,85 +248,37 @@ public class mainscreen {
         searchButton.setBounds(685, 3, 100, 25);
         JButton closeResults = new JButton("Close");
         closeResults.setBounds(790, 3, 100, 25);
-
-        //create String list to contain search results
-        DefaultListModel<String> searchResultsList = new DefaultListModel<>();
-        JList resultJList = new JList<>(searchResultsList);
-        JScrollPane resultScrollPane = new JScrollPane(resultJList);
-
+                
         //add search bar components into top panel
         panelTop.add(searchField);
         panelTop.add(searchButton);
         panelTop.add(closeResults);
 
-        //add search results components into top panel
-        JPanel searchResultsPanel = new JPanel();
-        searchResultsPanel.add(resultScrollPane);
-
-        resultScrollPane.setBounds(10, 30, 650, 50);
-        panelTop.add(resultScrollPane);
-        resultScrollPane.setVisible(false);
-
         //event listener that takes in text the user searches
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                searchResultsList.clear();
-
                 searchText = searchField.getText();
                 System.out.println("Search query: " + searchText);
                 System.out.println("Building: " + currBuilding.getName());
                 System.out.println("Floor list: " + currBuilding.getArray());
                 
-                //Get a string to compare later with the POI layer id
-                String strCurrBuilding;
-                if (currBuilding.getName().equals("Middlesex College")) {
-                    strCurrBuilding = "m";
-                } else if (currBuilding.getName().equals("Alumni Hall")) {
-                    strCurrBuilding = "a";
-                } else if (currBuilding.getName().equals("Health Sciences Building")) {
-                    strCurrBuilding = "h";
-                } else {
-                    strCurrBuilding = "error";
-                }
+                //create String list to contain search results
+                DefaultListModel<String> searchResultsList = main.search(searchText, currBuilding);
+                JList resultJList = new JList<>(searchResultsList);
+                resultScrollPane = new JScrollPane(resultJList);
+
+                //UI PROB GO HERE?
                 
-                System.out.println("Floor Char: " + strCurrBuilding);
-              
-                
-                //search through 
-                for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
-                    
-                    if (specificPoi.getLayerId().substring(0,1).equals(strCurrBuilding)) { //if the poi layer id is the same as the 
-                                
-                        //Search for room number
-                       if (searchText.equals(specificPoi.getRoomNum())) {
-                           System.out.println("Room number: " + specificPoi.getRoomNum());
-                           System.out.println("POI ID: " + specificPoi.getId());
-                           searchResultsList.addElement(specificPoi.getName());
-                       }
+                //add search results components into top panel
+                JPanel searchResultsPanel = new JPanel();
+                searchResultsPanel.add(resultScrollPane);
 
-                       //Search for name
-                       if (searchText.equals(specificPoi.getName())) {
-                           System.out.println("Room number: " + specificPoi.getName());
-                           System.out.println("POI ID: " + specificPoi.getId());
-                           searchResultsList.addElement(specificPoi.getName());
-                       }
+                resultScrollPane.setBounds(10, 30, 650, 50);
+                panelTop.add(resultScrollPane);
+                resultScrollPane.setVisible(false);
 
-                       String[] strArray = specificPoi.getDescription().split(" ");
-
-                       //Search for description
-                       for (int k = 0; k < strArray.length; k++) {
-                           if (searchText.equals(strArray[k])) {
-                               System.out.println("Description: " + specificPoi.getDescription());
-                               System.out.println("POI ID: " + specificPoi.getId());
-                               searchResultsList.addElement(specificPoi.getName());
-                           }
-                    }      
-                }
-
-                    panelTop.setBounds(0, 0, 1200, 100);
-                    resultScrollPane.setVisible(true);
-                }
+                panelTop.setBounds(0, 0, 1200, 100);
+                resultScrollPane.setVisible(true);
             }
         });
 
