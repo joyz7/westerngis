@@ -133,6 +133,7 @@ public class mainscreen {
     }
 
     public void changeFloorImage(String building, int floor) throws IOException {
+        System.out.println("ghello");
         try {
             BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -335,6 +336,7 @@ public class mainscreen {
         panelMap.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                
                 JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
                 activeScrollComponent = panelMap.getSelectedComponent();
 
@@ -358,6 +360,15 @@ public class mainscreen {
                 }
                 panelTop.remove(floors);
                 changeFloor(currBuilding);
+                Integer floorNum = currFloor.getNumber();
+                Floor newFloor = currBuilding.getArray().get(floorNum);
+                setCurrFloor(newFloor);
+                TreeModel newTree = main.makeTree(newFloor);
+                repaintUI(newTree); 
+                drawPOIs();//drawing the poits
+                
+                System.out.println(currFloor.getBuilding().getName());
+                System.out.println(currBuilding.getName());
                 // Add a MouseListener to the selected component
 //                selectedComponent.addMouseListener(mouseListener);
 
