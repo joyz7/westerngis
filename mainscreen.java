@@ -27,7 +27,8 @@ public class mainscreen {
     private Floor currFloor;
     private int poiCount;
     boolean addPOI = false;
-    Component selectedComponent;
+    Component activeScrollComponent;
+    CheckboxTree POIList = new CheckboxTree();
     final int mainscreenWidth = 1200; // width of the JFrame
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
@@ -109,12 +110,16 @@ public class mainscreen {
             public void itemStateChanged(ItemEvent event) {
                 try {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
+                        activeScrollComponent = panelMap.getSelectedComponent(); //ensures the active panel for drawing
                         Integer floorNum = (int) event.getItem();
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
                         TreeModel newTree = main.makeTree(newFloor);
                         generateSideBar(newTree);
+                        floors.revalidate(); // Trigger a new layout pass
+                        floors.repaint(); // Repaint the combobox 
+                        drawPOIs();//drawing the poits
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -139,6 +144,48 @@ public class mainscreen {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public void drawPOIs() {
+        try {
+            activeScrollComponent = panelMap.getSelectedComponent();
+            JScrollPane activeScrollPane = (JScrollPane) activeScrollComponent;
+            BufferedImage mapImage = ImageIO.read(new File(currFloor.getImage()));
+
+            // Create a label to hold the Alumni Hall image and set its bounds
+            JLabel mapLbl = new JLabel(new ImageIcon(mapImage));
+            mapLbl.setBounds(0, 0, mapImage.getWidth(), mapImage.getHeight());
+            // Create a layered pane to layer the components
+            JLayeredPane layeredPane = new JLayeredPane();
+            layeredPane.setPreferredSize(new Dimension(mapImage.getWidth(), mapImage.getHeight()));
+            layeredPane.add(mapLbl, JLayeredPane.DEFAULT_LAYER); // Add the Alumni Hall image label to the bottom layer
+
+            ArrayList<POI> poisToDraw = POIList.getPOIDraw();
+            //For every poi that needs be draw; draw it. if empty/no pois ignore
+            if (!poisToDraw.isEmpty()) {
+                for (POI poi : poisToDraw) {
+                    layeredPane.add(poi.getLbl(), JLayeredPane.PALETTE_LAYER);
+//                    System.out.println("drawing: " + poi.getName()); CAN DELETE
+                }
+            }
+// Get the current viewport
+            JViewport viewport = activeScrollPane.getViewport();
+
+// Keep the same view position
+            Point viewPosition = viewport.getViewPosition();
+
+// Update the viewport's view component with the new content
+            viewport.setView(layeredPane);
+
+// Set the view position to the same location as before
+            viewport.setViewPosition(viewPosition);
+
+            viewport.revalidate(); // Trigger a new layout pass
+            viewport.repaint(); // Repaint the JLayeredPane               
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     public mainscreen(Main main, Campus campus, HashMap<Integer, POI> poiMap) throws IOException {
@@ -316,24 +363,28 @@ public class mainscreen {
         };
         
         // Get the currently selected component
-        selectedComponent = panelMap.getSelectedComponent();
+        activeScrollComponent = panelMap.getSelectedComponent();
         panelMap.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
+                activeScrollComponent = panelMap.getSelectedComponent();
+
 
                 // Set building from selected pane
                 currBuilding = (Building) campus.getBuildings().get(tabbedPane.getSelectedIndex());
+                activeScrollComponent = tabbedPane.getSelectedComponent();
+
 
                 // Get the currently selected component
-                Component selectedComponent = tabbedPane.getSelectedComponent();
+                activeScrollComponent = tabbedPane.getSelectedComponent();
 
                 // Remove the MouseListener from the previously selected component (if any)
                 // This is necessary to avoid adding the same listener multiple times
                 // and potentially causing memory leaks or unexpected behavior.
                 Component[] components = tabbedPane.getComponents();
                 for (Component component : components) {
-                    if (component != selectedComponent && component instanceof JComponent) {
+                    if (component != activeScrollComponent && component instanceof JComponent) {
                         ((JComponent) component).removeMouseListener(mouseListener);
                     }
                 }
@@ -343,7 +394,7 @@ public class mainscreen {
 //                selectedComponent.addMouseListener(mouseListener);
 
                 // Add a MouseListener to the selected component
-                selectedComponent.addMouseListener(new MouseAdapter() {
+                activeScrollComponent.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         // Handle mouse click event here...
@@ -393,7 +444,6 @@ public class mainscreen {
         panelPOITitle.setBounds(0, 50, 230, 30);
         panelSideBar.add(panelPOITitle);
 
-        CheckboxTree POIList = new CheckboxTree();
         POIList.setShowsRootHandles(true);
         POIList.setRootVisible(false);
         POIList.setModel(layers);
@@ -419,6 +469,15 @@ public class mainscreen {
         POITitle.setForeground(Color.white);
         panelPOITitle.add(POITitle);
 
+            //Jacky added; listener for when user selects checkbox to draw the POI marker
+        POIList.addMouseListener(new MouseAdapter() {
+                 @Override
+                 public void mouseClicked(MouseEvent e) {
+                     drawPOIs();
+                 }
+        });
+        
+        
         // Add a button to Add POIs
         JButton addPOIBtn = new JButton("Add POI");
         addPOIBtn.setBounds(120, 5, 90, 20);
@@ -436,7 +495,7 @@ public class mainscreen {
         });
         
         //intial mouse listener?
-        selectedComponent.addMouseListener(new MouseAdapter() {
+        activeScrollComponent.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // Get the mouse click location

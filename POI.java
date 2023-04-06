@@ -4,6 +4,14 @@
  */
 package com.cs2212;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 /**
  *
  * @author JOYZH
@@ -18,7 +26,8 @@ public class POI {
     private String description;
     private boolean builtIn;
     private boolean isActive;
-    
+    private JLabel POILbl;
+
     public POI(int id, String layerId, long xCoord, long yCoord, String roomNum, String name, String description, boolean builtIn) {
         this.id = id;
         this.layerId = layerId;
@@ -29,6 +38,21 @@ public class POI {
         this.description = description;
         this.builtIn = builtIn;
         this.isActive = false;
+        try {
+            BufferedImage POI_IMG = ImageIO.read(new File(".\\src\\main\\java\\com\\cs2212\\images\\poi.png"));
+            Image SCALED_POI_IMG = POI_IMG.getScaledInstance(25, 40, Image.SCALE_SMOOTH);
+        // Create a label to hold the POI image and set its bounds
+            POILbl = new JLabel(new ImageIcon(SCALED_POI_IMG));
+            POILbl.setBounds((int)xcoord, (int)ycoord, 25, 40);
+            POILbl.setToolTipText("POI: " + this.name +"\nRm Num: " + this.roomNum + "\nDescription: " + this.description);
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public JLabel getLbl(){
+        return this.POILbl;
     }
     
     public int getId() {
@@ -93,5 +117,10 @@ public class POI {
     
     public void setActive() {
         isActive = !isActive;
+    }
+    
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -23,6 +24,9 @@ import javax.swing.tree.TreePath;
 public class CheckboxTree extends JTree {
 
     CheckboxTree selfPointer = this;
+    //needed to keep track of nodes
+    ArrayList<POI> poisToDraw  = new ArrayList<POI>();
+
     
     // Defining data structure that will enable to fast check-indicate the state of each node
     // It totally replaces the "selection" mechanism of the JTree
@@ -77,6 +81,14 @@ public class CheckboxTree extends JTree {
         resetCheckingState();
     }
 
+    //to get the list of nodes to be drawn on the mainscreen
+    public ArrayList<POI> getPOIDraw(){
+        return poisToDraw;
+    }
+    
+    public void clearPOI(){
+        poisToDraw.clear();
+    }
     // New method that returns only the checked paths (totally ignores original "selection" mechanism)
     public TreePath[] getCheckedPaths() {
         return checkedPaths.toArray(new TreePath[checkedPaths.size()]);
@@ -127,16 +139,27 @@ public class CheckboxTree extends JTree {
                 boolean selected, boolean expanded, boolean leaf, int row,
                 boolean hasFocus) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-            Object obj = node.getUserObject();          
+            Object obj = node.getUserObject(); 
             TreePath tp = new TreePath(node.getPath());
             CheckedNode cn = nodesCheckingState.get(tp);
             if (cn == null) {
                 return this;
+            }    
+            try {            
+                // If obj can be successfully casted as a POI object
+                if ((POI)obj instanceof POI) {
+                    POI POIobj = (POI)obj;
+                    checkBox.setSelected(cn.isSelected);
+                    checkBox.setText(POIobj.toString());
+                    checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
+                }
+            } catch (Exception e) {
+                // If obj cannot be successfully casted as a POI object, it is a String object
+                checkBox.setSelected(cn.isSelected);
+                checkBox.setText(obj.toString());
+                checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);              
             }
-            checkBox.setSelected(cn.isSelected);
-            checkBox.setText(obj.toString());
-            checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
-            return this;
+        return this;
         }       
     }
 
@@ -169,19 +192,35 @@ public class CheckboxTree extends JTree {
                     return;
                 } else {
                     DefaultMutableTreeNode poiNode = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                    //singular poi node to keep track of 
                         if (poiNode.getUserObject() instanceof POI) {
                             POI poi = (POI) poiNode.getUserObject();
                             poi.setActive();
+                            //Jacky Added; basically just checks if the poi is active and should be drawn or not
+                            if (poi.isActive() == true){
+                            poisToDraw.add(poi);
+                            }
+                            else{
+                            poisToDraw.remove(poi);
+                                
+                            }
+                            
                         } else {
+                            //Goes through the child of the layer /poi nodes and marks them for active and drawing
                             for (int i=0; i<poiNode.getChildCount(); i++) {
                                 DefaultMutableTreeNode poi = (DefaultMutableTreeNode) poiNode.getChildAt(i);
                                 POI p = (POI) poi.getUserObject();
                                 p.setActive();
-//                                togglePOI(poi);
+                                //should add or not (same above)
+                                if (p.isActive() == true){
+                                 poisToDraw.add(p);
+                                }
+                                else{
+                                 poisToDraw.remove(p);
+                                }
                             }
                         }
                 }
-                System.out.println("stark industries");
                 
                 boolean checkMode = ! nodesCheckingState.get(tp).isSelected;
                 checkSubTree(tp, checkMode);
@@ -195,10 +234,8 @@ public class CheckboxTree extends JTree {
             }           
             public void mouseExited(MouseEvent arg0) {              
             }
-            public void mousePressed(MouseEvent arg0) {      
-                System.out.println("obama");
+            public void mousePressed(MouseEvent arg0) {             
             }
-            
             public void mouseReleased(MouseEvent arg0) {
             }           
         });
