@@ -10,16 +10,23 @@ import org.json.simple.parser.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -30,32 +37,30 @@ import javax.swing.tree.TreeModel;
  */
 public class Main extends JFrame {
     
-    private JFrame mainFrame;
+    private mainscreen mainFrame;
     private HashMap<Integer,POI> poiMap;
     private HashSet<POI> builtinPoiObjects;
     private HashSet<POI> createdPoiObjects;
     private HashSet<POI> favouritePoiObjects;
     private HashMap<String,JSONArray> createdPois;
     private HashMap<String,JSONArray> favourites;
-    private HashMap<String,JSONArray> activeLayers;
     private HashMap<String,String> consumerMap;
     private HashMap<String,String> developerMap;
     private Campus campus;
     private User user;
+    private boolean developer;
     private int count;
     private boolean newUser;
-    DefaultMutableTreeNode usercreatedLayer;
-    DefaultMutableTreeNode favouriteLayer;
     
-    public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
+    public Main(User user, boolean newUser, boolean developer, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
         this.newUser = newUser;
         this.user = user;
         this.createdPois = createdPois;
         this.favourites = favourites;
-        this.activeLayers = activeLayers;
         this.consumerMap = consumers;
         this.developerMap = developers;
+        this.developer = developer;
         poiMap = new HashMap<>();
         builtinPoiObjects = new HashSet<>();
         createdPoiObjects = new HashSet<>();
@@ -64,31 +69,31 @@ public class Main extends JFrame {
         if (!newUser) {
             JSONArray poiArray = createdPois.get(user.getUsername());
             HashSet<Integer> createdPoiId = new HashSet<Integer>();
-            for (Object o : poiArray) {
-                createdPoiId.add((int)o);
+            if (poiArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((Integer)poi.get("id"));
+                }
             }
 
             JSONArray favouriteArray = favourites.get(user.getUsername());
             HashSet<Integer> favouritePoiId = new HashSet<Integer>();
-            for (Object o : favouriteArray) {
-                favouritePoiId.add((int)o);
-            }
-
-            JSONArray layerArray = activeLayers.get(user.getUsername());
-            HashSet<String> activeLayerId = new HashSet<String>();
-            for (Object o : layerArray) {
-                activeLayerId.add((String)o);
+            if (favouriteArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((Integer)poi.get("id"));
+                }
             }
 
             //Create set of user-created POIs
-            for (int o : createdPoiId) {
+            for (Integer o : createdPoiId) {
                 if (poiMap.containsKey(o)) {
                     createdPoiObjects.add(poiMap.get(o));
                 }
             }
 
             //Create set of favourite POIs
-            for (int o : favouritePoiId) {
+            for (Integer o : favouritePoiId) {
                 if (poiMap.containsKey(o)) {
                     favouritePoiObjects.add(poiMap.get(o));
                 }
@@ -97,7 +102,7 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -110,7 +115,6 @@ public class Main extends JFrame {
                 String name = (String)poi.get("name");
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
-  
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put(count, newPoi);
                 // Load built in POIs from JSON
@@ -124,7 +128,6 @@ public class Main extends JFrame {
         }
         createLayers();
         mainscreen mainscreen = new mainscreen(this, campus, poiMap);
-
     } 
     
     public void createLayers() {
@@ -152,7 +155,6 @@ public class Main extends JFrame {
         Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
         Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
         Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
-        health.addFloor(h0);
         health.addFloor(h1);
         health.addFloor(h2);
         health.addFloor(h3);
@@ -205,6 +207,8 @@ public class Main extends JFrame {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
         
         TreeModel layers = new DefaultTreeModel(root);
+        DefaultMutableTreeNode favouriteLayer = new DefaultMutableTreeNode("Favourites");
+        DefaultMutableTreeNode usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
         DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
         DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
         DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
@@ -212,8 +216,6 @@ public class Main extends JFrame {
         DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
         DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry Exit");
         DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Gen Labs");
-        usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
-        favouriteLayer = new DefaultMutableTreeNode("Favourites");
         root.add(favouriteLayer);
         root.add(usercreatedLayer);
         root.add(classroom);
@@ -230,9 +232,13 @@ public class Main extends JFrame {
             char layerType =  layerId.charAt(2);
             if (poiBuilding == buildingKey && poiFloor == floorNum) {
                 if (layerType == 'f') {
-                    favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                    if (favouritePoiObjects.contains(currPOI)) {
+                        favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                    }
                 } else if (layerType == 'u') {
-                    usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                    if (createdPoiObjects.contains(currPOI)) {
+                        usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                    }
                 } else if (layerType == 'c') {
                     classroom.add(new DefaultMutableTreeNode(currPOI));
                 } else if (layerType == 'e') {
@@ -263,43 +269,62 @@ public class Main extends JFrame {
         return myRow;
     }
     
-    /*public checkLayer(Floor floor) {
-        HashMap<Integer, Layer> layerMap = (HashMap) floor.getLayers();
-        for (int i=0; i<layerMap.size(); i++) {
-            Layer layer = layerMap.get(i);
-            for (POI j : layer.getPois()) {
-                if (j.getLayerId() == ) {
-                    System.out.println(j.isActive());
-                    //Show POI on map
-                }
-            }
-        }
-    }*/
-    
-    public void togglePOI(POI poi) {
-        if (poi.isActive()) {
-            //Show
-        } else {
-            //Delete
-        }
-        System.out.println(poi.isActive());
-    }
-    
     public void addPOI(POI newPOI) {
         poiMap.put(count, newPOI); //Add to local hashmap
+        newPOI.setMainframe(mainFrame);
         createdPoiObjects.add(newPOI);
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
         poi.put("pid", count);
         count += 1;
-        poiArray.add(poi);
-        createdPois.put(user.getUsername(), poiArray);
-        addPOItoSidebar(newPOI);
+        if (poiArray != null) {
+            poiArray.add(poi);
+            createdPois.put(user.getUsername(), poiArray);
+        } else {
+            JSONArray newPoiArray = new JSONArray();
+            newPoiArray.add(poi);
+            createdPois.put(user.getUsername(), newPoiArray);
+        }
     }
     
-    public void addPOItoSidebar(POI poi) {
-        usercreatedLayer.add(new DefaultMutableTreeNode(poi)); //BROKEN
-        System.out.println(poi);
+    public DefaultListModel<String> search(String searchText, Building building) {
+        DefaultListModel<String> searchResultsList = new DefaultListModel<>();     
+        //Get a string to compare later with the POI layer id
+
+        String buildingName;
+
+        //search through all pois
+        for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
+
+            String layerId = specificPoi.getLayerId();
+            if (layerId.charAt(0) == 'm') {
+                buildingName = "Middlesex College";
+            } else if (layerId.charAt(0) == 'h') {
+                buildingName = "Health Sciences Building";
+            } else {
+                buildingName = "Alumuni Nall";
+            }
+
+                //Search for room number
+            if (searchText.equals(specificPoi.getRoomNum())) {
+                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+            }
+
+            //Search for name
+            if (searchText.equals(specificPoi.getName())) {
+                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+            }
+
+            String[] strArray = specificPoi.getDescription().split(" ");
+
+            //Search for description
+            for (int k = 0; k < strArray.length; k++) {
+                if (searchText.equals(strArray[k])) {
+                    searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+                } 
+            }
+        }
+        return searchResultsList;
     }
     
     public void logOut() {
@@ -312,7 +337,7 @@ public class Main extends JFrame {
             poi.put("pid", id);
             poi.put("name", poiObject.getName());
             poi.put("xcoord", poiObject.getXCoord());
-            poi.put("yoord", poiObject.getYCoord());
+            poi.put("ycoord", poiObject.getYCoord());
             poi.put("roomnum", poiObject.getRoomNum());
             poi.put("layerid", poiObject.getLayerId());
             poi.put("builtin", poiObject.isBuiltIn());  
@@ -342,7 +367,6 @@ public class Main extends JFrame {
             consumer.put("consumer", true);
             consumer.put("createdpois", createdPois.get(username));
             consumer.put("favourites", favourites.get(username));
-            consumer.put("activelayers", activeLayers.get(username));  
             users.add(consumer);
             numUsers += 1;
         }
@@ -357,7 +381,6 @@ public class Main extends JFrame {
             developer.put("consumer", false);
             developer.put("createdpois", null);
             developer.put("favourites", null);
-            developer.put("activelayers", null);  
             users.add(developer);
             numUsers += 1;
         }
@@ -380,8 +403,29 @@ public class Main extends JFrame {
         return poiMap;
     }
     
-    public boolean deletePOI(int poiId) {
-        return true;
+    public void editPOIInfo(POI poiToEdit, String name, String roomNum, String desc) {  
+            // Edit POI
+        poiToEdit.setName(name);
+        poiToEdit.setRoomNum(roomNum);
+        poiToEdit.setDescription(desc);
     }
     
+    public boolean deletePOI(POI poiToDelete) {
+    	int pid = poiToDelete.getId();
+    	poiMap.remove(pid);
+    	
+    	if (poiMap.get(pid) == null) {
+            return true;
+        } else {
+            return false;
+      }
+    }    
+    
+    public boolean isDeveloper() {
+        return developer;
+    }
+    
+    public void setMainframe(mainscreen mainframe) {
+        this.mainFrame = mainframe;
+    }
 }
