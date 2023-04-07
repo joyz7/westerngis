@@ -9,13 +9,15 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.TreeModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class mainscreen {
-
+    
     private JFrame mainscreen;
     private Main main;
     static String searchText;
@@ -24,6 +26,7 @@ public class mainscreen {
     private Campus campus;
     private Building currBuilding;
     private Floor currFloor;
+    private HashMap<Integer, POI> poiMap;
     private int poiCount;
     private ArrayList<POI> drawnPois;
     boolean addPOI = false;
@@ -138,7 +141,6 @@ public class mainscreen {
     }
 
     public void changeFloorImage(String building, int floor) throws IOException {
-        System.out.println("ghello");
         try {
             BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -204,6 +206,14 @@ public class mainscreen {
         poiCount = poiMap.size();
         panelMap = new JTabbedPane();
         panelTop = new JPanel();
+        this.poiMap = poiMap;
+        
+        for (Object poi : poiMap.values()) {
+            POI currPOI = (POI) poi;
+            currPOI.setMainframe(this);
+        }
+        
+        main.setMainframe(this);
 
         //Parse POI json
         String filename = "src/main/java/com/cs2212/test.json";
@@ -339,7 +349,7 @@ public class mainscreen {
         panelTop.add(searchButton);
         //panelTop.add(closeResults);
 
-        // Create a panel for the search results dropdown
+         // Create a panel for the search results dropdown
         
         //event listener that takes in text the user searches
         searchButton.addActionListener(new ActionListener() {
@@ -350,20 +360,55 @@ public class mainscreen {
                 System.out.println("Floor list: " + currBuilding.getArray());
                 
                 //create String list to contain search results
-                DefaultListModel<String> searchResultsList = main.search(searchText, currBuilding);
+                DefaultListModel<POI> searchResultsList = main.search(searchText, currBuilding);
                 JList resultJList = new JList<>(searchResultsList);
-                resultScrollPane = new JScrollPane(resultJList);
-
-                //UI PROB GO HERE?
                 
-                //add search results components into top panel
-                JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane) {
-                    @Override
-                    public Dimension getPreferredSize() {
-                        return new Dimension(500, 200);
+                //add selection listener to the resultJList instance
+                resultJList.addListSelectionListener(new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent e) {
+                        if (!e.getValueIsAdjusting()) {
+                            //get the selected item
+                            POI selectedItem = (POI) resultJList.getSelectedValue();
+                            String layerId = selectedItem.getLayerId();
+                            char building = layerId.toLowerCase().charAt(0);
+                            if (building == 'a') {
+                                currBuilding = (Building) campus.getBuildings().get(0);
+                            } else if (building == 'm') {
+                                currBuilding = (Building) campus.getBuildings().get(1);
+                            } else if (building == 'h') {
+                                currBuilding = (Building) campus.getBuildings().get(2);
+                            }
+                            
+                            try {
+                                panelTop.remove(floors);
+                                floors = new JComboBox(currBuilding.getFloorsArray());
+                                floors.setBounds(915, 3, 125, 24);
+                                panelTop.add(floors);
+                                Floor newFloor = currBuilding.getArray().get(Character.getNumericValue(layerId.charAt(1)));
+                                changeFloorImage(currBuilding.getName(), newFloor.getNumber());
+                                setCurrFloor(newFloor);
+                                TreeModel newTree = main.makeTree(newFloor);
+                                repaintUI(newTree); 
+                                // DISPLAY THE POI BY CHECKING OFF CHECKBOX - SET POI TO ACTIVE?
+                                selectedItem.isActive();
+
+                                drawPOIs();//drawing the pois
+                            } catch (IOException error) {
+                                error.printStackTrace();
+                            }            
+                        }
                     }
-                };
-                JOptionPane.showMessageDialog(null, searchResultsPanel, "Search Results", JOptionPane.DEFAULT_OPTION);
+                });
+                
+                resultScrollPane = new JScrollPane(resultJList);
+                JPanel test = new JPanel();
+                test.add(resultScrollPane);
+
+                //add search results components into top panel
+                JOptionPane searchResultsPanel = new JOptionPane(test);
+                
+                //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
+                JOptionPane.showMessageDialog(null,test, "Search Results", JOptionPane.PLAIN_MESSAGE);
             }
         });
 
@@ -496,13 +541,15 @@ public class mainscreen {
         mainscreen.add(panelSideBar); // add side bar
 
     }
-
+    
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-
         
+        boolean isDeveloper = main.isDeveloper();
+        char layerType = 'a';
+
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -518,7 +565,20 @@ public class mainscreen {
         panel.add(new JLabel("Description:"));
         JTextField descriptionField = new JTextField();
         panel.add(descriptionField);
+        
 
+        if (isDeveloper) {            
+            panel.add(new JLabel("Layer"));
+            String[] layerStrings = {"Washroom", "Classroom", "Gen Lab", "CS Specific", "Resturaunt", "Exit/Entry point", "Navigation"};
+            JComboBox layerDropDown = new JComboBox(layerStrings);
+            panel.add(layerDropDown);
+            String layer = (String) layerDropDown.getSelectedItem(); 
+            if (layer.equals("CS Specific")) {
+                layerType = 's';
+            } else {
+                layerType = layer.toLowerCase().charAt(0);
+            }
+        }
         // Show the input dialog with the panel as the message
         int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
 
@@ -539,7 +599,12 @@ public class mainscreen {
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 System.out.println(xCoord + " " + yCoord);
                 //Create POI !!!!!
-                POI newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
+                POI newPOI;
+                if (!isDeveloper) {
+                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
+                } else {
+                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + layerType, xCoord, yCoord, roomNum, name, description, true);
+                }
                 main.addPOI(newPOI);
                 drawnPois = POIList.getPOIDraw(); // Store POIs drawn on map
                 TreeModel newTree = main.makeTree(currFloor);
@@ -553,47 +618,109 @@ public class mainscreen {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
         }
     }
-    
-    /*
-    // Display POI info when location markers are clicked on
-    private void displayPOIInfo(POI poi, User user, HashMap<String, String> developerMap, HashSet<POI> favourites) {
+
+    public void displayPOI(int poiID) {
+        
         String favOption = ""; // Text variable to change between favourite and unfavourite
         String[] buttons = {favOption, "Edit", "Delete"};
-        boolean isDev = false; // Changes to true if user is a developer
-
-        // Check if user is developer
-        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
-            String username = entry.getKey();
-            if (username.equals(user.getUsername())) {
-                isDev = true;
-            }
-        }
-
+        boolean isDev = main.isDeveloper(); // Changes to true if user is a developer      
+        
+        //Get the POI object
+        POI poiToDisplay = poiMap.get(poiID);
+        
         // Create pop up panel
-        JPanel POIPopUp = new JPanel(new GridLayout(6, 0));
+        JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
         // Display Name
         POIPopUp.add(new JLabel("Name:"));
-        JLabel POIName = new JLabel(poi.getName());
+        JLabel POIName = new JLabel(poiToDisplay.getName());
         POIPopUp.add(POIName);
         // Display Room Number
         POIPopUp.add(new JLabel("Room Number:"));
-        JLabel POIRoom = new JLabel(poi.getRoomNum());
+        JLabel POIRoom = new JLabel(poiToDisplay.getRoomNum());
         POIPopUp.add(POIRoom);
         // Display Description
         POIPopUp.add(new JLabel("Description:"));
-        JLabel POIDescription = new JLabel(poi.getDescription());
+        JLabel POIDescription = new JLabel(poiToDisplay.getDescription());
         POIPopUp.add(POIDescription);
+            
+        if (isDev) {
+            //Add two additional buttons
+            JButton devEdit = new JButton("Edit");
+            POIPopUp.add(devEdit);
 
-        // create option pane
-        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION);
-        // Check if built-in or created
-        // Favourite/Unfavourite button
-        // If developer, add edit and delete buttons, also display layer
-        // Take list of user's favourites and verify which POI they have clicked on
-        // If it is not a favourited POI, then the second button will say Favourite and clicking on it will add it to the favourites HashSet
-        // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
-        // Editing - cannot create duplicate POI
+            JButton devDelete = new JButton("Delete");
+            POIPopUp.add(devDelete);
+
+            //Event listener for edit
+            devEdit.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    
+                    // Create a panel with a grid layout for the input boxes
+                    JPanel panel = new JPanel(new GridLayout(0, 2));
+
+                    // Add labels and text fields for point name, room number, and description
+                    panel.add(new JLabel("Point name:"));
+                    JTextField pointNameField = new JTextField();
+                    panel.add(pointNameField);
+
+                    panel.add(new JLabel("Room number:"));
+                    JTextField roomNumberField = new JTextField();
+                    panel.add(roomNumberField);
+
+                    panel.add(new JLabel("Description:"));
+                    JTextField descriptionField = new JTextField();
+                    panel.add(descriptionField);
+
+                    // Show the input dialog with the panel as the message
+                    int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
+
+                    // Check if the user clicked OK and get the input values
+                    if (result == JOptionPane.OK_OPTION) {
+                        JOptionPane.showMessageDialog(null, "Successfully Edited");
+
+                        String name = pointNameField.getText();
+                        String roomNum = roomNumberField.getText();
+                        String description = descriptionField.getText();
+
+                        if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
+                            main.editPOIInfo(poiToDisplay, name, roomNum, description);
+                            mainscreen.remove(POIPopUp);
+                            mainscreen.invalidate();
+                            mainscreen.validate();
+                            mainscreen.repaint();
+                            displayPOI(poiID);
+                        }
+                    } else{      
+                        JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Edited");
+                    }          
+                }
+            });
+            //Event listener for delete
+            devDelete.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Boolean success = main.deletePOI(poiToDisplay);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Successfully Deleted");
+                        TreeModel newTree = main.makeTree(currFloor);
+                        repaintUI(newTree);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Unsuccessful No POI Deleted");
+                    }
+                }
+            });     
+        } else {
+            //Display checkbox for favourite
+            JCheckBox isFavourite = new JCheckBox("Favourite");
+            POIPopUp.add(isFavourite);
+
+            //Event listener for the favourite option
+            isFavourite.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                // FAVOURITES ???????????????????????????????????????????????????????????
+                }     
+            });
+        }
+        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
+
     }
-    */
-    
 }

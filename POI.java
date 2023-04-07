@@ -31,7 +31,7 @@ public class POI {
     private boolean builtIn;
     private boolean isActive;
     private JLabel POILbl;
-    private Main main;
+    private mainscreen mainframe;
 
     public POI(int id, String layerId, long xCoord, long yCoord, String roomNum, String name, String description, boolean builtIn) {
         this.id = id;
@@ -44,7 +44,6 @@ public class POI {
         this.builtIn = builtIn;
         this.isActive = false;
         
-        
         try {
             BufferedImage POI_IMG = ImageIO.read(new File("src/main/java/com/cs2212/images/poi.png"));
             Image SCALED_POI_IMG = POI_IMG.getScaledInstance(25, 40, Image.SCALE_SMOOTH);
@@ -56,8 +55,7 @@ public class POI {
             POILbl.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     System.out.println("Clicked");
-                    main.displayPOI(id);
-                    
+                    mainframe.displayPOI(id);
                 }
             });   
         }
@@ -134,10 +132,10 @@ public class POI {
         isActive = !isActive;
     }
     
-    public void setMain(Main main) {
-        this.main = main;
+    public void setMainframe(mainscreen mainframe) {
+        this.mainframe = mainframe;
     }
-    
+
     @Override
     public String toString() {
         return name;

@@ -124,9 +124,8 @@ public class Welcome extends JFrame implements ActionListener {
                 // Check if user in user hashmap and if password matches
                 if (consumers.containsKey(user.getText()) && consumers.get(user.getText()).equals(password.getText())) {
                     User oldUser = new User(user.getText(),password.getText());
-
                     try {
-                        Main main = new Main(oldUser, false, createdPois, favourites, consumers, developers);
+                        Main main = new Main(oldUser, false, false, createdPois, favourites, consumers, developers);
                     } catch (IOException ex) {
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -147,7 +146,10 @@ public class Welcome extends JFrame implements ActionListener {
             // Check if user in user hashmap and if password matches
             if (developers.containsKey(user.getText()) && developers.get(user.getText()).equals(password.getText())) {
                 User oldUser = new User(user.getText(),password.getText());
-                new DeveloperMain();
+                try {
+                    Main main = new Main(oldUser, true, true, createdPois, favourites,  consumers, developers);
+                } catch (Exception error) {
+                }
                 welcomeFrame.dispose();
             } else {
             // If password doesn't match, pop up error message
@@ -183,7 +185,7 @@ public class Welcome extends JFrame implements ActionListener {
                     welcomeFrame.setVisible(false);
                     welcomeFrame.dispose();
                     try {
-                        Main main = new Main(newUser, true, createdPois, favourites,  consumers, developers);
+                        Main main = new Main(newUser, true, false, createdPois, favourites,  consumers, developers);
                     } catch (IOException ex){
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -192,6 +194,9 @@ public class Welcome extends JFrame implements ActionListener {
         });
         welcomeFrame.add(signUp);
         signUp.setBounds(500, 400, 130, 40);
+        
+        System.out.println(password);
+        System.out.println(user);
     }
    
      public static void main(String[] args) {
@@ -202,7 +207,6 @@ public class Welcome extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-    
+
 
 };
