@@ -192,6 +192,9 @@ public class Welcome extends JFrame implements ActionListener {
         });
         welcomeFrame.add(signUp);
         signUp.setBounds(500, 400, 130, 40);
+        
+        System.out.println(password);
+        System.out.println(user);
     }
    
      public static void main(String[] args) {
@@ -202,7 +205,6 @@ public class Welcome extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-    
+
 
 };

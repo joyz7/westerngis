@@ -51,6 +51,7 @@ public class Main extends JFrame {
     private User user;
     private int count;
     private boolean newUser;
+    private boolean isDev;
     
     public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
@@ -93,7 +94,7 @@ public class Main extends JFrame {
                     createdPoiId.add((Integer)poi.get("id"));
                 }
             }
-
+            
             //Create set of user-created POIs
             for (Integer o : createdPoiId) {
                 if (poiMap.containsKey(o)) {
@@ -109,6 +110,15 @@ public class Main extends JFrame {
             }
         }
         
+        //check if user is developer
+        boolean isDev = false; 
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            if (username.equals(user.getUsername())) {
+                isDev = true;
+            }
+        }
+            
         try {
            JSONParser parser = new JSONParser();
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
@@ -424,7 +434,7 @@ public class Main extends JFrame {
         return poiMap;
     }
     
-     private void editPOIInfo(POI poiToEdit) {
+    private void editPOIInfo(POI poiToEdit) {
     	// Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -465,7 +475,6 @@ public class Main extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(null, "Unsuccessful No POI Edited");
         }
-
     }
     
     private void deletePOI(POI poiToDelete, HashMap<Integer,POI> poiMap) {
@@ -483,15 +492,6 @@ public class Main extends JFrame {
     public void displayPOI(int poiID) {
         String favOption = ""; // Text variable to change between favourite and unfavourite
         String[] buttons = {favOption, "Edit", "Delete"};
-        boolean isDev = false; // Changes to true if user is a developer      
-        
-        // Check if user is developer
-        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
-            String username = entry.getKey();
-            if (username.equals(user.getUsername())) {
-                isDev = true;
-            }
-        }
         
         //Get the POI object
         POI poiToDisplay = poiMap.get(poiID);
@@ -546,6 +546,10 @@ public class Main extends JFrame {
             });
         }
          JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
+    }
+    
+    public boolean getIsDev() {
+        return isDev;
     }
     
 }

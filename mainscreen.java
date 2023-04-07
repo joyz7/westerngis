@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class mainscreen {
-
+    
     private JFrame mainscreen;
     private Main main;
     static String searchText;
@@ -494,7 +494,9 @@ public class mainscreen {
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-
+        //check if the user is a developer or not
+        boolean isDev = main.getIsDev(); 
+        System.out.println(isDev);
         
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
@@ -511,6 +513,18 @@ public class mainscreen {
         panel.add(new JLabel("Description:"));
         JTextField descriptionField = new JTextField();
         panel.add(descriptionField);
+        
+        if (isDev) {
+            //only built in
+            //add a layers field
+            panel.add(new JLabel("Layer"));
+            String[] layerStrings = {"Washroom", "Classroom", "Gen lab", "CS Specfic", "Resturaunt", "Exit/entry point", "Navigation"};
+            JComboBox layerDropDown = new JComboBox(layerStrings);
+            panel.add(layerDropDown);
+            String layer = (String) layerDropDown.getSelectedItem();
+            
+        
+        }
 
         // Show the input dialog with the panel as the message
         int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
