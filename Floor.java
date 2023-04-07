@@ -54,7 +54,4 @@ public class Floor {
         return image;
     }
     
-    /*private Map search() {
-        return 
-    }*/
 }
