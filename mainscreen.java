@@ -840,7 +840,7 @@ public class mainscreen {
             //Event listener for the favourite option
             isFavourite.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
+
                     if (poiMap.get(poiID).getFavourite()) {
                         main.removeFavourite(poiID);
                         JOptionPane.showMessageDialog(null, "Successfully removed from favourites.");
@@ -851,10 +851,6 @@ public class mainscreen {
                     TreeModel newTree = main.makeTree(currFloor);
                     repaintUI(newTree);
                 }     
-=======
-                    // FAVOURITES ???????????????????????????????????????????????????????????
-                }
->>>>>>> 0777455e20d65cc3bfd8df5928e3eb61a29a07e7
             });
         }
         JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION);
