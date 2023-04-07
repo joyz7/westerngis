@@ -232,9 +232,13 @@ public class Main extends JFrame {
             char layerType =  layerId.charAt(2);
             if (poiBuilding == buildingKey && poiFloor == floorNum) {
                 if (layerType == 'f') {
-                    favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                    if (favouritePoiObjects.contains(currPOI)) {
+                        favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                    }
                 } else if (layerType == 'u') {
-                    usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                    if (createdPoiObjects.contains(currPOI)) {
+                        usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                    }
                 } else if (layerType == 'c') {
                     classroom.add(new DefaultMutableTreeNode(currPOI));
                 } else if (layerType == 'e') {
@@ -297,7 +301,7 @@ public class Main extends JFrame {
             } else if (layerId.charAt(0) == 'h') {
                 buildingName = "Health Sciences Building";
             } else {
-                buildingName = "Health Sciences Building";
+                buildingName = "Alumuni Nall";
             }
 
                 //Search for room number
