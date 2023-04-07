@@ -655,19 +655,103 @@ public class mainscreen {
                         TreeModel newTree = main.makeTree(currFloor);
                         repaintUI(newTree);
                     } else {
-                        JOptionPane.showMessageDialog(null, "Unsuccessful No POI Deleted");
+                        JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Deleted");
                     }
                 }
             });     
         } else {
+            
+            HashSet<POI> createdPOIs = main.getCreated();
+            
+            if (createdPOIs.contains(poiMap.get(poiID))) {
+            
+                //Add two additional buttons
+                JButton userEdit = new JButton("Edit");
+                POIPopUp.add(userEdit);
+
+                JButton userDelete = new JButton("Delete");
+                POIPopUp.add(userDelete);
+
+                //Event listener for edit
+                userEdit.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+
+                        // Create a panel with a grid layout for the input boxes
+                        JPanel panel = new JPanel(new GridLayout(0, 2));
+
+                        // Add labels and text fields for point name, room number, and description
+                        panel.add(new JLabel("Point name:"));
+                        JTextField pointNameField = new JTextField();
+                        panel.add(pointNameField);
+
+                        panel.add(new JLabel("Room number:"));
+                        JTextField roomNumberField = new JTextField();
+                        panel.add(roomNumberField);
+
+                        panel.add(new JLabel("Description:"));
+                        JTextField descriptionField = new JTextField();
+                        panel.add(descriptionField);
+
+                        // Show the input dialog with the panel as the message
+                        int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
+
+                        // Check if the user clicked OK and get the input values
+                        if (result == JOptionPane.OK_OPTION) {
+                            JOptionPane.showMessageDialog(null, "Successfully Edited");
+
+                            String name = pointNameField.getText();
+                            String roomNum = roomNumberField.getText();
+                            String description = descriptionField.getText();
+
+                            if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
+                                main.editPOIInfo(poiToDisplay, name, roomNum, description);
+                                mainscreen.remove(POIPopUp);
+                                mainscreen.invalidate();
+                                mainscreen.validate();
+                                mainscreen.repaint();
+                                displayPOI(poiID);
+                            }
+                        } else{      
+                            JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Edited");
+                        }          
+                    }
+                });
+                //Event listener for delete
+                userDelete.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        Boolean success = main.deletePOI(poiToDisplay);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Successfully Deleted");
+                            TreeModel newTree = main.makeTree(currFloor);
+                            repaintUI(newTree);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Deleted");
+                        }
+                    }
+                });     
+
+            }
             //Display checkbox for favourite
             JCheckBox isFavourite = new JCheckBox("Favourite");
             POIPopUp.add(isFavourite);
+            System.out.println(poiID);
+            if (poiMap.get(poiID).getFavourite()) {
+                System.out.println("true");
+                isFavourite.setSelected (true);
+            }
 
             //Event listener for the favourite option
             isFavourite.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                // FAVOURITES ???????????????????????????????????????????????????????????
+                    if (poiMap.get(poiID).getFavourite()) {
+                        main.removeFavourite(poiID);
+                        JOptionPane.showMessageDialog(null, "Successfully removed from favourites.");
+                    } else {
+                        main.addFavourite(poiID);
+                        JOptionPane.showMessageDialog(null, "Successfully added to favourites.");
+                    }
+                    TreeModel newTree = main.makeTree(currFloor);
+                    repaintUI(newTree);
                 }     
             });
         }

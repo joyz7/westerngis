@@ -32,6 +32,7 @@ public class POI {
     private boolean isActive;
     private JLabel POILbl;
     private mainscreen mainframe;
+    private boolean isFavourite;
 
     public POI(int id, String layerId, long xCoord, long yCoord, String roomNum, String name, String description, boolean builtIn) {
         this.id = id;
@@ -43,6 +44,7 @@ public class POI {
         this.description = description;
         this.builtIn = builtIn;
         this.isActive = false;
+        this.isFavourite = false;
         
         try {
             BufferedImage POI_IMG = ImageIO.read(new File("src/main/java/com/cs2212/images/poi.png"));
@@ -55,6 +57,7 @@ public class POI {
             POILbl.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     System.out.println("Clicked");
+                    System.out.println(id);
                     mainframe.displayPOI(id);
                 }
             });   
@@ -90,6 +93,14 @@ public class POI {
     
     public String getName() {
         return name;
+    }
+    
+    public boolean getFavourite() {
+        return isFavourite;
+    }
+    
+    public void setFavourite() {
+        isFavourite = !isFavourite;
     }
     
     public String getDescription() {

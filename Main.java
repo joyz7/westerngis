@@ -66,6 +66,7 @@ public class Main extends JFrame {
         builtinPoiObjects = new HashSet<>();
         createdPoiObjects = new HashSet<>();
         favouritePoiObjects = new HashSet<>();
+        count = 0;
         
         if (!newUser) {
             JSONArray poiArray = createdPois.get(user.getUsername());
@@ -73,33 +74,70 @@ public class Main extends JFrame {
             if (poiArray != null) {
                 for (Object o : poiArray) {
                     JSONObject poi = (JSONObject) o;
-                    createdPoiId.add((Integer)poi.get("id"));
+                    createdPoiId.add((int) ((long)poi.get("pid")));
                 }
             }
 
             JSONArray favouriteArray = favourites.get(user.getUsername());
             HashSet<Integer> favouritePoiId = new HashSet<Integer>();
             if (favouriteArray != null) {
-                for (Object o : poiArray) {
+                for (Object o : favouriteArray) {
                     JSONObject poi = (JSONObject) o;
-                    createdPoiId.add((Integer)poi.get("id"));
+                    if (poi != null) {
+                        System.out.println("wqe");
+                        favouritePoiId.add((int) ((long)poi.get("pid")));
+                    }
                 }
             }
-            
-            //Create set of user-created POIs
-            for (Integer o : createdPoiId) {
-                if (poiMap.containsKey(o)) {
-                    createdPoiObjects.add(poiMap.get(o));
-                }
-            }
+            System.out.println(favouritePoiId);
+        try {
+           JSONParser parser = new JSONParser();
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
+           JSONObject jsonObject = (JSONObject)obj;
+           JSONArray pois = (JSONArray) jsonObject.get("pois");
 
-            //Create set of favourite POIs
-            for (Integer o : favouritePoiId) {
-                if (poiMap.containsKey(o)) {
-                    favouritePoiObjects.add(poiMap.get(o));
+            for(Object o : pois) {
+                JSONObject poi = (JSONObject) o; 
+                String layerId = (String)poi.get("layerid");
+                int id = (int) ((long)poi.get("pid"));
+                if ((int) ((long)poi.get("pid") + 1) > count) {
+                    count = (int) ((long)poi.get("pid") + 1);
                 }
+                long xCoord = (long)poi.get("xcoord");
+                long yCoord = (long)poi.get("ycoord");
+                String roomNum = (String)poi.get("roomnum");
+                String name = (String)poi.get("name");
+                String description = (String)poi.get("description");
+                boolean builtIn = (boolean)poi.get("builtin");
+                POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
+                poiMap.put((int) ((long)poi.get("pid")), newPoi);
+                // Load built in POIs from JSON
+                if (builtIn) {
+                    builtinPoiObjects.add(newPoi);
+                }
+           }
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+            
+        //Create set of user-created POIs
+        for (Integer o : createdPoiId) {
+            if (poiMap.containsKey(o)) {
+                createdPoiObjects.add(poiMap.get(o));
             }
         }
+
+        //Create set of favourite POIs
+        for (Integer o : favouritePoiId) {
+            System.out.println(favouritePoiId);
+            if (poiMap.containsKey(o)) {
+                favouritePoiObjects.add(poiMap.get(o));
+                poiMap.get(o).setFavourite();
+            }
+        }
+    }
+        
+        System.out.println(poiMap.get(17).getDescription());
         
         //check if user is developer
         boolean isDev = false; 
@@ -110,32 +148,7 @@ public class Main extends JFrame {
             }
         }
             
-        try {
-           JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
-           JSONObject jsonObject = (JSONObject)obj;
-           JSONArray pois = (JSONArray) jsonObject.get("pois");
-
-            for(Object o : pois) {
-                JSONObject poi = (JSONObject) o;
-                String layerId = (String)poi.get("layerid");
-                long xCoord = (long)poi.get("xcoord");
-                long yCoord = (long)poi.get("ycoord");
-                String roomNum = (String)poi.get("roomnum");
-                String name = (String)poi.get("name");
-                String description = (String)poi.get("description");
-                boolean builtIn = (boolean)poi.get("builtin");
-                POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
-                poiMap.put(count, newPoi);
-                // Load built in POIs from JSON
-                if (builtIn) {
-                    builtinPoiObjects.add(newPoi);
-                }
-                count += 1;
-           }
-        } catch (Exception e) {
-           e.printStackTrace();
-        }
+      
         createLayers();
         mainscreen mainscreen = new mainscreen(this, campus, poiMap);
     } 
@@ -241,11 +254,10 @@ public class Main extends JFrame {
             Integer poiFloor = Character.getNumericValue(layerId.charAt(1));
             char layerType =  layerId.charAt(2);
             if (poiBuilding == buildingKey && poiFloor == floorNum) {
-                if (layerType == 'f') {
-                    if (favouritePoiObjects.contains(currPOI)) {
-                        favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
-                    }
-                } else if (layerType == 'u') {
+                if (currPOI.getFavourite()) {
+                    favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                }
+                if (layerType == 'u') {
                     if (createdPoiObjects.contains(currPOI)) {
                         usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
                     }
@@ -280,20 +292,62 @@ public class Main extends JFrame {
     }
     
     public void addPOI(POI newPOI) {
-        poiMap.put(count, newPOI); //Add to local hashmap
+        poiMap.put(count, newPOI); 
         newPOI.setMainframe(mainFrame);
-        createdPoiObjects.add(newPOI);
-        JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
+        
+        if (!developer) {
+            createdPoiObjects.add(newPOI);
+            JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
+            JSONObject poi = new JSONObject();
+            poi.put("pid", count);
+            count += 1;
+            if (poiArray != null) {
+                poiArray.add(poi);
+                createdPois.put(user.getUsername(), poiArray);
+            } else {
+                JSONArray newPoiArray = new JSONArray();
+                newPoiArray.add(poi);
+                createdPois.put(user.getUsername(), newPoiArray);
+            }
+        }
+    }
+    
+    public void addFavourite(int poiId) {
+        POI favPOI = poiMap.get(poiId);
+        favouritePoiObjects.add(favPOI);
+        favPOI.setFavourite();
+        JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
+        System.out.println(poiArray);
         JSONObject poi = new JSONObject();
-        poi.put("pid", count);
-        count += 1;
+        poi.put("pid", favPOI.getId());
         if (poiArray != null) {
             poiArray.add(poi);
-            createdPois.put(user.getUsername(), poiArray);
+            favourites.put(user.getUsername(), poiArray);
         } else {
             JSONArray newPoiArray = new JSONArray();
             newPoiArray.add(poi);
-            createdPois.put(user.getUsername(), newPoiArray);
+            favourites.put(user.getUsername(), newPoiArray);
+        }
+    }
+    
+     public void removeFavourite(int poiId) {
+        POI favPOI = poiMap.get(poiId);
+        favouritePoiObjects.remove(favPOI);
+        favPOI.setFavourite();
+        JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
+        JSONArray newFavList = new JSONArray();
+        if (poiArray != null) {
+            for(Object o : poiArray) {
+                JSONObject poi = (JSONObject) o; 
+                if (poi != null) {
+                    if ((int) ((long)poi.get("pid")) != poiId) {
+                        newFavList.add(poi);
+                    } else {
+                        System.out.println("Hell");
+                    }
+                }
+            }
+            favourites.put(user.getUsername(),newFavList);
         }
     }
     
@@ -423,6 +477,25 @@ public class Main extends JFrame {
     public boolean deletePOI(POI poiToDelete) {
     	int pid = poiToDelete.getId();
     	poiMap.remove(pid);
+        
+        if (createdPoiObjects.contains(poiToDelete)) {
+            createdPoiObjects.remove(poiToDelete);
+            JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
+            JSONArray newCreatedList = new JSONArray();
+                if (poiArray != null) {
+                    for(Object o : poiArray) {
+                        JSONObject poi = (JSONObject) o; 
+                        if (poi != null) {
+                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {
+                                newCreatedList.add(poi);
+                            } else {
+                                System.out.println("Hell");
+                            }
+                        }
+                    }
+                }
+            createdPois.put(user.getUsername(),newCreatedList);
+        }
     	
     	if (poiMap.get(pid) == null) {
             return true;
@@ -437,5 +510,9 @@ public class Main extends JFrame {
     
     public void setMainframe(mainscreen mainframe) {
         this.mainFrame = mainframe;
+    }
+    
+    public HashSet<POI> getCreated() {
+        return createdPoiObjects;
     }
 }
