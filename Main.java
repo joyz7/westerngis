@@ -37,31 +37,31 @@ import javax.swing.tree.TreeModel;
  */
 public class Main extends JFrame {
     
-    private JFrame mainFrame;
+    private mainscreen mainFrame;
     private HashMap<Integer,POI> poiMap;
     private HashSet<POI> builtinPoiObjects;
     private HashSet<POI> createdPoiObjects;
     private HashSet<POI> favouritePoiObjects;
     private HashMap<String,JSONArray> createdPois;
     private HashMap<String,JSONArray> favourites;
-    private HashMap<String,JSONArray> activeLayers;
     private HashMap<String,String> consumerMap;
     private HashMap<String,String> developerMap;
     private Campus campus;
     private User user;
+    private boolean developer;
     private int count;
     private boolean newUser;
     private boolean isDev;
     
-    public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
+    public Main(User user, boolean newUser, boolean developer, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
         this.newUser = newUser;
         this.user = user;
         this.createdPois = createdPois;
         this.favourites = favourites;
-        this.activeLayers = activeLayers;
         this.consumerMap = consumers;
         this.developerMap = developers;
+        this.developer = developer;
         poiMap = new HashMap<>();
         builtinPoiObjects = new HashSet<>();
         createdPoiObjects = new HashSet<>();
@@ -80,15 +80,6 @@ public class Main extends JFrame {
             JSONArray favouriteArray = favourites.get(user.getUsername());
             HashSet<Integer> favouritePoiId = new HashSet<Integer>();
             if (favouriteArray != null) {
-                for (Object o : poiArray) {
-                    JSONObject poi = (JSONObject) o;
-                    createdPoiId.add((Integer)poi.get("id"));
-                }
-            }
-
-            JSONArray layerArray = activeLayers.get(user.getUsername());
-            HashSet<String> activeLayerId = new HashSet<String>();
-            if (layerArray != null) {
                 for (Object o : poiArray) {
                     JSONObject poi = (JSONObject) o;
                     createdPoiId.add((Integer)poi.get("id"));
@@ -135,7 +126,6 @@ public class Main extends JFrame {
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
-                newPoi.setMain(this);
                 poiMap.put(count, newPoi);
                 // Load built in POIs from JSON
                 if (builtIn) {
@@ -148,7 +138,6 @@ public class Main extends JFrame {
         }
         createLayers();
         mainscreen mainscreen = new mainscreen(this, campus, poiMap);
-
     } 
     
     public void createLayers() {
@@ -253,9 +242,13 @@ public class Main extends JFrame {
             char layerType =  layerId.charAt(2);
             if (poiBuilding == buildingKey && poiFloor == floorNum) {
                 if (layerType == 'f') {
-                    favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                    if (favouritePoiObjects.contains(currPOI)) {
+                        favouriteLayer.add(new DefaultMutableTreeNode(currPOI));
+                    }
                 } else if (layerType == 'u') {
-                    usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                    if (createdPoiObjects.contains(currPOI)) {
+                        usercreatedLayer.add(new DefaultMutableTreeNode(currPOI));
+                    }
                 } else if (layerType == 'c') {
                     classroom.add(new DefaultMutableTreeNode(currPOI));
                 } else if (layerType == 'e') {
@@ -286,22 +279,8 @@ public class Main extends JFrame {
         return myRow;
     }
     
-    /*public checkLayer(Floor floor) {
-        HashMap<Integer, Layer> layerMap = (HashMap) floor.getLayers();
-        for (int i=0; i<layerMap.size(); i++) {
-            Layer layer = layerMap.get(i);
-            for (POI j : layer.getPois()) {
-                if (j.getLayerId() == ) {
-                    System.out.println(j.isActive());
-                    //Show POI on map
-                }
-            }
-        }
-    }*/
-    
     public void addPOI(POI newPOI) {
         poiMap.put(count, newPOI); //Add to local hashmap
-        System.out.println(poiMap.get(count).getLayerId());
         createdPoiObjects.add(newPOI);
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
@@ -320,36 +299,37 @@ public class Main extends JFrame {
     public DefaultListModel<String> search(String searchText, Building building) {
         DefaultListModel<String> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
-        char currBuilding = building.getName().toLowerCase().charAt(0);
+
+        String buildingName;
 
         //search through all pois
         for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
 
-            if (specificPoi.getLayerId().charAt(0) == currBuilding) { //get pois in the current building 
+            String layerId = specificPoi.getLayerId();
+            if (layerId.charAt(0) == 'm') {
+                buildingName = "Middlesex College";
+            } else if (layerId.charAt(0) == 'h') {
+                buildingName = "Health Sciences Building";
+            } else {
+                buildingName = "Alumuni Nall";
+            }
 
                 //Search for room number
-               if (searchText.equals(specificPoi.getRoomNum())) {
-                   System.out.println("Room number: " + specificPoi.getRoomNum());
-                   System.out.println("POI ID: " + specificPoi.getId());
-                   searchResultsList.addElement(specificPoi.getName());
-               }
+            if (searchText.equals(specificPoi.getRoomNum())) {
+                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+            }
 
-               //Search for name
-               if (searchText.equals(specificPoi.getName())) {
-                   System.out.println("Room number: " + specificPoi.getName());
-                   System.out.println("POI ID: " + specificPoi.getId());
-                   searchResultsList.addElement(specificPoi.getName());
-               }
+            //Search for name
+            if (searchText.equals(specificPoi.getName())) {
+                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+            }
 
-               String[] strArray = specificPoi.getDescription().split(" ");
+            String[] strArray = specificPoi.getDescription().split(" ");
 
-               //Search for description
-               for (int k = 0; k < strArray.length; k++) {
-                   if (searchText.equals(strArray[k])) {
-                       System.out.println("Description: " + specificPoi.getDescription());
-                       System.out.println("POI ID: " + specificPoi.getId());
-                       searchResultsList.addElement(specificPoi.getName());
-                   }
+            //Search for description
+            for (int k = 0; k < strArray.length; k++) {
+                if (searchText.equals(strArray[k])) {
+                    searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
                 } 
             }
         }
@@ -396,7 +376,6 @@ public class Main extends JFrame {
             consumer.put("consumer", true);
             consumer.put("createdpois", createdPois.get(username));
             consumer.put("favourites", favourites.get(username));
-            consumer.put("activelayers", activeLayers.get(username));  
             users.add(consumer);
             numUsers += 1;
         }
@@ -411,7 +390,6 @@ public class Main extends JFrame {
             developer.put("consumer", false);
             developer.put("createdpois", null);
             developer.put("favourites", null);
-            developer.put("activelayers", null);  
             users.add(developer);
             numUsers += 1;
         }
