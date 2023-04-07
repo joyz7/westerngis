@@ -465,6 +465,11 @@ public class mainscreen {
                 //button action listener to toggle on the poi adding mode
         addPOIBtn.addActionListener(e -> {
             addPOI = !addPOI; // Toggle the boolean variable
+            if (addPOI == true) {
+                addPOIBtn.setText("Click Map");
+            } else {
+                addPOIBtn.setText("Add POI");
+            }
         });
         
         //intial mouse listener?
@@ -474,9 +479,9 @@ public class mainscreen {
                 // Get the mouse click location
                 if (addPOI == true) {
                     newPoiAdd(e.getX(), e.getY(), floors);
+                    addPOIBtn.setText("Add POI");
                     addPOI = false; //Turn off the clicking
                 }
-
             }
         });
         

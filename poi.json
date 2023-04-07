@@ -1,0 +1,295 @@
+{
+    "pois":[
+        {
+            "pid":0,
+            "name":"Classroom",
+            "xcoord":100,
+            "ycoord":100,
+            "roomnum":"MC 17",
+            "layerid":"m1c",
+            "builtin":true,
+            "description":"Classroom with 48 seating capacity and fixed tab arm seating"
+        },
+        {
+            "pid":1,
+            "name":"Classroom",
+            "xcoord":105,
+            "ycoord":105,
+            "roomnum":"MC 105B",
+            "layerid":"m1c",
+            "builtin":true,
+            "description":"Classroom with 144 seating capacity and fixed tab arm seating"
+        },
+                {
+            "pid":2,
+            "name":"Classroom",
+            "xcoord":110,
+            "ycoord":110,
+            "roomnum":"MC 110",
+            "layerid":"m1c",
+            "builtin":true,
+            "description":"Classroom with 380 seating capacity and theatre tab arm seating"
+        },
+                {
+            "pid":10,
+            "name":"Lab",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 230",
+            "layerid":"m2s",
+            "builtin":true,
+            "description":"Lab with 24 seating capacity"
+        },
+                {
+            "pid":11,
+            "name":"Lab",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 235",
+            "layerid":"m2s",
+            "builtin":true,
+            "description":"Lab with 24 seating capacity"
+        },
+                {
+            "pid":12,
+            "name":"Lab",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 240",
+            "layerid":"m2s",
+            "builtin":true,
+            "description":"Lab with 27 seating capacity"
+        },
+                {
+            "pid":13,
+            "name":"Lab",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 244",
+            "layerid":"m2s",
+            "builtin":true,
+            "description":"Lab with 30 seating capacity"
+        },        
+                {
+            "pid":14,
+            "name":"Lab",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 342",
+            "layerid":"m3s",
+            "builtin":true,
+            "description":"Lab with 20 seating capacity"
+        },  
+                {
+            "pid":20,
+            "name":"Collaborative Space",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 220",
+            "layerid":"m2s",
+            "builtin":true,
+            "description":"Bookable collaborative space with 8 seating capacity"
+        },    
+                {
+            "pid":21,
+            "name":"Collaborative Space",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 239",
+            "layerid":"m2s",
+            "builtin":true,
+            "description":"Bookable collaborative space with 4 seating capacity"
+        },  
+                {
+            "pid":22,
+            "name":"Collaborative Space",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 325",
+            "layerid":"m3s",
+            "builtin":true,
+            "description":"Collaborative space with 30 seating capacity. Only Pod A is bookable."
+        },
+                {
+            "pid":30,
+            "name":"Stairwell 1",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ST 1",
+            "layerid":"m2n",
+            "builtin":true,
+            "description":"North stairwell"
+        },     
+                {
+            "pid":31,
+            "name":"Stairwell 2",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ST 2",
+            "layerid":"m2n",
+            "builtin":true,
+            "description":"North-center stairwell"
+        },
+                {
+            "pid":32,
+            "name":"Stairwell 6",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ST 6",
+            "layerid":"m1n",
+            "builtin":true,
+            "description":"Grad Club stairwell"
+        },
+                {
+            "pid":33,
+            "name":"Stairwell 3",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ST 3",
+            "layerid":"m1n",
+            "builtin":true,
+            "description":"South-center stairwell"
+        },
+                {
+            "pid":34,
+            "name":"Center Elevator",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ELEV A",
+            "layerid":"m0n",
+            "builtin":true,
+            "description":"Elevator near the center of MC"
+        },   
+                {
+            "pid":35,
+            "name":"South Elevator",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ELEV C",
+            "layerid":"m0n",
+            "builtin":true,
+            "description":"Elevator near the south side of MC"
+        },   
+                {
+            "pid":36,
+            "name":"Stairwell 5",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"ST 5",
+            "layerid":"m3n",
+            "builtin":true,
+            "description":"South stairwell"
+        },  
+                {
+            "pid":37,
+            "name":"Grad Club",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 19",
+            "layerid":"m1r",
+            "builtin":true,
+            "description":"Not-for-profit graduate student pub and eatery that is owned and operated by the Society of Graduate Students (SOGS)."
+        },  
+                {
+            "pid":40,
+            "name":"Basement Men's Washroom",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 5B",
+            "layerid":"m0w",
+            "builtin":true,
+            "description":"Male washroom in the basement of MC, located by Grad Club."
+        },  
+                {
+            "pid":41,
+            "name":"Basement Women's Washroom",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 4B",
+            "layerid":"m0w",
+            "builtin":true,
+            "description":"Female washroom in the basement of MC, located by Grad Club."
+        },   
+                {
+            "pid":42,
+            "name":"Basement Unisex Washroom",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 5B",
+            "layerid":"m0w",
+            "builtin":true,
+            "description":"Unisex washroom in the basement of MC, located by Grad Club. Accessible and barrier free."
+        },  
+                 {
+            "pid":43,
+            "name":"Basement Men's Washroom Southside",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 28E",
+            "layerid":"m0w",
+            "builtin":true,
+            "description":"Male washroom in the basement of MC, located by the southside stairwell. Non-accessible washroom."
+        },         
+                 {
+            "pid":44,
+            "name":"First Floor Men's Washroom Center",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 100",
+            "layerid":"m1w",
+            "builtin":true,
+            "description":"Male washroom on the first floor of MC, located near the center. Non-accessible washroom."
+        }, 
+                 {
+            "pid":45,
+            "name":"First Floor Women's Washroom Southside",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 139",
+            "layerid":"m1w",
+            "builtin":true,
+            "description":"Female washroom on the first floor of MC, located by the southside stairwell. Non-accessible washroom."
+        },  
+                 {
+            "pid":46,
+            "name":"Second Floor Men's Washroom Center",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 205",
+            "layerid":"m2w",
+            "builtin":true,
+            "description":"Male washroom on the second floor of MC, located by the center. Non-accessible washroom."
+        },        
+                 {
+            "pid":47,
+            "name":"Second Floor Women's Washroom Southside",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 278",
+            "layerid":"m2w",
+            "builtin":true,
+            "description":"Female washroom on the first floor of MC, located by the southside stairwell. Washroom is barrier free."
+        },          
+                 {
+            "pid":48,
+            "name":"Third Floor Women's Washroom Center",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 388",
+            "layerid":"m3w",
+            "builtin":true,
+            "description":"Female washroom on the third floor of MC, located by the southside stairwell. Non-accessible washroom."
+        },       
+                 {
+            "pid":49,
+            "name":"Third Floor Men's Washroom Center",
+            "xcoord":115,
+            "ycoord":115,
+            "roomnum":"MC 311",
+            "layerid":"m3w",
+            "builtin":true,
+            "description":"Male washroom on the third floor of MC, located by the southside stairwell. Non-accessible washroom."
+        }            
+       
+    ]
+}
