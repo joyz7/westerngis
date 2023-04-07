@@ -204,7 +204,7 @@ public class mainscreen {
         panelTop = new JPanel();
 
         //Parse POI json
-        String filename = "src/main/java/com/cs2212/poi.json";
+        String filename = "src/main/java/com/cs2212/test.json";
         
         try {
             //Parse and print out each of the different results 
@@ -239,95 +239,8 @@ public class mainscreen {
         currBuilding = (Building) campus.getBuildings().get(0);
         changeFloor(currBuilding);
         setCurrFloor(currBuilding.getArray().get(0));
-                   
-        // JPanel for the top bar, that includes Search
-        panelTop.setLayout(null);
-        panelTop.setBackground(mediumGrey);
-        panelTop.setBounds(0, 0, 1200, 30);
-
-        // Create search bar
-        JTextField searchField = new JTextField(20);
-        searchField.setBounds(10, 3, 650, 24);
-        JButton searchButton = new JButton("Search");
-        searchButton.setBounds(685, 3, 100, 25);
-        JButton closeResults = new JButton("Close");
-        closeResults.setBounds(790, 3, 100, 25);
-                
-        //add search bar components into top panel
-        panelTop.add(searchField);
-        panelTop.add(searchButton);
-        panelTop.add(closeResults);
-
-        //event listener that takes in text the user searches
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                searchText = searchField.getText();
-                System.out.println("Search query: " + searchText);
-                System.out.println("Building: " + currBuilding.getName());
-                System.out.println("Floor list: " + currBuilding.getArray());
-                
-                //create String list to contain search results
-                DefaultListModel<String> searchResultsList = main.search(searchText, currBuilding);
-                JList resultJList = new JList<>(searchResultsList);
-                resultScrollPane = new JScrollPane(resultJList);
-
-                //UI PROB GO HERE?
-                
-                //add search results components into top panel
-                JPanel searchResultsPanel = new JPanel();
-                searchResultsPanel.add(resultScrollPane);
-
-                resultScrollPane.setBounds(10, 30, 650, 50);
-                panelTop.add(resultScrollPane);
-                resultScrollPane.setVisible(false);
-
-                panelTop.setBounds(0, 0, 1200, 100);
-                resultScrollPane.setVisible(true);
-            }
-        });
-
-
-        //Event listener to close the search results
-        closeResults.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                resultScrollPane.setVisible(false);
-                panelTop.setBounds(0, 0, 1200, 30);
-            }
-        });
         
-        //Help icon for users to click
-        JButton helpIcon = new JButton("Help");
-        helpIcon.setBounds(1050, 3, 125, 24);
-        panelTop.add(helpIcon);
-
-        //Event listener so that when the help icon is clicked the PDF is opened
-        helpIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
-                    if (pdfFile.exists()) {
-                        Desktop.getDesktop().open(pdfFile);
-                    } else {
-                        System.out.println("The PDF file does not exist.");
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        // JPanel for the map
-        panelMap.setBackground(Color.white);
-        panelMap.setBounds(0, 30, 970, 620);
-
-        // JPanel behind the tabbed panels
-        JPanel panelCenter = new JPanel();
-        panelCenter.setBackground(Color.white);
-        panelCenter.setBounds(0, 30, 970, 620);
-        panelCenter.add(panelMap);
-        mainscreen.add(panelCenter); // add map
-
-        final MouseListener mouseListener = new MouseAdapter() {
+                final MouseListener mouseListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 
@@ -363,11 +276,7 @@ public class mainscreen {
                 }
                 panelTop.remove(floors);
                 changeFloor(currBuilding);
-                Integer floorNum = currFloor.getNumber();
-                if (currBuilding.getName().equals("Health Sciences Building") && floorNum != 0) {
-                    floorNum -= 1;
-                }
-                Floor newFloor = currBuilding.getArray().get(floorNum);
+                Floor newFloor = currBuilding.getArray().get(0);
                 setCurrFloor(newFloor);
                 TreeModel newTree = main.makeTree(newFloor);
                 repaintUI(newTree); 
@@ -393,8 +302,98 @@ public class mainscreen {
 //                displayPOIInfo(testPOI, testUser, developerMap, favouritePoiObjects);
             }
         });
+                   
+        // JPanel for the top bar, that includes Search
+        panelTop.setLayout(null);
+        panelTop.setBackground(mediumGrey);
+        panelTop.setBounds(0, 0, 1200, 30);
         
+        // JPanel for the map
+        panelMap.setBackground(Color.white);
+        panelMap.setBounds(0, 30, 970, 620);
+
+        // JPanel behind the tabbed panels
+        JPanel panelCenter = new JPanel(); // what was changed
+        panelCenter.setBackground(Color.white);
+        panelCenter.setBounds(0, 30, 970, 620);
+        panelCenter.add(panelMap); // what was changed
+        mainscreen.add(panelCenter); // add map
+
+        // Create search bar
+        JTextField searchField = new JTextField(20);
+        searchField.setBounds(10, 3, 650, 24);
+        // Create search button
+        JButton searchButton = new JButton("Search");
+        searchButton.setBounds(685, 3, 100, 25);
         
+        //JButton closeResults = new JButton("Close");
+        //closeResults.setBounds(790, 3, 100, 25);
+                
+        //add search bar components into top panel
+        panelTop.add(searchField);
+        panelTop.add(searchButton);
+        //panelTop.add(closeResults);
+
+        // Create a panel for the search results dropdown
+        
+        //event listener that takes in text the user searches
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                searchText = searchField.getText();
+                System.out.println("Search query: " + searchText);
+                System.out.println("Building: " + currBuilding.getName());
+                System.out.println("Floor list: " + currBuilding.getArray());
+                
+                //create String list to contain search results
+                DefaultListModel<String> searchResultsList = main.search(searchText, currBuilding);
+                JList resultJList = new JList<>(searchResultsList);
+                resultScrollPane = new JScrollPane(resultJList);
+
+                //UI PROB GO HERE?
+                
+                //add search results components into top panel
+                JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane) {
+                    @Override
+                    public Dimension getPreferredSize() {
+                        return new Dimension(500, 200);
+                    }
+                };
+                JOptionPane.showMessageDialog(null, searchResultsPanel, "Search Results", JOptionPane.DEFAULT_OPTION);
+            }
+        });
+
+
+        //Event listener to close the search results
+        /* DELETE LATER
+        closeResults.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                resultScrollPane.setVisible(false);
+                panelTop.setBounds(0, 0, 1200, 30);
+            }
+        });
+        */
+        
+        //Help icon for users to click
+        JButton helpIcon = new JButton("Help");
+        helpIcon.setBounds(1050, 3, 125, 24);
+        panelTop.add(helpIcon);
+
+        //Event listener so that when the help icon is clicked the PDF is opened
+        helpIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
+                    if (pdfFile.exists()) {
+                        Desktop.getDesktop().open(pdfFile);
+                    } else {
+                        System.out.println("The PDF file does not exist.");
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         // add all JPanels to the JFrame
         TreeModel defaultTree = main.makeTree(currFloor);
         generateSideBar(defaultTree);
@@ -489,6 +488,8 @@ public class mainscreen {
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
+
+        
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -537,7 +538,8 @@ public class mainscreen {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
         }
     }
-
+    
+    /*
     // Display POI info when location markers are clicked on
     private void displayPOIInfo(POI poi, User user, HashMap<String, String> developerMap, HashSet<POI> favourites) {
         String favOption = ""; // Text variable to change between favourite and unfavourite
@@ -577,4 +579,6 @@ public class mainscreen {
         // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
         // Editing - cannot create duplicate POI
     }
+    */
+    
 }
