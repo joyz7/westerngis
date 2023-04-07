@@ -1,1 +1,1 @@
-{"users":[{"password":"","favourites":null,"createdpois":null,"userid":0,"consumer":true,"username":""},{"password":"","favourites":null,"createdpois":null,"userid":1,"consumer":false,"username":""}]}
+{"users":[{"password":"","favourites":null,"createdpois":[{"pid":61},{"pid":62}],"userid":0,"consumer":true,"username":""},{"password":"","favourites":null,"createdpois":null,"userid":1,"consumer":false,"username":""}]}
