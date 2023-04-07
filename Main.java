@@ -44,7 +44,6 @@ public class Main extends JFrame {
     private HashSet<POI> favouritePoiObjects;
     private HashMap<String,JSONArray> createdPois;
     private HashMap<String,JSONArray> favourites;
-    private HashMap<String,JSONArray> activeLayers;
     private HashMap<String,String> consumerMap;
     private HashMap<String,String> developerMap;
     private Campus campus;
@@ -52,13 +51,12 @@ public class Main extends JFrame {
     private int count;
     private boolean newUser;
     
-    public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,JSONArray> activeLayers, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
+    public Main(User user, boolean newUser, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
         this.newUser = newUser;
         this.user = user;
         this.createdPois = createdPois;
         this.favourites = favourites;
-        this.activeLayers = activeLayers;
         this.consumerMap = consumers;
         this.developerMap = developers;
         poiMap = new HashMap<>();
@@ -79,15 +77,6 @@ public class Main extends JFrame {
             JSONArray favouriteArray = favourites.get(user.getUsername());
             HashSet<Integer> favouritePoiId = new HashSet<Integer>();
             if (favouriteArray != null) {
-                for (Object o : poiArray) {
-                    JSONObject poi = (JSONObject) o;
-                    createdPoiId.add((Integer)poi.get("id"));
-                }
-            }
-
-            JSONArray layerArray = activeLayers.get(user.getUsername());
-            HashSet<String> activeLayerId = new HashSet<String>();
-            if (layerArray != null) {
                 for (Object o : poiArray) {
                     JSONObject poi = (JSONObject) o;
                     createdPoiId.add((Integer)poi.get("id"));
@@ -276,22 +265,8 @@ public class Main extends JFrame {
         return myRow;
     }
     
-    /*public checkLayer(Floor floor) {
-        HashMap<Integer, Layer> layerMap = (HashMap) floor.getLayers();
-        for (int i=0; i<layerMap.size(); i++) {
-            Layer layer = layerMap.get(i);
-            for (POI j : layer.getPois()) {
-                if (j.getLayerId() == ) {
-                    System.out.println(j.isActive());
-                    //Show POI on map
-                }
-            }
-        }
-    }*/
-    
     public void addPOI(POI newPOI) {
         poiMap.put(count, newPOI); //Add to local hashmap
-        System.out.println(poiMap.get(count).getLayerId());
         createdPoiObjects.add(newPOI);
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
@@ -387,7 +362,6 @@ public class Main extends JFrame {
             consumer.put("consumer", true);
             consumer.put("createdpois", createdPois.get(username));
             consumer.put("favourites", favourites.get(username));
-            consumer.put("activelayers", activeLayers.get(username));  
             users.add(consumer);
             numUsers += 1;
         }
@@ -402,7 +376,6 @@ public class Main extends JFrame {
             developer.put("consumer", false);
             developer.put("createdpois", null);
             developer.put("favourites", null);
-            developer.put("activelayers", null);  
             users.add(developer);
             numUsers += 1;
         }

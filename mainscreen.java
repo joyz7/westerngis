@@ -465,11 +465,6 @@ public class mainscreen {
                 //button action listener to toggle on the poi adding mode
         addPOIBtn.addActionListener(e -> {
             addPOI = !addPOI; // Toggle the boolean variable
-            if (addPOI == true) {
-                addPOIBtn.setText("Adding POI...");
-            } else {
-                addPOIBtn.setText("Add POI");
-            }
         });
         
         //intial mouse listener?
@@ -480,7 +475,6 @@ public class mainscreen {
                 if (addPOI == true) {
                     newPoiAdd(e.getX(), e.getY(), floors);
                     addPOI = false; //Turn off the clicking
-                    addPOIBtn.setText("Add POI");
                 }
 
             }
