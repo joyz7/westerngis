@@ -363,11 +363,7 @@ public class mainscreen {
                 }
                 panelTop.remove(floors);
                 changeFloor(currBuilding);
-                Integer floorNum = currFloor.getNumber();
-                if (currBuilding.getName().equals("Health Sciences Building") && floorNum != 0) {
-                    floorNum -= 1;
-                }
-                Floor newFloor = currBuilding.getArray().get(floorNum);
+                Floor newFloor = currBuilding.getArray().get(0);
                 setCurrFloor(newFloor);
                 TreeModel newTree = main.makeTree(newFloor);
                 repaintUI(newTree); 
