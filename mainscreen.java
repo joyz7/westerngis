@@ -209,6 +209,8 @@ public class mainscreen {
             POI currPOI = (POI) poi;
             currPOI.setMainframe(this);
         }
+        
+        main.setMainframe(this);
 
         //Parse POI json
         String filename = "src/main/java/com/cs2212/test.json";
@@ -549,7 +551,13 @@ public class mainscreen {
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 System.out.println(xCoord + " " + yCoord);
                 //Create POI !!!!!
-                POI newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
+                boolean isDeveloper = main.isDeveloper();
+                POI newPOI;
+                if (!isDeveloper) {
+                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
+                } else {
+                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, true);
+                }
                 main.addPOI(newPOI);
                 TreeModel newTree = main.makeTree(currFloor);
                 repaintUI(newTree);
