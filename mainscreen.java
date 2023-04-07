@@ -341,7 +341,7 @@ public class mainscreen {
         panelTop.add(searchButton);
         //panelTop.add(closeResults);
 
-        // Create a panel for the search results dropdown
+         // Create a panel for the search results dropdown
         
         //event listener that takes in text the user searches
         searchButton.addActionListener(new ActionListener() {
@@ -354,18 +354,15 @@ public class mainscreen {
                 //create String list to contain search results
                 DefaultListModel<String> searchResultsList = main.search(searchText, currBuilding);
                 JList resultJList = new JList<>(searchResultsList);
-                resultScrollPane = new JScrollPane(resultJList);
-
-                //UI PROB GO HERE?
                 
+                resultScrollPane = new JScrollPane(resultJList);
+                JPanel test = new JPanel();
+                test.add(resultScrollPane);
+
                 //add search results components into top panel
-                JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane) {
-                    @Override
-                    public Dimension getPreferredSize() {
-                        return new Dimension(500, 200);
-                    }
-                };
-                JOptionPane.showMessageDialog(null, searchResultsPanel, "Search Results", JOptionPane.DEFAULT_OPTION);
+                JOptionPane searchResultsPanel = new JOptionPane(test);
+                //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
+                JOptionPane.showMessageDialog(null,test, "Search Results", JOptionPane.PLAIN_MESSAGE);
             }
         });
 
