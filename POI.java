@@ -137,7 +137,7 @@ public class POI {
     public void setMain(Main main) {
         this.main = main;
     }
-    
+
     @Override
     public String toString() {
         return name;
