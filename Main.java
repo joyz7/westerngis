@@ -62,31 +62,40 @@ public class Main extends JFrame {
         if (!newUser) {
             JSONArray poiArray = createdPois.get(user.getUsername());
             HashSet<Integer> createdPoiId = new HashSet<Integer>();
-            for (Object o : poiArray) {
-                createdPoiId.add((int)o);
+            if (poiArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((Integer)poi.get("id"));
+                }
             }
 
             JSONArray favouriteArray = favourites.get(user.getUsername());
             HashSet<Integer> favouritePoiId = new HashSet<Integer>();
-            for (Object o : favouriteArray) {
-                favouritePoiId.add((int)o);
+            if (favouriteArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((Integer)poi.get("id"));
+                }
             }
 
             JSONArray layerArray = activeLayers.get(user.getUsername());
             HashSet<String> activeLayerId = new HashSet<String>();
-            for (Object o : layerArray) {
-                activeLayerId.add((String)o);
+            if (layerArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((Integer)poi.get("id"));
+                }
             }
 
             //Create set of user-created POIs
-            for (int o : createdPoiId) {
+            for (Integer o : createdPoiId) {
                 if (poiMap.containsKey(o)) {
                     createdPoiObjects.add(poiMap.get(o));
                 }
             }
 
             //Create set of favourite POIs
-            for (int o : favouritePoiId) {
+            for (Integer o : favouritePoiId) {
                 if (poiMap.containsKey(o)) {
                     favouritePoiObjects.add(poiMap.get(o));
                 }
@@ -95,7 +104,7 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -149,7 +158,6 @@ public class Main extends JFrame {
         Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
         Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
         Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
-        health.addFloor(h0);
         health.addFloor(h1);
         health.addFloor(h2);
         health.addFloor(h3);
@@ -340,7 +348,7 @@ public class Main extends JFrame {
             poi.put("pid", id);
             poi.put("name", poiObject.getName());
             poi.put("xcoord", poiObject.getXCoord());
-            poi.put("yoord", poiObject.getYCoord());
+            poi.put("ycoord", poiObject.getYCoord());
             poi.put("roomnum", poiObject.getRoomNum());
             poi.put("layerid", poiObject.getLayerId());
             poi.put("builtin", poiObject.isBuiltIn());  
