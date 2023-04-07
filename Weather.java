@@ -55,7 +55,7 @@ public class Weather {
             System.out.println("Error recovering weather details.");
             city = "Error ";
             currWeather = 1;
-            currCondition = " weather details available.";
+            currCondition = ": weather details available.";
             
         }
     }
