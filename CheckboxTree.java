@@ -86,6 +86,10 @@ public class CheckboxTree extends JTree {
         return poisToDraw;
     }
     
+    public void setPOIDraw(ArrayList<POI> pois) {
+        poisToDraw = pois;
+    }
+    
     public void clearPOI(){
         poisToDraw.clear();
     }
@@ -241,7 +245,7 @@ public class CheckboxTree extends JTree {
         });
         this.setSelectionModel(dtsm);
     }
-
+    
     // When a node is checked/unchecked, updating the states of the predecessors
     protected void updatePredecessorsWithCheckMode(TreePath tp, boolean check) {
         TreePath parentPath = tp.getParentPath();
@@ -292,5 +296,4 @@ public class CheckboxTree extends JTree {
             checkedPaths.remove(tp);
         }
     }
-
 }

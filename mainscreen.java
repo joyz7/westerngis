@@ -25,6 +25,7 @@ public class mainscreen {
     private Building currBuilding;
     private Floor currFloor;
     private int poiCount;
+    private ArrayList<POI> drawnPois;
     boolean addPOI = false;
     Component activeScrollComponent;
     CheckboxTree POIList;
@@ -124,6 +125,7 @@ public class mainscreen {
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
+                        drawnPois.clear();
                         TreeModel newTree = main.makeTree(newFloor);
                         repaintUI(newTree); 
                         drawPOIs();//drawing the poits
@@ -170,7 +172,7 @@ public class mainscreen {
 
             ArrayList<POI> poisToDraw = POIList.getPOIDraw();
             //For every poi that needs be draw; draw it. if empty/no pois ignore
-            if (!poisToDraw.isEmpty()) {
+            if (poisToDraw != null) {
                 for (POI poi : poisToDraw) {
                     layeredPane.add(poi.getLbl(), JLayeredPane.PALETTE_LAYER);
 //                    System.out.println("drawing: " + poi.getName()); CAN DELETE
@@ -278,6 +280,9 @@ public class mainscreen {
                 changeFloor(currBuilding);
                 Floor newFloor = currBuilding.getArray().get(0);
                 setCurrFloor(newFloor);
+                if (drawnPois != null) {
+                    drawnPois.clear();
+                }
                 TreeModel newTree = main.makeTree(newFloor);
                 repaintUI(newTree); 
                 drawPOIs();//drawing the poits
@@ -427,12 +432,15 @@ public class mainscreen {
         panelPOITitle.setBackground(darkGrey);
         panelPOITitle.setBounds(0, 50, 230, 30);
         panelSideBar.add(panelPOITitle);
-        
+
         POIList = new CheckboxTree();
         POIList.setShowsRootHandles(true);
         POIList.setRootVisible(false);
         POIList.setModel(layers);
-
+        if (drawnPois != null) {
+            POIList.setPOIDraw(drawnPois);
+        }
+        
         JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
         panelPOIScroll.setBackground(Color.white);
         panelPOIScroll.setBounds(0, 80, 230, 500);
@@ -533,8 +541,10 @@ public class mainscreen {
                 //Create POI !!!!!
                 POI newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
                 main.addPOI(newPOI);
+                drawnPois = POIList.getPOIDraw(); // Store POIs drawn on map
                 TreeModel newTree = main.makeTree(currFloor);
                 repaintUI(newTree);
+                drawPOIs();
                 JOptionPane.showMessageDialog(null, "Successfully added");
             } else {
                 JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
