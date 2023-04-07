@@ -131,7 +131,11 @@ public class mainscreen {
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
-                        drawnPois.clear();
+                        
+                        if (drawnPois != null) {
+                            drawnPois.clear();
+                        }
+                        
                         TreeModel newTree = main.makeTree(newFloor);
                         repaintUI(newTree);
                         drawPOIs();//drawing the poits
