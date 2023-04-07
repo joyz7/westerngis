@@ -351,8 +351,8 @@ public class Main extends JFrame {
         }
     }
     
-    public DefaultListModel<String> search(String searchText, Building building) {
-        DefaultListModel<String> searchResultsList = new DefaultListModel<>();     
+    public DefaultListModel<POI> search(String searchText, Building building) {
+        DefaultListModel<POI> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
 
         String buildingName;
@@ -366,26 +366,22 @@ public class Main extends JFrame {
             } else if (layerId.charAt(0) == 'h') {
                 buildingName = "Health Sciences Building";
             } else {
-                buildingName = "Alumuni Nall";
+                buildingName = "Alumuni Hall";
             }
 
-                //Search for room number
+            //Search for room number
             if (searchText.equals(specificPoi.getRoomNum())) {
-                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
-            }
-
-            //Search for name
-            if (searchText.equals(specificPoi.getName())) {
-                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
-            }
-
-            String[] strArray = specificPoi.getDescription().split(" ");
-
-            //Search for description
-            for (int k = 0; k < strArray.length; k++) {
-                if (searchText.equals(strArray[k])) {
-                    searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
-                } 
+                searchResultsList.addElement(specificPoi);
+            } else if (searchText.equals(specificPoi.getName())) {  //Search for name
+                searchResultsList.addElement(specificPoi);
+            } else {
+                String[] strArray = specificPoi.getDescription().split(" ");
+                //Search for description
+                for (int k = 0; k < strArray.length; k++) {
+                    if (searchText.equals(strArray[k])) {
+                        searchResultsList.addElement(specificPoi);
+                    } 
+                }
             }
         }
         return searchResultsList;
