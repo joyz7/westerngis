@@ -220,7 +220,7 @@ public class mainscreen {
         main.setMainframe(this);
 
         //Parse POI json
-        String filename = "src/main/java/com/cs2212/test.json";
+        String filename = "src/main/java/com/cs2212/poi.json";
 
         try {
             //Parse and print out each of the different results 
@@ -614,19 +614,22 @@ public class mainscreen {
         JTextField descriptionField = new JTextField();
         panel.add(descriptionField);
         
-
-        if (isDeveloper) {            
-            panel.add(new JLabel("Layer"));
-            String[] layerStrings = {"Washroom", "Classroom", "Gen Lab", "CS Specific", "Resturaunt", "Exit/Entry point", "Navigation"};
-            JComboBox layerDropDown = new JComboBox(layerStrings);
-            panel.add(layerDropDown);
-            String layer = (String) layerDropDown.getSelectedItem(); 
-            if (layer.equals("CS Specific")) {
-                layerType = 's';
-            } else {
-                layerType = layer.toLowerCase().charAt(0);
-            }
+        //text option for layer
+        panel.add(new JLabel("Layer:"));
+        JTextField layerField = new JTextField();
+        
+        
+        //drop down for dev mode ------------------------- didn't use
+        panel.add(new JLabel("Layer"));
+        String[] layerStrings = {"Washroom", "Classroom", "Gen Lab", "CS Specific", "Resturaunt", "Exit/Entry point", "Navigation"};
+        JComboBox layerDropDown = new JComboBox(layerStrings);         
+          
+        
+        //if dev, then add this component to panel
+        if (isDeveloper) {     
+            panel.add(layerField);   
         }
+        
         // Show the input dialog with the panel as the message
         int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
 
@@ -635,6 +638,31 @@ public class mainscreen {
             String name = pointNameField.getText();
             String roomNum = roomNumberField.getText();
             String description = descriptionField.getText();
+            
+            if (isDeveloper) {
+               
+                String layer = (String)layerField.getText();
+                System.out.println("Selected item: " + layer);
+
+                if (layer.equals("Washroom")) {
+                    layerType = 'w';
+                } else if (layer.equals("Classroom")) {
+                    layerType = 'c';
+                } else if (layer.equals("Gen Lab")) {
+                    layerType = 'g';
+                } else if (layer.equals("CS Specific")) {
+                    layerType = 's';
+                } else if (layer.equals("Resturaunts")) {
+                    layerType = 'r';
+                } else if (layer.equals("Exit/Entry point")) {
+                    layerType = 'e';
+                } else if (layer.equals("Navigation")) {
+                    layerType = 'n';
+                } else {
+                    layerType = layer.toLowerCase().charAt(0);
+                }
+                        
+            }
 
             // Verify the inputs
             System.out.println("Point name: " + name);

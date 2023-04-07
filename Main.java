@@ -137,7 +137,7 @@ public class Main extends JFrame {
         }
     }
         
-        System.out.println(poiMap.get(17).getDescription());
+        //System.out.println(poiMap.get(17).getDescription());
         
         //check if user is developer
         boolean isDev = false; 
