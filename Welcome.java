@@ -148,8 +148,10 @@ public class Welcome extends JFrame implements ActionListener {
                 User oldUser = new User(user.getText(),password.getText());
                 try {
                     Main main = new Main(oldUser, true, true, createdPois, favourites,  consumers, developers);
-                } catch (Exception error) {
+                } catch (IOException ex) {
+                    Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                 }
+               
                 welcomeFrame.dispose();
             } else {
             // If password doesn't match, pop up error message

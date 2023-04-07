@@ -89,10 +89,9 @@ public class Main extends JFrame {
                     }
                 }
             }
-            System.out.println(favouritePoiId);
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -137,7 +136,6 @@ public class Main extends JFrame {
         }
     }
         
-        System.out.println(poiMap.get(17).getDescription());
         
         //check if user is developer
         boolean isDev = false; 
