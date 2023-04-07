@@ -246,8 +246,12 @@ public class mainscreen {
         mainscreen.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                e.getWindow().dispose();
-                main.logOut();
+                //popup that warns the user that unsaved progress will be deleted
+                int result = JOptionPane.showConfirmDialog(mainscreen, "Are you sure you want to exit?", "Exit Program", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                  e.getWindow().dispose();
+                  main.logOut();
+                } 
             }
         });
 
