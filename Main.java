@@ -10,16 +10,23 @@ import org.json.simple.parser.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -104,7 +111,7 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -118,6 +125,7 @@ public class Main extends JFrame {
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
                 POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
+                newPoi.setMain(this);
                 poiMap.put(count, newPoi);
                 // Load built in POIs from JSON
                 if (builtIn) {
@@ -416,8 +424,128 @@ public class Main extends JFrame {
         return poiMap;
     }
     
-    public boolean deletePOI(int poiId) {
-        return true;
+     private void editPOIInfo(POI poiToEdit) {
+    	// Create a panel with a grid layout for the input boxes
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+
+        // Add labels and text fields for point name, room number, and description
+        panel.add(new JLabel("Point name:"));
+        JTextField pointNameField = new JTextField();
+        panel.add(pointNameField);
+
+        panel.add(new JLabel("Room number:"));
+        JTextField roomNumberField = new JTextField();
+        panel.add(roomNumberField);
+
+        panel.add(new JLabel("Description:"));
+        JTextField descriptionField = new JTextField();
+        panel.add(descriptionField);
+        
+        // Show the input dialog with the panel as the message
+        int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
+
+        // Check if the user clicked OK and get the input values
+        if (result == JOptionPane.OK_OPTION) {
+          String name = pointNameField.getText();
+          String roomNum = roomNumberField.getText();
+          String description = descriptionField.getText();
+          
+          if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
+              
+              // Edit POI
+        	  poiToEdit.setName(name);
+        	  poiToEdit.setRoomNum(roomNum);
+        	  poiToEdit.setDescription(description);
+        	  
+                  JOptionPane.showMessageDialog(null, "Successfully Edited");
+              }
+              else{      
+                JOptionPane.showMessageDialog(null, "Unsuccessful No POI Edited");
+              }            
+            } else {
+                JOptionPane.showMessageDialog(null, "Unsuccessful No POI Edited");
+        }
+
+    }
+    
+    private void deletePOI(POI poiToDelete, HashMap<Integer,POI> poiMap) {
+    	int pid = poiToDelete.getId();
+    	poiMap.remove(pid);
+    	
+    	if (poiMap.get(pid) == null) {
+               JOptionPane.showMessageDialog(null, "Successfully Deleted");
+               
+         } else {
+              JOptionPane.showMessageDialog(null, "Unsuccessful No POI Deleted");
+      }
+    }
+    
+    public void displayPOI(int poiID) {
+        String favOption = ""; // Text variable to change between favourite and unfavourite
+        String[] buttons = {favOption, "Edit", "Delete"};
+        boolean isDev = false; // Changes to true if user is a developer      
+        
+        // Check if user is developer
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            if (username.equals(user.getUsername())) {
+                isDev = true;
+            }
+        }
+        
+        //Get the POI object
+        POI poiToDisplay = poiMap.get(poiID);
+        
+        // Create pop up panel
+        JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
+	    // Display Name
+        POIPopUp.add(new JLabel("Name:"));
+        JLabel POIName = new JLabel(poiToDisplay.getName());
+        POIPopUp.add(POIName);
+        // Display Room Number
+        POIPopUp.add(new JLabel("Room Number:"));
+        JLabel POIRoom = new JLabel(poiToDisplay.getRoomNum());
+        POIPopUp.add(POIRoom);
+        // Display Description
+        POIPopUp.add(new JLabel("Description:"));
+        JLabel POIDescription = new JLabel(poiToDisplay.getDescription());
+        POIPopUp.add(POIDescription);
+       
+        if (isDev == true) {  
+        	//Add two additional buttons
+        	JButton devEdit = new JButton("Edit");
+	        POIPopUp.add(devEdit);
+	        
+	        JButton devDelete = new JButton("Delete");
+	        POIPopUp.add(devDelete);
+	      
+	        //Event listener for edit
+	        devEdit.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	            	editPOIInfo(poiToDisplay);
+	            }
+	        });
+	        
+	      //Event listener for delete
+	        devDelete.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	            	deletePOI(poiToDisplay, poiMap);
+	            }
+	        });
+	       
+        } else {
+            //Display checkbox for favourite
+            JCheckBox isFavourite = new JCheckBox("Favourite");
+            POIPopUp.add(isFavourite);
+
+            //Event listener for the favourite option
+            isFavourite.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                     // FAVOURITES ???????????????????????????????????????????????????????????
+                }
+            });
+        }
+         JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
     }
     
 }

@@ -495,6 +495,8 @@ public class mainscreen {
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
+
+        
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -543,7 +545,8 @@ public class mainscreen {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
         }
     }
-
+    
+    /*
     // Display POI info when location markers are clicked on
     private void displayPOIInfo(POI poi, User user, HashMap<String, String> developerMap, HashSet<POI> favourites) {
         String favOption = ""; // Text variable to change between favourite and unfavourite
@@ -583,4 +586,6 @@ public class mainscreen {
         // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
         // Editing - cannot create duplicate POI
     }
+    */
+    
 }
