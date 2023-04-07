@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.TreeModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -137,7 +139,6 @@ public class mainscreen {
     }
 
     public void changeFloorImage(String building, int floor) throws IOException {
-        System.out.println("ghello");
         try {
             BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
@@ -354,8 +355,45 @@ public class mainscreen {
                 System.out.println("Floor list: " + currBuilding.getArray());
                 
                 //create String list to contain search results
-                DefaultListModel<String> searchResultsList = main.search(searchText, currBuilding);
+                DefaultListModel<POI> searchResultsList = main.search(searchText, currBuilding);
                 JList resultJList = new JList<>(searchResultsList);
+                
+                //add selection listener to the resultJList instance
+                resultJList.addListSelectionListener(new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent e) {
+                        if (!e.getValueIsAdjusting()) {
+                            //get the selected item
+                            POI selectedItem = (POI) resultJList.getSelectedValue();
+                            String layerId = selectedItem.getLayerId();
+                            char building = layerId.toLowerCase().charAt(0);
+                            if (building == 'a') {
+                                currBuilding = (Building) campus.getBuildings().get(0);
+                            } else if (building == 'm') {
+                                currBuilding = (Building) campus.getBuildings().get(1);
+                            } else if (building == 'h') {
+                                currBuilding = (Building) campus.getBuildings().get(2);
+                            }
+                            
+                            try {
+                                panelTop.remove(floors);
+                                floors = new JComboBox(currBuilding.getFloorsArray());
+                                floors.setBounds(915, 3, 125, 24);
+                                panelTop.add(floors);
+                                Floor newFloor = currBuilding.getArray().get(Character.getNumericValue(layerId.charAt(1)));
+                                changeFloorImage(currBuilding.getName(), newFloor.getNumber());
+                                setCurrFloor(newFloor);
+                                TreeModel newTree = main.makeTree(newFloor);
+                                repaintUI(newTree); 
+                                // DISPLAY THE POI BY CHECKING OFF CHECKBOX - SET POI TO ACTIVE?
+                                selectedItem.isActive();
+
+                                drawPOIs();//drawing the pois
+                            } catch (IOException error) {
+                                error.printStackTrace();
+                            }            
+                        }
+                    }
+                });
                 
                 resultScrollPane = new JScrollPane(resultJList);
                 JPanel test = new JPanel();
@@ -363,6 +401,7 @@ public class mainscreen {
 
                 //add search results components into top panel
                 JOptionPane searchResultsPanel = new JOptionPane(test);
+                
                 //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
                 JOptionPane.showMessageDialog(null,test, "Search Results", JOptionPane.PLAIN_MESSAGE);
             }
