@@ -327,15 +327,11 @@ public class Main extends JFrame {
 
                 //Search for room number
             if (searchText.equals(specificPoi.getRoomNum())) {
-                System.out.println("Room number: " + specificPoi.getRoomNum());
-                System.out.println("POI ID: " + specificPoi.getId());
                 searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
             }
 
             //Search for name
             if (searchText.equals(specificPoi.getName())) {
-                System.out.println("Room number: " + specificPoi.getName());
-                System.out.println("POI ID: " + specificPoi.getId());
                 searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
             }
 
@@ -344,8 +340,6 @@ public class Main extends JFrame {
             //Search for description
             for (int k = 0; k < strArray.length; k++) {
                 if (searchText.equals(strArray[k])) {
-                    System.out.println("Description: " + specificPoi.getDescription());
-                    System.out.println("POI ID: " + specificPoi.getId());
                     searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
                 } 
             }
