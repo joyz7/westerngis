@@ -102,7 +102,7 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -271,6 +271,7 @@ public class Main extends JFrame {
     
     public void addPOI(POI newPOI) {
         poiMap.put(count, newPOI); //Add to local hashmap
+        newPOI.setMainframe(mainFrame);
         createdPoiObjects.add(newPOI);
         JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
         JSONObject poi = new JSONObject();
@@ -422,5 +423,9 @@ public class Main extends JFrame {
     
     public boolean isDeveloper() {
         return developer;
+    }
+    
+    public void setMainframe(mainscreen mainframe) {
+        this.mainFrame = mainframe;
     }
 }
