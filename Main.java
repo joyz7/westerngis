@@ -310,36 +310,43 @@ public class Main extends JFrame {
     public DefaultListModel<String> search(String searchText, Building building) {
         DefaultListModel<String> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
-        char currBuilding = building.getName().toLowerCase().charAt(0);
+
+        String buildingName;
 
         //search through all pois
         for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
 
-            if (specificPoi.getLayerId().charAt(0) == currBuilding) { //get pois in the current building 
+            String layerId = specificPoi.getLayerId();
+            if (layerId.charAt(0) == 'm') {
+                buildingName = "Middlesex College";
+            } else if (layerId.charAt(0) == 'h') {
+                buildingName = "Health Sciences Building";
+            } else {
+                buildingName = "Health Sciences Building";
+            }
 
                 //Search for room number
-               if (searchText.equals(specificPoi.getRoomNum())) {
-                   System.out.println("Room number: " + specificPoi.getRoomNum());
-                   System.out.println("POI ID: " + specificPoi.getId());
-                   searchResultsList.addElement(specificPoi.getName());
-               }
+            if (searchText.equals(specificPoi.getRoomNum())) {
+                System.out.println("Room number: " + specificPoi.getRoomNum());
+                System.out.println("POI ID: " + specificPoi.getId());
+                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+            }
 
-               //Search for name
-               if (searchText.equals(specificPoi.getName())) {
-                   System.out.println("Room number: " + specificPoi.getName());
-                   System.out.println("POI ID: " + specificPoi.getId());
-                   searchResultsList.addElement(specificPoi.getName());
-               }
+            //Search for name
+            if (searchText.equals(specificPoi.getName())) {
+                System.out.println("Room number: " + specificPoi.getName());
+                System.out.println("POI ID: " + specificPoi.getId());
+                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
+            }
 
-               String[] strArray = specificPoi.getDescription().split(" ");
+            String[] strArray = specificPoi.getDescription().split(" ");
 
-               //Search for description
-               for (int k = 0; k < strArray.length; k++) {
-                   if (searchText.equals(strArray[k])) {
-                       System.out.println("Description: " + specificPoi.getDescription());
-                       System.out.println("POI ID: " + specificPoi.getId());
-                       searchResultsList.addElement(specificPoi.getName());
-                   }
+            //Search for description
+            for (int k = 0; k < strArray.length; k++) {
+                if (searchText.equals(strArray[k])) {
+                    System.out.println("Description: " + specificPoi.getDescription());
+                    System.out.println("POI ID: " + specificPoi.getId());
+                    searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
                 } 
             }
         }
