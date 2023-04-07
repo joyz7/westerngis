@@ -36,11 +36,13 @@ public class mainscreen {
     final int mainscreenHeight = 650; // height of the JFrame
     // REMINDER: ADD CONSTANTS FOR THE WIDTHS AND HEIGHTS OF EVERYTHING
     JPanel panelTop;
+    JButton addPOIBtn = new JButton("Add POI");
 
     final Color mediumGrey = new Color(202, 203, 204);
     final Color lightGrey = new Color(232, 232, 232);
     final Color darkGrey = new Color(88, 89, 89);
 
+    JLabel mapLbl;
     JTabbedPane panelMap;
     JScrollPane alumniScrollPane;
     JScrollPane middlesexScrollPane;
@@ -48,6 +50,7 @@ public class mainscreen {
     JComboBox floors;
     JPanel panelSideBar;
     JScrollPane resultScrollPane;
+
     /*
     public int searchPOI(JTextField searchField){
             searchText = searchField.getText();
@@ -103,7 +106,7 @@ public class mainscreen {
             e.printStackTrace();
         }
     }
-    
+
     public void repaintUI(TreeModel newTree) {
         mainscreen.remove(panelSideBar);
         generateSideBar(newTree);
@@ -124,13 +127,13 @@ public class mainscreen {
                         Integer floorNum = (int) event.getItem();
                         if (currBuilding.getName().equals("Health Sciences Building")) {
                             floorNum -= 1;
-                         }
+                        }
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
                         drawnPois.clear();
                         TreeModel newTree = main.makeTree(newFloor);
-                        repaintUI(newTree); 
+                        repaintUI(newTree);
                         drawPOIs();//drawing the poits
                     }
                 } catch (IOException e) {
@@ -143,21 +146,21 @@ public class mainscreen {
     public void changeFloorImage(String building, int floor) throws IOException {
         try {
             BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
-            JLabel image = new JLabel(new ImageIcon(mapImage));
-            image.setBounds(0, 30, 970, 550);
+            mapLbl = new JLabel(new ImageIcon(mapImage));
+            mapLbl.setBounds(0, 30, 970, 550);
             //Create a scroll pane to hold the image
             if (building.equals("Alumni Hall")) {
-                alumniScrollPane.setViewportView(image);
+                alumniScrollPane.setViewportView(mapLbl);
             } else if (building.equals("Middlesex College")) {
-                middlesexScrollPane.setViewportView(image);
+                middlesexScrollPane.setViewportView(mapLbl);
             } else if (building.equals("Health Sciences Building")) {
-                healthScrollPane.setViewportView(image);
+                healthScrollPane.setViewportView(mapLbl);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     public void drawPOIs() {
         try {
             activeScrollComponent = panelMap.getSelectedComponent();
@@ -165,13 +168,12 @@ public class mainscreen {
             BufferedImage mapImage = ImageIO.read(new File(currFloor.getImage()));
 
             // Create a label to hold the Alumni Hall image and set its bounds
-            JLabel mapLbl = new JLabel(new ImageIcon(mapImage));
+            mapLbl = new JLabel(new ImageIcon(mapImage));
             mapLbl.setBounds(0, 0, mapImage.getWidth(), mapImage.getHeight());
             // Create a layered pane to layer the components
             JLayeredPane layeredPane = new JLayeredPane();
             layeredPane.setPreferredSize(new Dimension(mapImage.getWidth(), mapImage.getHeight()));
             layeredPane.add(mapLbl, JLayeredPane.DEFAULT_LAYER); // Add the Alumni Hall image label to the bottom layer
-
             ArrayList<POI> poisToDraw = POIList.getPOIDraw();
             //For every poi that needs be draw; draw it. if empty/no pois ignore
             if (poisToDraw != null) {
@@ -192,8 +194,10 @@ public class mainscreen {
 // Set the view position to the same location as before
             viewport.setViewPosition(viewPosition);
 
-            viewport.revalidate(); // Trigger a new layout pass
-            viewport.repaint(); // Repaint the JLayeredPane               
+            activeScrollPane.setViewport(viewport);
+
+            activeScrollPane.revalidate(); // Trigger a new layout pass
+            activeScrollPane.repaint(); // Repaint the JLayeredPane              
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -207,17 +211,17 @@ public class mainscreen {
         panelMap = new JTabbedPane();
         panelTop = new JPanel();
         this.poiMap = poiMap;
-        
+
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
             currPOI.setMainframe(this);
         }
-        
+
         main.setMainframe(this);
 
         //Parse POI json
         String filename = "src/main/java/com/cs2212/test.json";
-        
+
         try {
             //Parse and print out each of the different results 
             JSONParser parser = new JSONParser();
@@ -242,7 +246,7 @@ public class mainscreen {
                 main.logOut();
             }
         });
-        
+
         // Create building maps
         createMap("Alumni Hall", 0);
         createMap("Middlesex College", 0);
@@ -251,28 +255,26 @@ public class mainscreen {
         currBuilding = (Building) campus.getBuildings().get(0);
         changeFloor(currBuilding);
         setCurrFloor(currBuilding.getArray().get(0));
-        
-                final MouseListener mouseListener = new MouseAdapter() {
+
+        final MouseListener mouseListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                
+
             }
         };
-        
+
         // Get the currently selected component
         activeScrollComponent = panelMap.getSelectedComponent();
         panelMap.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                
+
                 JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
                 activeScrollComponent = panelMap.getSelectedComponent();
-
 
                 // Set building from selected pane
                 currBuilding = (Building) campus.getBuildings().get(tabbedPane.getSelectedIndex());
                 activeScrollComponent = tabbedPane.getSelectedComponent();
-
 
                 // Get the currently selected component
                 activeScrollComponent = tabbedPane.getSelectedComponent();
@@ -294,35 +296,62 @@ public class mainscreen {
                     drawnPois.clear();
                 }
                 TreeModel newTree = main.makeTree(newFloor);
-                repaintUI(newTree); 
+                repaintUI(newTree);
                 drawPOIs();//drawing the poits
-                
+
                 System.out.println(currFloor.getBuilding().getName());
                 System.out.println(currBuilding.getName());
                 // Add a MouseListener to the selected component
 //                selectedComponent.addMouseListener(mouseListener);
 
-                // Add a MouseListener to the selected component
-                activeScrollComponent.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        // Handle mouse click event here...
-                        System.out.println(e.getX() + "," + e.getY());
-                    }
-                });
-
+// Add a MouseListener to the selected component
+                
 //                // TEST CASE: POI POP UP
 //                User testUser = new User("bob", "bob");
 //                POI testPOI = new POI(5, 4, 250, 250, "AH 24", "Alumni Hall Classroom", "Male washroom in the basement of MC, located by the southside stairwell. Non-accessible washroom.", true);
 //                displayPOIInfo(testPOI, testUser, developerMap, favouritePoiObjects);
             }
         });
-                   
+
+        //
+        activeScrollComponent.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Get the mouse click location
+                drawPOIs();
+                if (addPOI == true) {
+                    mapLbl.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent ex) {
+                            // Get the mouse click location
+                            if (addPOI == true) {
+                                newPoiAdd(ex.getX()-13, ex.getY()-40, floors);
+                                addPOIBtn.setText("Add POI");
+                                addPOI = false; //Turn off the clicking
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        if (addPOI == true) {
+            mapLbl.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent ex) {
+                    // Get the mouse click location
+                    if (addPOI == true) {
+                        newPoiAdd(ex.getX()-13, ex.getY()-40, floors);
+                        addPOIBtn.setText("Add POI");
+                        addPOI = false; //Turn off the clicking
+                    }
+                }
+            });
+        }
         // JPanel for the top bar, that includes Search
         panelTop.setLayout(null);
         panelTop.setBackground(mediumGrey);
         panelTop.setBounds(0, 0, 1200, 30);
-        
+
         // JPanel for the map
         panelMap.setBackground(Color.white);
         panelMap.setBounds(0, 30, 970, 620);
@@ -340,17 +369,14 @@ public class mainscreen {
         // Create search button
         JButton searchButton = new JButton("Search");
         searchButton.setBounds(685, 3, 100, 25);
-        
+
         //JButton closeResults = new JButton("Close");
         //closeResults.setBounds(790, 3, 100, 25);
-                
         //add search bar components into top panel
         panelTop.add(searchField);
         panelTop.add(searchButton);
         //panelTop.add(closeResults);
 
-         // Create a panel for the search results dropdown
-        
         //event listener that takes in text the user searches
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -358,10 +384,11 @@ public class mainscreen {
                 System.out.println("Search query: " + searchText);
                 System.out.println("Building: " + currBuilding.getName());
                 System.out.println("Floor list: " + currBuilding.getArray());
-                
+
                 //create String list to contain search results
                 DefaultListModel<POI> searchResultsList = main.search(searchText, currBuilding);
                 JList resultJList = new JList<>(searchResultsList);
+
                 
                 //add selection listener to the resultJList instance
                 resultJList.addListSelectionListener(new ListSelectionListener() {
@@ -408,10 +435,9 @@ public class mainscreen {
                 JOptionPane searchResultsPanel = new JOptionPane(test);
                 
                 //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
-                JOptionPane.showMessageDialog(null,test, "Search Results", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, test, "Search Results", JOptionPane.PLAIN_MESSAGE);
             }
         });
-
 
         //Event listener to close the search results
         /* DELETE LATER
@@ -421,8 +447,7 @@ public class mainscreen {
                 panelTop.setBounds(0, 0, 1200, 30);
             }
         });
-        */
-        
+         */
         //Help icon for users to click
         JButton helpIcon = new JButton("Help");
         helpIcon.setBounds(1050, 3, 125, 24);
@@ -443,7 +468,7 @@ public class mainscreen {
                 }
             }
         });
-
+        
         // add all JPanels to the JFrame
         TreeModel defaultTree = main.makeTree(currFloor);
         generateSideBar(defaultTree);
@@ -451,8 +476,8 @@ public class mainscreen {
         //mainscreen.setResizable(false);
         mainscreen.setVisible(true);
     }
-          
-            // CHANGES START HERE ----------------------------------------------
+
+    // CHANGES START HERE ----------------------------------------------
     public void generateSideBar(TreeModel layers) {
 
         // JPanel for the side bar
@@ -500,44 +525,67 @@ public class mainscreen {
         POITitle.setForeground(Color.white);
         panelPOITitle.add(POITitle);
 
-            //Jacky added; listener for when user selects checkbox to draw the POI marker
+        //Jacky added; listener for when user selects checkbox to draw the POI marker
         POIList.addMouseListener(new MouseAdapter() {
-                 @Override
-                 public void mouseClicked(MouseEvent e) {
-                     drawPOIs();
-                 }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                drawPOIs();
+            }
         });
-        
-        
+
         // Add a button to Add POIs
-        JButton addPOIBtn = new JButton("Add POI");
+        addPOIBtn = new JButton("Add POI");
         addPOIBtn.setBounds(120, 5, 90, 20);
         //addPOIBtn.setHorizontalAlignment(SwingConstants.LEFT);
         panelPOITitle.add(addPOIBtn);
 
-                //button action listener to toggle on the poi adding mode
+        //Jacky added; listener for when user selects checkbox to draw the POI marker
+        POIList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                drawPOIs();
+            }
+        });
+
+        //button action listener to toggle on the poi adding mode
         addPOIBtn.addActionListener(e -> {
             addPOI = !addPOI; // Toggle the boolean variable
+            drawPOIs();
             if (addPOI == true) {
                 addPOIBtn.setText("Click Map");
             } else {
                 addPOIBtn.setText("Add POI");
             }
-        });
-        
-        //intial mouse listener?
-        activeScrollComponent.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Get the mouse click location
-                if (addPOI == true) {
-                    newPoiAdd(e.getX(), e.getY(), floors);
-                    addPOIBtn.setText("Add POI");
-                    addPOI = false; //Turn off the clicking
+            
+            if (mapLbl != null) {
+            mapLbl.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // Get the mouse click location
+                    if (addPOI == true) {
+                        newPoiAdd(e.getX()-13, e.getY()-40, floors);
+                        addPOIBtn.setText("Add POI");
+                        addPOI = false; //Turn off the clicking
+                    }
                 }
-            }
+            });
+        }
         });
-        
+
+        if (mapLbl != null) {
+            mapLbl.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // Get the mouse click location
+                    if (addPOI == true) {
+                        newPoiAdd(e.getX()-13, e.getY()-40, floors);
+                        addPOIBtn.setText("Add POI");
+                        addPOI = false; //Turn off the clicking
+                    }
+                }
+            });
+        }
+
         mainscreen.add(panelSideBar); // add side bar
 
     }
@@ -546,7 +594,7 @@ public class mainscreen {
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-        
+
         boolean isDeveloper = main.isDeveloper();
         char layerType = 'a';
 
@@ -620,16 +668,16 @@ public class mainscreen {
     }
 
     public void displayPOI(int poiID) {
-        
+
         String favOption = ""; // Text variable to change between favourite and unfavourite
         String[] buttons = {favOption, "Edit", "Delete"};
         boolean isDev = main.isDeveloper(); // Changes to true if user is a developer      
-        
+
         //Get the POI object
         POI poiToDisplay = poiMap.get(poiID);
-        
+
         // Create pop up panel
-        JPanel POIPopUp = new JPanel(new GridLayout(6,0 ));
+        JPanel POIPopUp = new JPanel(new GridLayout(6, 0));
         // Display Name
         POIPopUp.add(new JLabel("Name:"));
         JLabel POIName = new JLabel(poiToDisplay.getName());
@@ -642,7 +690,7 @@ public class mainscreen {
         POIPopUp.add(new JLabel("Description:"));
         JLabel POIDescription = new JLabel(poiToDisplay.getDescription());
         POIPopUp.add(POIDescription);
-            
+
         if (isDev) {
             //Add two additional buttons
             JButton devEdit = new JButton("Edit");
@@ -654,7 +702,7 @@ public class mainscreen {
             //Event listener for edit
             devEdit.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    
+
                     // Create a panel with a grid layout for the input boxes
                     JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -690,9 +738,9 @@ public class mainscreen {
                             mainscreen.repaint();
                             displayPOI(poiID);
                         }
-                    } else{      
+                    } else {
                         JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Edited");
-                    }          
+                    }
                 }
             });
             //Event listener for delete
@@ -707,7 +755,7 @@ public class mainscreen {
                         JOptionPane.showMessageDialog(null, "Unsuccessful No POI Deleted");
                     }
                 }
-            });     
+            });
         } else {
             //Display checkbox for favourite
             JCheckBox isFavourite = new JCheckBox("Favourite");
@@ -716,11 +764,53 @@ public class mainscreen {
             //Event listener for the favourite option
             isFavourite.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                // FAVOURITES ???????????????????????????????????????????????????????????
-                }     
+                    // FAVOURITES ???????????????????????????????????????????????????????????
+                }
             });
         }
-        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
+        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION);
 
     }
+
+    /*
+    // Display POI info when location markers are clicked on
+    private void displayPOIInfo(POI poi, User user, HashMap<String, String> developerMap, HashSet<POI> favourites) {
+        String favOption = ""; // Text variable to change between favourite and unfavourite
+        String[] buttons = {favOption, "Edit", "Delete"};
+        boolean isDev = false; // Changes to true if user is a developer
+
+        // Check if user is developer
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            if (username.equals(user.getUsername())) {
+                isDev = true;
+            }
+        }
+
+        // Create pop up panel
+        JPanel POIPopUp = new JPanel(new GridLayout(6, 0));
+        // Display Name
+        POIPopUp.add(new JLabel("Name:"));
+        JLabel POIName = new JLabel(poi.getName());
+        POIPopUp.add(POIName);
+        // Display Room Number
+        POIPopUp.add(new JLabel("Room Number:"));
+        JLabel POIRoom = new JLabel(poi.getRoomNum());
+        POIPopUp.add(POIRoom);
+        // Display Description
+        POIPopUp.add(new JLabel("Description:"));
+        JLabel POIDescription = new JLabel(poi.getDescription());
+        POIPopUp.add(POIDescription);
+
+        // create option pane
+        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION);
+        // Check if built-in or created
+        // Favourite/Unfavourite button
+        // If developer, add edit and delete buttons, also display layer
+        // Take list of user's favourites and verify which POI they have clicked on
+        // If it is not a favourited POI, then the second button will say Favourite and clicking on it will add it to the favourites HashSet
+        // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
+        // Editing - cannot create duplicate POI
+    }
+     */
 }
