@@ -118,6 +118,9 @@ public class mainscreen {
                     if (event.getStateChange() == ItemEvent.SELECTED) {
                         activeScrollComponent = panelMap.getSelectedComponent(); //ensures the active panel for drawing
                         Integer floorNum = (int) event.getItem();
+                        if (currBuilding.getName().equals("Health Sciences Building")) {
+                            floorNum -= 1;
+                         }
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
@@ -361,6 +364,9 @@ public class mainscreen {
                 panelTop.remove(floors);
                 changeFloor(currBuilding);
                 Integer floorNum = currFloor.getNumber();
+                if (currBuilding.getName().equals("Health Sciences Building") && floorNum != 0) {
+                    floorNum -= 1;
+                }
                 Floor newFloor = currBuilding.getArray().get(floorNum);
                 setCurrFloor(newFloor);
                 TreeModel newTree = main.makeTree(newFloor);
