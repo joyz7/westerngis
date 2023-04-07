@@ -51,6 +51,7 @@ public class Main extends JFrame {
     private boolean developer;
     private int count;
     private boolean newUser;
+    private boolean isDev;
     
     public Main(User user, boolean newUser, boolean developer, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
@@ -84,7 +85,7 @@ public class Main extends JFrame {
                     createdPoiId.add((Integer)poi.get("id"));
                 }
             }
-
+            
             //Create set of user-created POIs
             for (Integer o : createdPoiId) {
                 if (poiMap.containsKey(o)) {
@@ -100,6 +101,15 @@ public class Main extends JFrame {
             }
         }
         
+        //check if user is developer
+        boolean isDev = false; 
+        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
+            String username = entry.getKey();
+            if (username.equals(user.getUsername())) {
+                isDev = true;
+            }
+        }
+            
         try {
            JSONParser parser = new JSONParser();
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
@@ -287,8 +297,8 @@ public class Main extends JFrame {
         }
     }
     
-    public DefaultListModel<String> search(String searchText, Building building) {
-        DefaultListModel<String> searchResultsList = new DefaultListModel<>();     
+    public DefaultListModel<POI> search(String searchText, Building building) {
+        DefaultListModel<POI> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
 
         String buildingName;
@@ -302,26 +312,22 @@ public class Main extends JFrame {
             } else if (layerId.charAt(0) == 'h') {
                 buildingName = "Health Sciences Building";
             } else {
-                buildingName = "Alumuni Nall";
+                buildingName = "Alumuni Hall";
             }
 
-                //Search for room number
+            //Search for room number
             if (searchText.equals(specificPoi.getRoomNum())) {
-                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
-            }
-
-            //Search for name
-            if (searchText.equals(specificPoi.getName())) {
-                searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
-            }
-
-            String[] strArray = specificPoi.getDescription().split(" ");
-
-            //Search for description
-            for (int k = 0; k < strArray.length; k++) {
-                if (searchText.equals(strArray[k])) {
-                    searchResultsList.addElement(buildingName + ": " + specificPoi.getName());
-                } 
+                searchResultsList.addElement(specificPoi);
+            } else if (searchText.equals(specificPoi.getName())) {  //Search for name
+                searchResultsList.addElement(specificPoi);
+            } else {
+                String[] strArray = specificPoi.getDescription().split(" ");
+                //Search for description
+                for (int k = 0; k < strArray.length; k++) {
+                    if (searchText.equals(strArray[k])) {
+                        searchResultsList.addElement(specificPoi);
+                    } 
+                }
             }
         }
         return searchResultsList;
@@ -419,8 +425,8 @@ public class Main extends JFrame {
         } else {
             return false;
       }
-    }    
-    
+    }
+   
     public boolean isDeveloper() {
         return developer;
     }

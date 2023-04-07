@@ -135,7 +135,7 @@ public class POI {
     public void setMainframe(mainscreen mainframe) {
         this.mainframe = mainframe;
     }
-    
+
     @Override
     public String toString() {
         return name;
