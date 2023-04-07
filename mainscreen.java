@@ -615,7 +615,6 @@ public class mainscreen {
         panel.add(descriptionField);
         
         //text option for layer
-        panel.add(new JLabel("Layer:"));
         JTextField layerField = new JTextField();
         
         
@@ -626,6 +625,7 @@ public class mainscreen {
         
         //if dev, then add this component to panel
         if (isDeveloper) {     
+            panel.add(new JLabel("Layer:"));
             panel.add(layerField);   
         }
         
