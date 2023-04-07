@@ -494,15 +494,15 @@ public class mainscreen {
         mainscreen.add(panelSideBar); // add side bar
 
     }
-
+    
     //Method of adding POI
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-        //check if the user is a developer or not
-        boolean isDev = main.getIsDev(); 
-        System.out.println(isDev);
         
+        boolean isDeveloper = main.isDeveloper();
+        char layerType = 'a';
+
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -519,18 +519,19 @@ public class mainscreen {
         JTextField descriptionField = new JTextField();
         panel.add(descriptionField);
         
-        if (isDev) {
-            //only built in
-            //add a layers field
+
+        if (isDeveloper) {            
             panel.add(new JLabel("Layer"));
-            String[] layerStrings = {"Washroom", "Classroom", "Gen lab", "CS Specfic", "Resturaunt", "Exit/entry point", "Navigation"};
+            String[] layerStrings = {"Washroom", "Classroom", "Gen Lab", "CS Specific", "Resturaunt", "Exit/Entry point", "Navigation"};
             JComboBox layerDropDown = new JComboBox(layerStrings);
             panel.add(layerDropDown);
-            String layer = (String) layerDropDown.getSelectedItem();
-            
-        
+            String layer = (String) layerDropDown.getSelectedItem(); 
+            if (layer.equals("CS Specific")) {
+                layerType = 's';
+            } else {
+                layerType = layer.toLowerCase().charAt(0);
+            }
         }
-
         // Show the input dialog with the panel as the message
         int result = JOptionPane.showConfirmDialog(null, panel, "Enter point information", JOptionPane.OK_CANCEL_OPTION);
 
@@ -551,12 +552,11 @@ public class mainscreen {
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 System.out.println(xCoord + " " + yCoord);
                 //Create POI !!!!!
-                boolean isDeveloper = main.getIsDev();
                 POI newPOI;
                 if (!isDeveloper) {
                     newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
                 } else {
-                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, true);
+                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + layerType, xCoord, yCoord, roomNum, name, description, true);
                 }
                 main.addPOI(newPOI);
                 TreeModel newTree = main.makeTree(currFloor);
@@ -569,8 +569,7 @@ public class mainscreen {
             JOptionPane.showMessageDialog(null, "Unsuccessful No POI Added");
         }
     }
-    
-    /*
+
     public void displayPOI(int poiID) {
         
         String favOption = ""; // Text variable to change between favourite and unfavourite
@@ -594,8 +593,8 @@ public class mainscreen {
         POIPopUp.add(new JLabel("Description:"));
         JLabel POIDescription = new JLabel(poiToDisplay.getDescription());
         POIPopUp.add(POIDescription);
-       
-        if (isDev) {  
+            
+        if (isDev) {
             //Add two additional buttons
             JButton devEdit = new JButton("Edit");
             POIPopUp.add(devEdit);
@@ -650,7 +649,7 @@ public class mainscreen {
             //Event listener for delete
             devDelete.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                   Boolean success = main.deletePOI(poiToDisplay, poiMap);
+                    Boolean success = main.deletePOI(poiToDisplay);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Successfully Deleted");
                         TreeModel newTree = main.makeTree(currFloor);
@@ -675,47 +674,4 @@ public class mainscreen {
         JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION); 
 
     }
-    
-    /*
-    // Display POI info when location markers are clicked on
-    private void displayPOIInfo(POI poi, User user, HashMap<String, String> developerMap, HashSet<POI> favourites) {
-        String favOption = ""; // Text variable to change between favourite and unfavourite
-        String[] buttons = {favOption, "Edit", "Delete"};
-        boolean isDev = false; // Changes to true if user is a developer
-
-        // Check if user is developer
-        for (Map.Entry<String, String> entry : developerMap.entrySet()) {
-            String username = entry.getKey();
-            if (username.equals(user.getUsername())) {
-                isDev = true;
-            }
-        }
-
-        // Create pop up panel
-        JPanel POIPopUp = new JPanel(new GridLayout(6, 0));
-        // Display Name
-        POIPopUp.add(new JLabel("Name:"));
-        JLabel POIName = new JLabel(poi.getName());
-        POIPopUp.add(POIName);
-        // Display Room Number
-        POIPopUp.add(new JLabel("Room Number:"));
-        JLabel POIRoom = new JLabel(poi.getRoomNum());
-        POIPopUp.add(POIRoom);
-        // Display Description
-        POIPopUp.add(new JLabel("Description:"));
-        JLabel POIDescription = new JLabel(poi.getDescription());
-        POIPopUp.add(POIDescription);
-
-        // create option pane
-        JOptionPane.showConfirmDialog(null, POIPopUp, "Information", JOptionPane.DEFAULT_OPTION);
-        // Check if built-in or created
-        // Favourite/Unfavourite button
-        // If developer, add edit and delete buttons, also display layer
-        // Take list of user's favourites and verify which POI they have clicked on
-        // If it is not a favourited POI, then the second button will say Favourite and clicking on it will add it to the favourites HashSet
-        // If it is a favourited POI, then the second button will say Unfavourite and clicking on it will remove it from the favourites HashSet
-        // Editing - cannot create duplicate POI
-    }
-    */
-    
 }

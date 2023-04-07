@@ -145,7 +145,7 @@ public class Welcome extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Check if user in user hashmap and if password matches
             if (developers.containsKey(user.getText()) && developers.get(user.getText()).equals(password.getText())) {
-                 User oldUser = new User(user.getText(),password.getText());
+                User oldUser = new User(user.getText(),password.getText());
                 try {
                     Main main = new Main(oldUser, true, true, createdPois, favourites,  consumers, developers);
                 } catch (Exception error) {
