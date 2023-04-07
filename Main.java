@@ -68,31 +68,9 @@ public class Main extends JFrame {
         favouritePoiObjects = new HashSet<>();
         count = 0;
         
-        if (!newUser) {
-            JSONArray poiArray = createdPois.get(user.getUsername());
-            HashSet<Integer> createdPoiId = new HashSet<Integer>();
-            if (poiArray != null) {
-                for (Object o : poiArray) {
-                    JSONObject poi = (JSONObject) o;
-                    createdPoiId.add((int) ((long)poi.get("pid")));
-                }
-            }
-
-            JSONArray favouriteArray = favourites.get(user.getUsername());
-            HashSet<Integer> favouritePoiId = new HashSet<Integer>();
-            if (favouriteArray != null) {
-                for (Object o : favouriteArray) {
-                    JSONObject poi = (JSONObject) o;
-                    if (poi != null) {
-                        System.out.println("wqe");
-                        favouritePoiId.add((int) ((long)poi.get("pid")));
-                    }
-                }
-            }
-            System.out.println(favouritePoiId);
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -119,6 +97,30 @@ public class Main extends JFrame {
         } catch (Exception e) {
            e.printStackTrace();
         }
+        
+        if (!newUser) {
+            JSONArray poiArray = createdPois.get(user.getUsername());
+            HashSet<Integer> createdPoiId = new HashSet<Integer>();
+            if (poiArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((int) ((long)poi.get("pid")));
+                }
+            }
+
+            JSONArray favouriteArray = favourites.get(user.getUsername());
+            HashSet<Integer> favouritePoiId = new HashSet<Integer>();
+            if (favouriteArray != null) {
+                for (Object o : favouriteArray) {
+                    JSONObject poi = (JSONObject) o;
+                    if (poi != null) {
+                        System.out.println("wqe");
+                        favouritePoiId.add((int) ((long)poi.get("pid")));
+                    }
+                }
+            }
+            System.out.println(favouritePoiId);
+
             
         //Create set of user-created POIs
         for (Integer o : createdPoiId) {
