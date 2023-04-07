@@ -319,7 +319,7 @@ public class mainscreen {
                         public void mouseClicked(MouseEvent ex) {
                             // Get the mouse click location
                             if (addPOI == true) {
-                                newPoiAdd(ex.getX(), ex.getY(), floors);
+                                newPoiAdd(ex.getX()-13, ex.getY()-40, floors);
                                 addPOIBtn.setText("Add POI");
                                 addPOI = false; //Turn off the clicking
                             }
@@ -334,7 +334,7 @@ public class mainscreen {
                 public void mouseClicked(MouseEvent ex) {
                     // Get the mouse click location
                     if (addPOI == true) {
-                        newPoiAdd(ex.getX(), ex.getY(), floors);
+                        newPoiAdd(ex.getX()-13, ex.getY()-40, floors);
                         addPOIBtn.setText("Add POI");
                         addPOI = false; //Turn off the clicking
                     }
@@ -515,7 +515,7 @@ public class mainscreen {
                 public void mouseClicked(MouseEvent e) {
                     // Get the mouse click location
                     if (addPOI == true) {
-                        newPoiAdd(e.getX(), e.getY(), floors);
+                        newPoiAdd(e.getX()-13, e.getY()-40, floors);
                         addPOIBtn.setText("Add POI");
                         addPOI = false; //Turn off the clicking
                     }
@@ -530,7 +530,7 @@ public class mainscreen {
                 public void mouseClicked(MouseEvent e) {
                     // Get the mouse click location
                     if (addPOI == true) {
-                        newPoiAdd(e.getX(), e.getY(), floors);
+                        newPoiAdd(e.getX()-13, e.getY()-40, floors);
                         addPOIBtn.setText("Add POI");
                         addPOI = false; //Turn off the clicking
                     }
