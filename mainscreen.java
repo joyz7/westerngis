@@ -613,6 +613,11 @@ public class mainscreen {
 
                         if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                             main.editPOIInfo(poiToDisplay, name, roomNum, description);
+                            mainscreen.remove(POIPopUp);
+                            mainscreen.invalidate();
+                            mainscreen.validate();
+                            mainscreen.repaint();
+                            displayPOI(poiID);
                         }
                     } else{      
                         JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Edited");
