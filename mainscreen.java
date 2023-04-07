@@ -247,7 +247,7 @@ public class mainscreen {
             @Override
             public void windowClosing(WindowEvent e) {
                 //popup that warns the user that unsaved progress will be deleted
-                int result = JOptionPane.showConfirmDialog(mainscreen, "Are you sure you want to exit?", "Exit Program", JOptionPane.YES_NO_OPTION);
+                int result = JOptionPane.showConfirmDialog(mainscreen, "Are you sure you want to exit? Any unsaved work will be lost!", "Exit Program", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                   e.getWindow().dispose();
                   main.logOut();
