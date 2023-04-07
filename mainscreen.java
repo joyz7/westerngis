@@ -620,7 +620,6 @@ public class mainscreen {
         
         
         //drop down for dev mode ------------------------- didn't use
-        panel.add(new JLabel("Layer"));
         String[] layerStrings = {"Washroom", "Classroom", "Gen Lab", "CS Specific", "Resturaunt", "Exit/Entry point", "Navigation"};
         JComboBox layerDropDown = new JComboBox(layerStrings);         
           

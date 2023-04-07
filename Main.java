@@ -51,7 +51,7 @@ public class Main extends JFrame {
     private boolean developer;
     private int count;
     private boolean newUser;
-    private boolean isDev;
+    //private boolean isDev;
     
     public Main(User user, boolean newUser, boolean developer, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
