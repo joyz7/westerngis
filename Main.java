@@ -87,7 +87,7 @@ public class Main extends JFrame {
                 String name = (String)poi.get("name");
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
-                POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
+                POI newPoi = new POI(id, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put((int) ((long)poi.get("pid")), newPoi);
                 // Load built in POIs from JSON
                 if (builtIn) {
@@ -114,13 +114,10 @@ public class Main extends JFrame {
                 for (Object o : favouriteArray) {
                     JSONObject poi = (JSONObject) o;
                     if (poi != null) {
-                        System.out.println("wqe");
                         favouritePoiId.add((int) ((long)poi.get("pid")));
                     }
                 }
             }
-            System.out.println(favouritePoiId);
-
             
         //Create set of user-created POIs
         for (Integer o : createdPoiId) {
@@ -131,15 +128,12 @@ public class Main extends JFrame {
 
         //Create set of favourite POIs
         for (Integer o : favouritePoiId) {
-            System.out.println(favouritePoiId);
             if (poiMap.containsKey(o)) {
                 favouritePoiObjects.add(poiMap.get(o));
                 poiMap.get(o).setFavourite();
             }
         }
     }
-        
-        //System.out.println(poiMap.get(17).getDescription());
         
         //check if user is developer
         boolean isDev = false; 
@@ -235,19 +229,28 @@ public class Main extends JFrame {
         DefaultMutableTreeNode favouriteLayer = new DefaultMutableTreeNode("Favourites");
         DefaultMutableTreeNode usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
         DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
-        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
         DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
-        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
         DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
-        DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry Exit");
-        DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Gen Labs");
+        DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry/Exit");
+        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
+        DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Genlabs");
+        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
+
         root.add(favouriteLayer);
         root.add(usercreatedLayer);
         root.add(classroom);
-        root.add(csSpecific);
-        root.add(navigation);
-        root.add(restaurant);
+        if (buildingKey == 'm') {
+            root.add(csSpecific);
+        }
+        if (buildingKey == 'h') {
+            root.add(genLabs);
+        }
+        if (buildingKey != 'a') {
+            root.add(restaurant);
+        }
         root.add(washroom);
+        root.add(navigation);
+        root.add(entryExit);
         
         // reset the active states of all the POIs
         for (Object poi : poiMap.values()) {
@@ -257,11 +260,8 @@ public class Main extends JFrame {
             }
         }
             
-            
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
-            System.out.println(currPOI.getName());
-            System.out.println(currPOI.isActive());
             String layerId = currPOI.getLayerId();
             char poiBuilding = layerId.charAt(0);
             Integer poiFloor = Character.getNumericValue(layerId.charAt(1));
@@ -291,17 +291,7 @@ public class Main extends JFrame {
                 }
             }
        }
-        String tree = getTreeText(layers, root, "");
-        System.out.println(tree);
         return layers;
-    }
-    
-    private String getTreeText(TreeModel model, Object object, String indent) {
-        String myRow = indent + object + "\n";
-        for (int i = 0; i < model.getChildCount(object); i++) {
-            myRow += getTreeText(model, model.getChild(object, i), indent + "  ");
-        }
-        return myRow;
     }
     
     public void addPOI(String layerId, long xCoord, long yCoord, String roomNum, String name, String description) {
@@ -333,12 +323,12 @@ public class Main extends JFrame {
         favouritePoiObjects.add(favPOI);
         favPOI.setFavourite();
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
-        System.out.println(poiArray);
         JSONObject poi = new JSONObject();
         poi.put("pid", favPOI.getId());
         if (poiArray != null) {
             poiArray.add(poi);
             favourites.put(user.getUsername(), poiArray);
+
         } else {
             JSONArray newPoiArray = new JSONArray();
             newPoiArray.add(poi);
@@ -356,10 +346,14 @@ public class Main extends JFrame {
             for(Object o : poiArray) {
                 JSONObject poi = (JSONObject) o; 
                 if (poi != null) {
-                    if ((int) ((long)poi.get("pid")) != poiId) {
-                        newFavList.add(poi);
+                    if (poi.get("pid") instanceof Integer) {
+                        if ((int) poi.get("pid") != poiId) {
+                            newFavList.add(poi);
+                        }
                     } else {
-                        System.out.println("Hell");
+                        if ((int) ((long)poi.get("pid")) != poiId) {
+                            newFavList.add(poi);
+                        }
                     }
                 }
             }
@@ -493,7 +487,6 @@ public class Main extends JFrame {
                             if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
                                 newCreatedList.add(poi);
                             } else {
-                                System.out.println("Hell");
                             }
                         }
                     }

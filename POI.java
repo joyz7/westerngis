@@ -61,7 +61,6 @@ public class POI {
             
             POILbl.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("Clicked");
                     System.out.println(id);
                     mainframe.displayPOI(id);
                 }

@@ -129,7 +129,10 @@ public class mainscreen {
     private void changeFloor(Building building) {
         // Create dropdown to switch floors
         floors = new JComboBox(building.getFloorsArray());
+        JLabel floorsLabel = new JLabel("Floor:");
+        floorsLabel.setBounds(870, 3, 50, 24);
         floors.setBounds(915, 3, 125, 24);
+        panelTop.add(floorsLabel);
         panelTop.add(floors); // add combo box to the panel
         // Create a listener to grab user selection
         floors.addItemListener(new ItemListener() {
@@ -146,7 +149,6 @@ public class mainscreen {
                         // Change the floor image and set new current floor to reflect user selection
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
-                        // Change POIs on the sidebar
                         TreeModel newTree = main.makeTree(newFloor);
                         repaintUI(newTree);
                         drawPOIs();//drawing the poits
@@ -604,7 +606,6 @@ public class mainscreen {
      * @param floorCB JComboBox containing the floors of the building.
      */
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-
         boolean isDeveloper = main.isDeveloper();
         char layerType = 'a';
 

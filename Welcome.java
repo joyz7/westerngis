@@ -43,15 +43,14 @@ public class Welcome extends JFrame implements ActionListener {
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/users.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray userArray = (JSONArray) jsonObject.get("users");
-           
+
            for(Object o : userArray) {
                
                 JSONObject user = (JSONObject) o;
-                               
+  
                 // Load user data from JSON
                 String username = (String)user.get("username");
                 String password = (String)user.get("password");
-                
                 if ((boolean)user.get("consumer")) {
 
                     consumers.put(username,password);
@@ -89,14 +88,14 @@ public class Welcome extends JFrame implements ActionListener {
         
         // Error Message for Invalid Login
         JLabel errorMessageLogin = new JLabel("Invalid email or password. Please try again.");
-        errorMessageLogin.setBounds(500, 250, 400, 30);
+        errorMessageLogin.setBounds(400, 250, 400, 30);
         errorMessageLogin.setVisible(false);
         errorMessageLogin.setForeground(Color.RED);
         welcomeFrame.add(errorMessageLogin);
         
         // Error Message for Invalid Sign Up
         JLabel errorMessageSignup = new JLabel("Username already exists. Please enter a different username.");
-        errorMessageSignup.setBounds(500, 250, 400, 30);
+        errorMessageSignup.setBounds(400, 250, 400, 30);
         errorMessageSignup.setVisible(false);
         errorMessageSignup.setForeground(Color.RED);
         welcomeFrame.add(errorMessageSignup);
@@ -131,6 +130,7 @@ public class Welcome extends JFrame implements ActionListener {
                     }
                 } else {
                 // If password doesn't match, pop up error message
+                        errorMessageSignup.setVisible(false);
                         errorMessageLogin.setVisible(true);
                         user.setText("");
                         password.setText("");
@@ -148,11 +148,14 @@ public class Welcome extends JFrame implements ActionListener {
                 User oldUser = new User(user.getText(),password.getText());
                 try {
                     Main main = new Main(oldUser, true, true, createdPois, favourites,  consumers, developers);
-                } catch (Exception error) {
+                } catch (IOException ex) {
+                    Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                 }
+               
                 welcomeFrame.dispose();
             } else {
             // If password doesn't match, pop up error message
+                    errorMessageSignup.setVisible(false);
                     errorMessageLogin.setVisible(true);
                     user.setText("");
                     password.setText("");
@@ -168,13 +171,12 @@ public class Welcome extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 // Check if username already exists in hashmap
                 String username = user.getText();
-                
-                /* Uncomment later
-                if (consumers.containsKey(username)) {
+                if (consumers.containsKey(username) || developers.containsKey(username)) {
+                    errorMessageLogin.setVisible(false);
                     errorMessageSignup.setVisible(true);
                     user.setText("");
                     password.setText("");
-                } else {*/
+                } else {
                     String newPassword = password.getText();
                     newUser = new User(username, newPassword);
                     consumers.put(username,newPassword);
@@ -190,13 +192,11 @@ public class Welcome extends JFrame implements ActionListener {
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            //}
+            }
         });
         welcomeFrame.add(signUp);
         signUp.setBounds(500, 400, 130, 40);
         
-        System.out.println(password);
-        System.out.println(user);
     }
    
      public static void main(String[] args) {
