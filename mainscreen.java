@@ -204,20 +204,32 @@ public class mainscreen {
             //For every poi that needs be draw; draw it. if empty/no pois ignore
             if (poisToDraw != null) {
                 for (POI poi : poisToDraw) {
+                    poi.setActive();
                     layeredPane.add(poi.getLbl(), JLayeredPane.PALETTE_LAYER);
                 }
             }
-            // Get the current viewport
-            JViewport viewport = activeScrollPane.getViewport();
-            // Keep the same view position
-            Point viewPosition = viewport.getViewPosition();
-            // Update the viewport's view component with the new content
-            viewport.setView(layeredPane);
-            // Set the view position to the same location as before
-            viewport.setViewPosition(viewPosition);
-            activeScrollPane.setViewport(viewport);
-            activeScrollPane.revalidate(); // Trigger a new layout pass
-            activeScrollPane.repaint(); // Repaint the JLayeredPane              
+            if (poisToDraw.size()> 0) {
+                POI lastPOI = poisToDraw.get(poisToDraw.size()-1);
+                JViewport viewport = activeScrollPane.getViewport();
+                viewport.setView(layeredPane);
+                viewport.setViewPosition(new Point((int)lastPOI.getXCoord()-50, (int)lastPOI.getYCoord()-50));
+                activeScrollPane.setViewport(viewport);
+                activeScrollPane.revalidate(); // Trigger a new layout pass
+                activeScrollPane.repaint(); // Repaint the JLayeredPane  
+            } else {
+                // Get the current viewport
+                JViewport viewport = activeScrollPane.getViewport();
+               // Keep the same view position
+                Point viewPosition = viewport.getViewPosition();
+                // Update the viewport's view component with the new content
+                viewport.setView(layeredPane);
+                // Set the view position to the same location as before
+                viewport.setViewPosition(viewPosition);
+                activeScrollPane.setViewport(viewport);
+                activeScrollPane.revalidate(); // Trigger a new layout pass
+                activeScrollPane.repaint(); // Repaint the JLayeredPane    
+            }
+
         } catch (IOException e) {
         }
     }
@@ -543,14 +555,6 @@ public class mainscreen {
         POITitle.setBackground(darkGrey);
         POITitle.setForeground(Color.white);
         panelPOITitle.add(POITitle);
-
-        // Listener for when user selects checkbox to draw the POI marker
-        POIList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                drawPOIs();
-            }
-        });
 
         // Add a button to Add POIs
         addPOIBtn = new JButton("Add POI");
