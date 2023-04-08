@@ -88,14 +88,14 @@ public class Welcome extends JFrame implements ActionListener {
         
         // Error Message for Invalid Login
         JLabel errorMessageLogin = new JLabel("Invalid email or password. Please try again.");
-        errorMessageLogin.setBounds(500, 250, 400, 30);
+        errorMessageLogin.setBounds(400, 250, 400, 30);
         errorMessageLogin.setVisible(false);
         errorMessageLogin.setForeground(Color.RED);
         welcomeFrame.add(errorMessageLogin);
         
         // Error Message for Invalid Sign Up
         JLabel errorMessageSignup = new JLabel("Username already exists. Please enter a different username.");
-        errorMessageSignup.setBounds(500, 250, 400, 30);
+        errorMessageSignup.setBounds(400, 250, 400, 30);
         errorMessageSignup.setVisible(false);
         errorMessageSignup.setForeground(Color.RED);
         welcomeFrame.add(errorMessageSignup);
@@ -130,6 +130,7 @@ public class Welcome extends JFrame implements ActionListener {
                     }
                 } else {
                 // If password doesn't match, pop up error message
+                        errorMessageSignup.setVisible(false);
                         errorMessageLogin.setVisible(true);
                         user.setText("");
                         password.setText("");
@@ -154,6 +155,7 @@ public class Welcome extends JFrame implements ActionListener {
                 welcomeFrame.dispose();
             } else {
             // If password doesn't match, pop up error message
+                    errorMessageSignup.setVisible(false);
                     errorMessageLogin.setVisible(true);
                     user.setText("");
                     password.setText("");
@@ -170,6 +172,7 @@ public class Welcome extends JFrame implements ActionListener {
                 // Check if username already exists in hashmap
                 String username = user.getText();
                 if (consumers.containsKey(username) || developers.containsKey(username)) {
+                    errorMessageLogin.setVisible(false);
                     errorMessageSignup.setVisible(true);
                     user.setText("");
                     password.setText("");
