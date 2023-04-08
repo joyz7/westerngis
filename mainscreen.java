@@ -283,7 +283,7 @@ public class mainscreen {
         currBuilding = (Building) campus.getBuildings().get(0);
         changeFloor(currBuilding);
         setCurrFloor(currBuilding.getArray().get(0));
-
+                
         final MouseListener mouseListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -407,31 +407,40 @@ public class mainscreen {
                                 POI selectedItem = (POI) resultJList.getSelectedValue();
                                 String layerId = selectedItem.getLayerId();
                                 char building = layerId.toLowerCase().charAt(0);
+                                Integer floor = Character.getNumericValue(layerId.charAt(1));
                                 // Determine which building the selected item is from
-                                if (building == 'a') {
-                                    currBuilding = (Building) campus.getBuildings().get(0);
-                                } else if (building == 'm') {
-                                    currBuilding = (Building) campus.getBuildings().get(1);
-                                } else if (building == 'h') {
-                                    currBuilding = (Building) campus.getBuildings().get(2);
+                                boolean changedBuilding;
+                                if (building != currBuilding.getName().charAt(0)) {
+                                    if (building == 'a') {
+                                        currBuilding = (Building) campus.getBuildings().get(0);
+                                        panelMap.setSelectedComponent(alumniScrollPane);
+                                    } else if (building == 'm') {
+                                        currBuilding = (Building) campus.getBuildings().get(1);
+                                        panelMap.setSelectedComponent(middlesexScrollPane);
+                                    } else if (building == 'h') {
+                                        currBuilding = (Building) campus.getBuildings().get(2);
+                                        floor -= 1;
+                                        panelMap.setSelectedComponent(healthScrollPane);
+                                    }
+                                } else {
+                                    changedBuilding = false;
                                 }
 
+                                // Change the floor image and set new current floor to reflect user selection
                                 try {
                                     panelTop.remove(floors);
-                                    floors = new JComboBox(currBuilding.getFloorsArray());
-                                    floors.setBounds(915, 3, 125, 24);
-                                    panelTop.add(floors);
-                                    Floor newFloor = currBuilding.getArray().get(Character.getNumericValue(layerId.charAt(1)));
-                                    changeFloorImage(currBuilding.getName(), newFloor.getNumber());
+                                    changeFloor(currBuilding);
+                                    Floor newFloor = currBuilding.getArray().get(floor);
                                     setCurrFloor(newFloor);
                                     TreeModel newTree = main.makeTree(newFloor);
-                                    repaintUI(newTree); 
+                                    repaintUI(newTree);
                                     ArrayList<POI> draw = new ArrayList<>();
                                     draw.add(selectedItem);
                                     POIList.setPOIDraw(draw);
                                     // Set POI to active
                                     selectedItem.isActive();
-                                    drawPOIs(); //drawing the pois
+                                    drawPOIs(); // Draw the seearched POI
+                                    throw new IOException();
                                 } catch (IOException error) {
                                     error.printStackTrace();
                                 }            

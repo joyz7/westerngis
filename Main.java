@@ -239,12 +239,14 @@ public class Main extends JFrame {
         root.add(favouriteLayer);
         root.add(usercreatedLayer);
         root.add(classroom);
-        if (buildingKey == 'm') {
+        root.add(csSpecific);
+        root.add(genLabs);
+        /*if (buildingKey == 'm') {
             root.add(csSpecific);
         }
         if (buildingKey == 'h') {
             root.add(genLabs);
-        }
+        }*/
         root.add(restaurant);
         root.add(washroom);
         root.add(navigation);
@@ -408,7 +410,7 @@ public class Main extends JFrame {
         JSONObject poiJSON = new JSONObject();
         poiJSON.put("pois", pois);
         try {
-            FileWriter file = new FileWriter("src/main/java/com/cs2212/poi.json");
+            FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
             file.write(poiJSON.toJSONString());
             file.close();
         } catch (Exception error) {
