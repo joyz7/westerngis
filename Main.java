@@ -484,9 +484,14 @@ public class Main extends JFrame {
                     for(Object o : poiArray) {
                         JSONObject poi = (JSONObject) o; 
                         if (poi != null) {
-                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
-                                newCreatedList.add(poi);
+                            if (poi.get("pid") instanceof Integer) {
+                                if ((int) poi.get("pid") != poiToDelete.getId()) {
+                                    newCreatedList.add(poi);
+                                }
                             } else {
+                                if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {
+                                    newCreatedList.add(poi);        
+                                }
                             }
                         }
                     }
