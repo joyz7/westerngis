@@ -594,9 +594,7 @@ public class mainscreen {
                 }
             });
         }
-
         mainscreen.add(panelSideBar); // add side bar
-
     }
     
     /**
@@ -607,8 +605,10 @@ public class mainscreen {
      */
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
         boolean isDeveloper = main.isDeveloper();
-        char layerType = 'a';
+        JTextField layerField = new JTextField();     
 
+        char layerType = 'a';
+        
         // Create a panel with a grid layout for the input boxes
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
@@ -624,10 +624,7 @@ public class mainscreen {
         panel.add(new JLabel("Description:"));
         JTextField descriptionField = new JTextField();
         panel.add(descriptionField);
-        
-        //text option for layer
-        JTextField layerField = new JTextField();     
- 
+         
         //if dev, then add this component to panel
         if (isDeveloper) {     
             panel.add(new JLabel("Layer:"));
@@ -661,10 +658,7 @@ public class mainscreen {
                     layerType = 'e';
                 } else if (layer.equals("Navigation")) {
                     layerType = 'n';
-                } else {
-                    layerType = layer.toLowerCase().charAt(0);
-                }
-                        
+                }          
             }
 
             Integer selectedFloor = (Integer) floorCB.getSelectedItem();
@@ -873,6 +867,7 @@ public class mainscreen {
                     }
                     TreeModel newTree = main.makeTree(currFloor);
                     repaintUI(newTree);
+                    drawPOIs();
                 }     
             });
         }
