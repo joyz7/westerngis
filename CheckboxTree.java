@@ -1,322 +1,364 @@
-package com.cs2212;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.EventListener;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.HashSet;
+/*
+ * Copyright (c) 1997, 2017, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.event.EventListenerList;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeSelectionModel;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+package javax.swing.tree;
 
-/* 
-* CheckboxTree is a class that extends the JTree class and implements its own checking mechanism. It
-* defines a new event type and implements the methods required to handle it.
-* @author Sophia Ma
-*/
+import java.io.*;
+import java.beans.ConstructorProperties;
 
-public class CheckboxTree extends JTree {
+/**
+ * {@code TreePath} represents an array of objects that uniquely
+ * identify the path to a node in a tree. The elements of the array
+ * are ordered with the root as the first element of the array. For
+ * example, a file on the file system is uniquely identified based on
+ * the array of parent directories and the name of the file. The path
+ * {@code /tmp/foo/bar} could be represented by a {@code TreePath} as
+ * {@code new TreePath(new Object[] {"tmp", "foo", "bar"})}.
+ * <p>
+ * {@code TreePath} is used extensively by {@code JTree} and related classes.
+ * For example, {@code JTree} represents the selection as an array of
+ * {@code TreePath}s. When used with {@code JTree}, the elements of the
+ * path are the objects returned from the {@code TreeModel}. When {@code JTree}
+ * is paired with {@code DefaultTreeModel}, the elements of the
+ * path are {@code TreeNode}s. The following example illustrates extracting
+ * the user object from the selection of a {@code JTree}:
+ * <pre>
+ *   DefaultMutableTreeNode root = ...;
+ *   DefaultTreeModel model = new DefaultTreeModel(root);
+ *   JTree tree = new JTree(model);
+ *   ...
+ *   TreePath selectedPath = tree.getSelectionPath();
+ *   DefaultMutableTreeNode selectedNode =
+ *       ((DefaultMutableTreeNode)selectedPath.getLastPathComponent()).
+ *       getUserObject();
+ * </pre>
+ * Subclasses typically need override only {@code
+ * getLastPathComponent}, and {@code getParentPath}. As {@code JTree}
+ * internally creates {@code TreePath}s at various points, it's
+ * generally not useful to subclass {@code TreePath} and use with
+ * {@code JTree}.
+ * <p>
+ * While {@code TreePath} is serializable, a {@code
+ * NotSerializableException} is thrown if any elements of the path are
+ * not serializable.
+ * <p>
+ * For further information and examples of using tree paths,
+ * see <a
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/tree.html">How to Use Trees</a>
+ * in <em>The Java Tutorial.</em>
+ * <p>
+ * <strong>Warning:</strong>
+ * Serialized objects of this class will not be compatible with
+ * future Swing releases. The current serialization support is
+ * appropriate for short term storage or RMI between applications running
+ * the same version of Swing.  As of 1.4, support for long term storage
+ * of all JavaBeans
+ * has been added to the <code>java.beans</code> package.
+ * Please see {@link java.beans.XMLEncoder}.
+ *
+ * @author Scott Violet
+ * @author Philip Milne
+ */
+@SuppressWarnings("serial") // Same-version serialization only
+public class TreePath implements Serializable {
+    /** Path representing the parent, null if lastPathComponent represents
+     * the root. */
+    private TreePath           parentPath;
+    /** Last path component. */
+    private Object lastPathComponent;
 
-    CheckboxTree selfPointer = this;
-    //needed to keep track of nodes
-    ArrayList<POI> poisToDraw  = new ArrayList<POI>();
-
-    
-    // Defining data structure that will enable to fast check-indicate the state of each node
-    // It totally replaces the "selection" mechanism of the JTree
-    private class CheckedNode {
-        boolean isSelected;
-        boolean hasChildren;
-        boolean allChildrenSelected;
-
-        public CheckedNode(boolean isSelected_, boolean hasChildren_, boolean allChildrenSelected_) {
-            isSelected = isSelected_;
-            hasChildren = hasChildren_;
-            allChildrenSelected = allChildrenSelected_;
-        }
-    }
-    HashMap<TreePath, CheckedNode> nodesCheckingState;
-    HashSet<TreePath> checkedPaths = new HashSet<TreePath>();
-
-    // Defining a new event type for the checking mechanism and preparing event-handling mechanism
-    protected EventListenerList listenerList = new EventListenerList();
-
-    public class CheckChangeEvent extends EventObject {     
-        private static final long serialVersionUID = -8100230309044193368L;
-
-        public CheckChangeEvent(Object source) {
-            super(source);          
-        }       
-    }   
-
-    public interface CheckChangeEventListener extends EventListener {
-        public void checkStateChanged(CheckChangeEvent event);
-    }
-
-    public void addCheckChangeEventListener(CheckChangeEventListener listener) {
-        listenerList.add(CheckChangeEventListener.class, listener);
-    }
-    public void removeCheckChangeEventListener(CheckChangeEventListener listener) {
-        listenerList.remove(CheckChangeEventListener.class, listener);
-    }
-
-    void fireCheckChangeEvent(CheckChangeEvent evt) {
-        Object[] listeners = listenerList.getListenerList();
-        for (int i = 0; i < listeners.length; i++) {
-            if (listeners[i] == CheckChangeEventListener.class) {
-                ((CheckChangeEventListener) listeners[i + 1]).checkStateChanged(evt);
-            }
-        }
-    }
-     
     /**
-     * Overrides the setModel method of JTree to reset the checking state.
-     * @param newModel the new model to set
+     * Creates a {@code TreePath} from an array. The array uniquely
+     * identifies the path to a node.
+     *
+     * @param path an array of objects representing the path to a node
+     * @throws IllegalArgumentException if {@code path} is {@code null},
+     *         empty, or contains a {@code null} value
      */
-    // Override
-    public void setModel(TreeModel newModel) {
-        super.setModel(newModel);
-        resetCheckingState();
-    }
-    
-    /**
-     * Returns the list of nodes to be drawn on the main screen.
-     * @return the list of nodes to draw
-     */
-    public ArrayList<POI> getPOIDraw(){
-        return poisToDraw;
-    }
-    
-    /**
-     * Sets the list of nodes to be drawn on the main screen.
-     * @param pois the list of nodes to draw
-     */
-    public void setPOIDraw(ArrayList<POI> pois) {
-        poisToDraw = pois;
-    }
-    
-    /**
-     * Clears the POIs.
-     */
-    public void clearPOI(){
-        poisToDraw.clear();
-    }
-    
-    /*
-    *  Returns only the checked paths (totally ignores original "selection" mechanism)
-    * @return TreePath[] 
-    */
-    public TreePath[] getCheckedPaths() {
-        return checkedPaths.toArray(new TreePath[checkedPaths.size()]);
-    }
-
-    // Returns true in case that the node is selected, has children but not all of them are selected
-    public boolean isSelectedPartially(TreePath path) {
-        CheckedNode cn = nodesCheckingState.get(path);
-        return cn.isSelected && cn.hasChildren && !cn.allChildrenSelected;
-    }
-
-    private void resetCheckingState() { 
-        nodesCheckingState = new HashMap<TreePath, CheckedNode>();
-        checkedPaths = new HashSet<TreePath>();
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)getModel().getRoot();
-        if (node == null) {
-            return;
+    @ConstructorProperties({"path"})
+    public TreePath(Object[] path) {
+        if(path == null || path.length == 0)
+            throw new IllegalArgumentException("path in TreePath must be non null and not empty.");
+        lastPathComponent = path[path.length - 1];
+        if (lastPathComponent == null) {
+            throw new IllegalArgumentException(
+                "Last path component must be non-null");
         }
-        addSubtreeToCheckingStateTracking(node);
+        if(path.length > 1)
+            parentPath = new TreePath(path, path.length - 1);
     }
 
-    // Creating data structure of the current model for the checking mechanism
-    private void addSubtreeToCheckingStateTracking(DefaultMutableTreeNode node) {
-        TreeNode[] path = node.getPath();   
-        TreePath tp = new TreePath(path);
-        CheckedNode cn = new CheckedNode(false, node.getChildCount() > 0, false);
-        nodesCheckingState.put(tp, cn);
-        for (int i = 0 ; i < node.getChildCount() ; i++) {              
-            addSubtreeToCheckingStateTracking((DefaultMutableTreeNode) tp.pathByAddingChild(node.getChildAt(i)).getLastPathComponent());
-        }
+    /**
+     * Creates a {@code TreePath} containing a single element. This is
+     * used to construct a {@code TreePath} identifying the root.
+     *
+     * @param lastPathComponent the root
+     * @see #TreePath(Object[])
+     * @throws IllegalArgumentException if {@code lastPathComponent} is
+     *         {@code null}
+     */
+    public TreePath(Object lastPathComponent) {
+        if(lastPathComponent == null)
+            throw new IllegalArgumentException("path in TreePath must be non null.");
+        this.lastPathComponent = lastPathComponent;
+        parentPath = null;
     }
 
-    // Overriding cell renderer by a class that ignores the original "selection" mechanism
-    // It decides how to show the nodes due to the checking-mechanism
-    private class CheckBoxCellRenderer extends JPanel implements TreeCellRenderer {     
-        private static final long serialVersionUID = -7341833835878991719L;     
-        JCheckBox checkBox;     
-        public CheckBoxCellRenderer() {
-            super();
-            this.setLayout(new BorderLayout());
-            checkBox = new JCheckBox();
-            add(checkBox, BorderLayout.CENTER);
-            setOpaque(false);
-        }
+    /**
+     * Creates a {@code TreePath} with the specified parent and element.
+     *
+     * @param parent the path to the parent, or {@code null} to indicate
+     *        the root
+     * @param lastPathComponent the last path element
+     * @throws IllegalArgumentException if {@code lastPathComponent} is
+     *         {@code null}
+     */
+    protected TreePath(TreePath parent, Object lastPathComponent) {
+        if(lastPathComponent == null)
+            throw new IllegalArgumentException("path in TreePath must be non null.");
+        parentPath = parent;
+        this.lastPathComponent = lastPathComponent;
+    }
 
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value,
-                boolean selected, boolean expanded, boolean leaf, int row,
-                boolean hasFocus) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-            Object obj = node.getUserObject(); 
-            TreePath tp = new TreePath(node.getPath());
-            CheckedNode cn = nodesCheckingState.get(tp);
-            if (cn == null) {
-                return this;
-            }    
-            try {            
-                // If obj can be successfully casted as a POI object
-                if ((POI)obj instanceof POI) {
-                    POI POIobj = (POI)obj;
-                    checkBox.setSelected(cn.isSelected);
-                    checkBox.setText(POIobj.checkBoxText());
-                    checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
+    /**
+     * Creates a {@code TreePath} from an array. The returned
+     * {@code TreePath} represents the elements of the array from
+     * {@code 0} to {@code length - 1}.
+     * <p>
+     * This constructor is used internally, and generally not useful outside
+     * of subclasses.
+     *
+     * @param path the array to create the {@code TreePath} from
+     * @param length identifies the number of elements in {@code path} to
+     *        create the {@code TreePath} from
+     * @throws NullPointerException if {@code path} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if {@code length - 1} is
+     *         outside the range of the array
+     * @throws IllegalArgumentException if any of the elements from
+     *         {@code 0} to {@code length - 1} are {@code null}
+     */
+    protected TreePath(Object[] path, int length) {
+        lastPathComponent = path[length - 1];
+        if (lastPathComponent == null) {
+            throw new IllegalArgumentException(
+                "Path elements must be non-null");
+        }
+        if(length > 1)
+            parentPath = new TreePath(path, length - 1);
+    }
+
+    /**
+     * Creates an empty {@code TreePath}.  This is provided for
+     * subclasses that represent paths in a different
+     * manner. Subclasses that use this constructor must override
+     * {@code getLastPathComponent}, and {@code getParentPath}.
+     */
+    protected TreePath() {
+    }
+
+    /**
+     * Returns an ordered array of the elements of this {@code TreePath}.
+     * The first element is the root.
+     *
+     * @return an array of the elements in this {@code TreePath}
+     */
+    public Object[] getPath() {
+        int            i = getPathCount();
+        Object[]       result = new Object[i--];
+
+        for(TreePath path = this; path != null; path = path.getParentPath()) {
+            result[i--] = path.getLastPathComponent();
+        }
+        return result;
+    }
+
+    /**
+     * Returns the last element of this path.
+     *
+     * @return the last element in the path
+     */
+    public Object getLastPathComponent() {
+        return lastPathComponent;
+    }
+
+    /**
+     * Returns the number of elements in the path.
+     *
+     * @return the number of elements in the path
+     */
+    public int getPathCount() {
+        int        result = 0;
+        for(TreePath path = this; path != null; path = path.getParentPath()) {
+            result++;
+        }
+        return result;
+    }
+
+    /**
+     * Returns the path element at the specified index.
+     *
+     * @param index the index of the element requested
+     * @return the element at the specified index
+     * @throws IllegalArgumentException if the index is outside the
+     *         range of this path
+     */
+    public Object getPathComponent(int index) {
+        int          pathLength = getPathCount();
+
+        if(index < 0 || index >= pathLength)
+            throw new IllegalArgumentException("Index " + index +
+                                           " is out of the specified range");
+
+        TreePath         path = this;
+
+        for(int i = pathLength-1; i != index; i--) {
+            path = path.getParentPath();
+        }
+        return path.getLastPathComponent();
+    }
+
+    /**
+     * Compares this {@code TreePath} to the specified object. This returns
+     * {@code true} if {@code o} is a {@code TreePath} with the exact
+     * same elements (as determined by using {@code equals} on each
+     * element of the path).
+     *
+     * @param o the object to compare
+     */
+    public boolean equals(Object o) {
+        if(o == this)
+            return true;
+        if(o instanceof TreePath) {
+            TreePath            oTreePath = (TreePath)o;
+
+            if(getPathCount() != oTreePath.getPathCount())
+                return false;
+            for(TreePath path = this; path != null;
+                    path = path.getParentPath()) {
+                if (!(path.getLastPathComponent().equals
+                      (oTreePath.getLastPathComponent()))) {
+                    return false;
                 }
-            } catch (Exception e) {
-                // If obj cannot be successfully casted as a POI object, it is a String object
-                checkBox.setSelected(cn.isSelected);
-                checkBox.setText(obj.toString());
-                checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);              
+                oTreePath = oTreePath.getParentPath();
             }
-        return this;
-        }       
+            return true;
+        }
+        return false;
     }
 
-    public CheckboxTree() {
-        super();
-        // Disabling toggling by double-click
-        this.setToggleClickCount(0);
-        // Overriding cell renderer by new one defined above
-        CheckBoxCellRenderer cellRenderer = new CheckBoxCellRenderer();
-        this.setCellRenderer(cellRenderer);
+    /**
+     * Returns the hash code of this {@code TreePath}. The hash code of a
+     * {@code TreePath} is the hash code of the last element in the path.
+     *
+     * @return the hashCode for the object
+     */
+    public int hashCode() {
+        return getLastPathComponent().hashCode();
+    }
 
-        // Overriding selection model by an empty one
-        DefaultTreeSelectionModel dtsm = new DefaultTreeSelectionModel() {      
-            private static final long serialVersionUID = -8190634240451667286L;
-            // Totally disabling the selection mechanism
-            public void setSelectionPath(TreePath path) {
-            }           
-            public void addSelectionPath(TreePath path) {                       
-            }           
-            public void removeSelectionPath(TreePath path) {
-            }
-            public void setSelectionPaths(TreePath[] pPaths) {
-            }
-        };
-        // Calling checking mechanism on mouse click
-        this.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent arg0) {
-                TreePath tp = selfPointer.getPathForLocation(arg0.getX(), arg0.getY());
-                if (tp == null) {
-                    return;
-                } else {
-                    DefaultMutableTreeNode poiNode = (DefaultMutableTreeNode) tp.getLastPathComponent();
-                    //singular poi node to keep track of 
-                        if (poiNode.getUserObject() instanceof POI) {
-                            POI poi = (POI) poiNode.getUserObject();
-                            poi.setActive();
-                            //Jacky Added; basically just checks if the poi is active and should be drawn or not
-                            if (poi.isActive() == true){
-                            poisToDraw.add(poi);
-                            }
-                            else{
-                            poisToDraw.remove(poi);
-                                
-                            }
-                            
-                        } else {
-                            //Goes through the child of the layer /poi nodes and marks them for active and drawing
-                            for (int i=0; i<poiNode.getChildCount(); i++) {
-                                DefaultMutableTreeNode poi = (DefaultMutableTreeNode) poiNode.getChildAt(i);
-                                POI p = (POI) poi.getUserObject();
-                                p.setActive();
-                                //should add or not (same above)
-                                if (p.isActive() == true){
-                                 poisToDraw.add(p);
-                                }
-                                else{
-                                 poisToDraw.remove(p);
-                                }
-                            }
-                        }
-                }
-                
-                boolean checkMode = ! nodesCheckingState.get(tp).isSelected;
-                checkSubTree(tp, checkMode);
-                updatePredecessorsWithCheckMode(tp, checkMode);
-                // Firing the check change event
-                fireCheckChangeEvent(new CheckChangeEvent(new Object()));
-                // Repainting tree after the data structures were updated
-                selfPointer.repaint();                          
-            }           
-            public void mouseEntered(MouseEvent arg0) {         
-            }           
-            public void mouseExited(MouseEvent arg0) {              
-            }
-            public void mousePressed(MouseEvent arg0) {             
-            }
-            public void mouseReleased(MouseEvent arg0) {
-            }           
-        });
-        this.setSelectionModel(dtsm);
+    /**
+     * Returns true if <code>aTreePath</code> is a
+     * descendant of this
+     * {@code TreePath}. A {@code TreePath} {@code P1} is a descendant of a
+     * {@code TreePath} {@code P2}
+     * if {@code P1} contains all of the elements that make up
+     * {@code P2's} path.
+     * For example, if this object has the path {@code [a, b]},
+     * and <code>aTreePath</code> has the path {@code [a, b, c]},
+     * then <code>aTreePath</code> is a descendant of this object.
+     * However, if <code>aTreePath</code> has the path {@code [a]},
+     * then it is not a descendant of this object.  By this definition
+     * a {@code TreePath} is always considered a descendant of itself.
+     * That is, <code>aTreePath.isDescendant(aTreePath)</code> returns
+     * {@code true}.
+     *
+     * @param aTreePath the {@code TreePath} to check
+     * @return true if <code>aTreePath</code> is a descendant of this path
+     */
+    public boolean isDescendant(TreePath aTreePath) {
+        if(aTreePath == this)
+            return true;
+
+        if(aTreePath != null) {
+            int                 pathLength = getPathCount();
+            int                 oPathLength = aTreePath.getPathCount();
+
+            if(oPathLength < pathLength)
+                // Can't be a descendant, has fewer components in the path.
+                return false;
+            while(oPathLength-- > pathLength)
+                aTreePath = aTreePath.getParentPath();
+            return equals(aTreePath);
+        }
+        return false;
     }
-    
-    // When a node is checked/unchecked, updating the states of the predecessors
-    protected void updatePredecessorsWithCheckMode(TreePath tp, boolean check) {
-        TreePath parentPath = tp.getParentPath();
-        // If it is the root, stop the recursive calls and return
-        if (parentPath == null) {
-            return;
-        }       
-        CheckedNode parentCheckedNode = nodesCheckingState.get(parentPath);
-        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();     
-        parentCheckedNode.allChildrenSelected = true;
-        parentCheckedNode.isSelected = false;
-        for (int i = 0 ; i < parentNode.getChildCount() ; i++) {                
-            TreePath childPath = parentPath.pathByAddingChild(parentNode.getChildAt(i));
-            CheckedNode childCheckedNode = nodesCheckingState.get(childPath);           
-            // It is enough that even one subtree is not fully selected
-            // to determine that the parent is not fully selected
-            if (! childCheckedNode.allChildrenSelected) {
-                parentCheckedNode.allChildrenSelected = false;      
-            }
-            // If at least one child is selected, selecting also the parent
-            if (childCheckedNode.isSelected) {
-                parentCheckedNode.isSelected = false;
-            }
-            // ADD LATER - If all child nodes are selected, select parent node
-            
-        }
-        if (parentCheckedNode.isSelected) {
-            checkedPaths.add(parentPath);
-        } else {
-            checkedPaths.remove(parentPath);
-        }
-        // Go to upper predecessor
-        updatePredecessorsWithCheckMode(parentPath, check);
+
+    /**
+     * Returns a new path containing all the elements of this path
+     * plus <code>child</code>. <code>child</code> is the last element
+     * of the newly created {@code TreePath}.
+     *
+     * @param   child   the path element to add
+     * @throws          NullPointerException if {@code child} is {@code null}
+     * @return          a new path containing all the elements of this path
+     *                  plus {@code child}
+     */
+    public TreePath pathByAddingChild(Object child) {
+        if(child == null)
+            throw new NullPointerException("Null child not allowed");
+
+        return new TreePath(this, child);
     }
-    
-    // Recursively checks/unchecks a subtree
-    protected void checkSubTree(TreePath tp, boolean check) {
-        CheckedNode cn = nodesCheckingState.get(tp);
-        cn.isSelected = check;
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp.getLastPathComponent();
-        for (int i = 0 ; i < node.getChildCount() ; i++) {              
-            checkSubTree(tp.pathByAddingChild(node.getChildAt(i)), check);
+
+    /**
+     * Returns the {@code TreePath} of the parent. A return value of
+     * {@code null} indicates this is the root node.
+     *
+     * @return the parent path
+     */
+    public TreePath getParentPath() {
+        return parentPath;
+    }
+
+    /**
+     * Returns a string that displays and identifies this
+     * object's properties.
+     *
+     * @return a String representation of this object
+     */
+    public String toString() {
+        StringBuilder tempSpot = new StringBuilder("[");
+
+        for(int counter = 0, maxCounter = getPathCount();counter < maxCounter;
+            counter++) {
+            if(counter > 0)
+                tempSpot.append(", ");
+            tempSpot.append(getPathComponent(counter));
         }
-        cn.allChildrenSelected = check;
-        if (check) {
-            checkedPaths.add(tp);
-        } else {
-            checkedPaths.remove(tp);
-        }
+        tempSpot.append("]");
+        return tempSpot.toString();
     }
 }
+
