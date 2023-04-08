@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.cs2212;
 
 import java.util.*;
 
 /**
  * The Layer class represents a layer of pois on a floor in a building.
- * @author JOYZH
  */
 public class Layer {
     private String name;
