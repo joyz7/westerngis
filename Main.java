@@ -311,7 +311,6 @@ public class Main extends JFrame {
     
     public void addFavourite(int poiId) {
         POI favPOI = poiMap.get(poiId);
-        System.out.println(favPOI.getName());
         favouritePoiObjects.add(favPOI);
         favPOI.setFavourite();
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
@@ -320,14 +319,11 @@ public class Main extends JFrame {
         if (poiArray != null) {
             poiArray.add(poi);
             favourites.put(user.getUsername(), poiArray);
-            System.out.println(poiArray);
 
         } else {
             JSONArray newPoiArray = new JSONArray();
             newPoiArray.add(poi);
             favourites.put(user.getUsername(), newPoiArray);
-            System.out.println(poiArray);
-
         }
     }
     

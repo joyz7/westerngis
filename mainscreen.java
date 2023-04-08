@@ -129,7 +129,10 @@ public class mainscreen {
     private void changeFloor(Building building) {
         // Create dropdown to switch floors
         floors = new JComboBox(building.getFloorsArray());
+        JLabel floorsLabel = new JLabel("Floor:");
+        floorsLabel.setBounds(870, 3, 50, 24);
         floors.setBounds(915, 3, 125, 24);
+        panelTop.add(floorsLabel);
         panelTop.add(floors); // add combo box to the panel
         // Create a listener to grab user selection
         floors.addItemListener(new ItemListener() {
