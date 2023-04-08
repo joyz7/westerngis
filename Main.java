@@ -307,16 +307,14 @@ public class Main extends JFrame {
         return myRow;
     }
     
-    public void addPOI(POI newPOI) {
-        poiMap.put(count, newPOI); 
-        newPOI.setMainframe(mainFrame);
-        
+    public void addPOI(String layerId, long xCoord, long yCoord, String roomNum, String name, String description) {
+        POI newPOI;
         if (!developer) {
+            newPOI = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, false);
             createdPoiObjects.add(newPOI);
             JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
             JSONObject poi = new JSONObject();
             poi.put("pid", count);
-            count += 1;
             if (poiArray != null) {
                 poiArray.add(poi);
                 createdPois.put(user.getUsername(), poiArray);
@@ -325,7 +323,12 @@ public class Main extends JFrame {
                 newPoiArray.add(poi);
                 createdPois.put(user.getUsername(), newPoiArray);
             }
+        } else {
+            newPOI = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, true);
         }
+        poiMap.put(count, newPOI); 
+        newPOI.setMainframe(mainFrame);
+        count += 1;
     }
     
     public void addFavourite(int poiId) {
@@ -498,7 +501,7 @@ public class Main extends JFrame {
                     for(Object o : poiArray) {
                         JSONObject poi = (JSONObject) o; 
                         if (poi != null) {
-                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {
+                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
                                 newCreatedList.add(poi);
                             } else {
                                 System.out.println("Hell");
