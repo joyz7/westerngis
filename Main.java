@@ -367,31 +367,23 @@ public class Main extends JFrame {
         }
     }
     
-    public DefaultListModel<POI> search(String searchText, Building building) {
+    public DefaultListModel<POI> search(String searchText) {
         DefaultListModel<POI> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
-
-        String buildingName;
+        searchText = searchText.toLowerCase();
 
         //search through all pois
         for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
 
             String layerId = specificPoi.getLayerId();
-            if (layerId.charAt(0) == 'm') {
-                buildingName = "Middlesex College";
-            } else if (layerId.charAt(0) == 'h') {
-                buildingName = "Health Sciences Building";
-            } else {
-                buildingName = "Alumuni Hall";
-            }
 
             //Search for room number
-            if (searchText.equals(specificPoi.getRoomNum())) {
+            if (searchText.equals(specificPoi.getRoomNum().toLowerCase())) {
                 searchResultsList.addElement(specificPoi);
-            } else if (searchText.equals(specificPoi.getName())) {  //Search for name
+            } else if (searchText.equals(specificPoi.getName().toLowerCase())) {  //Search for name
                 searchResultsList.addElement(specificPoi);
             } else {
-                String[] strArray = specificPoi.getDescription().split(" ");
+                String[] strArray = specificPoi.getDescription().toLowerCase().split(" ");
                 //Search for description
                 for (int k = 0; k < strArray.length; k++) {
                     if (searchText.equals(strArray[k])) {

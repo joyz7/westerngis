@@ -237,8 +237,21 @@ public class POI {
      * Returns the name of the POI.
      * @return the name of the POI.
      */
+
+    public String checkBoxText() {
+        return name;
+    }
+    
     @Override
     public String toString() {
+        String layer = this.getLayerId().substring(0,1);
+        if (layer.equals("a")) {
+            return "AH: " + name;
+        } else if (layer.equals("m")) {
+            return "MC: " + name;
+        } else if (layer.equals("h")){ 
+            return "HSB: " + name;
+        }
         return name;
     }
     

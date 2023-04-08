@@ -374,7 +374,7 @@ public class mainscreen {
                 System.out.println("Floor list: " + currBuilding.getArray());
 
                 //create String list to contain search results
-                DefaultListModel<POI> searchResultsList = main.search(searchText, currBuilding);
+                DefaultListModel<POI> searchResultsList = main.search(searchText);
                 JList resultJList = new JList<>(searchResultsList);
                 
                 if (searchResultsList.isEmpty()) {
@@ -422,14 +422,15 @@ public class mainscreen {
                     });
 
                     resultScrollPane = new JScrollPane(resultJList);
-                    JPanel test = new JPanel();
-                    test.add(resultScrollPane);
+                    resultScrollPane.setPreferredSize(new Dimension(350,200));
+                    JPanel resultsPane = new JPanel();
+                    resultsPane.add(resultScrollPane);
 
                     //add search results components into top panel
-                    JOptionPane searchResultsPanel = new JOptionPane(test);
+                    JOptionPane searchResultsPanel = new JOptionPane(resultsPane);
 
                     //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
-                    JOptionPane.showMessageDialog(null, test, "Search Results", JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showMessageDialog(null, resultsPane, "Search Results", JOptionPane.PLAIN_MESSAGE);
                 }
             }
         });
