@@ -252,11 +252,8 @@ public class Main extends JFrame {
         // reset the active states of all the POIs
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
-            //System.out.println(currPOI.getName());
-            //System.out.println(currPOI.isActive());
             if (currPOI.isActive()) {
                 currPOI.setActive();
-                System.out.println("SET TO FALSE!!!!!!!!");
             }
         }
             
