@@ -338,6 +338,7 @@ public class Main extends JFrame {
     
      public void removeFavourite(int poiId) {
         POI favPOI = poiMap.get(poiId);
+        favPOI.setActive();
         favouritePoiObjects.remove(favPOI);
         favPOI.setFavourite();
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
@@ -475,7 +476,7 @@ public class Main extends JFrame {
     public boolean deletePOI(POI poiToDelete) {
     	int pid = poiToDelete.getId();
     	poiMap.remove(pid);
-        
+        poiToDelete.setActive();
         if (createdPoiObjects.contains(poiToDelete)) {
             createdPoiObjects.remove(poiToDelete);
             JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());

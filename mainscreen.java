@@ -605,7 +605,8 @@ public class mainscreen {
      */
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
         boolean isDeveloper = main.isDeveloper();
-        JTextField layerField;
+        JTextField layerField = new JTextField();     
+
         char layerType = 'a';
         
         // Create a panel with a grid layout for the input boxes
@@ -627,7 +628,6 @@ public class mainscreen {
         //if dev, then add this component to panel
         if (isDeveloper) {     
             panel.add(new JLabel("Layer:"));
-            layerField = new JTextField();     
             panel.add(layerField);   
         }
         
@@ -867,6 +867,7 @@ public class mainscreen {
                     }
                     TreeModel newTree = main.makeTree(currFloor);
                     repaintUI(newTree);
+                    drawPOIs();
                 }     
             });
         }
