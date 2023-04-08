@@ -245,9 +245,7 @@ public class Main extends JFrame {
         if (buildingKey == 'h') {
             root.add(genLabs);
         }
-        if (buildingKey != 'a') {
-            root.add(restaurant);
-        }
+        root.add(restaurant);
         root.add(washroom);
         root.add(navigation);
         root.add(entryExit);
