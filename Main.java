@@ -249,8 +249,22 @@ public class Main extends JFrame {
         root.add(restaurant);
         root.add(washroom);
         
+        // reset the active states of all the POIs
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
+            //System.out.println(currPOI.getName());
+            //System.out.println(currPOI.isActive());
+            if (currPOI.isActive()) {
+                currPOI.setActive();
+                System.out.println("SET TO FALSE!!!!!!!!");
+            }
+        }
+            
+            
+        for (Object poi : poiMap.values()) {
+            POI currPOI = (POI) poi;
+            System.out.println(currPOI.getName());
+            System.out.println(currPOI.isActive());
             String layerId = currPOI.getLayerId();
             char poiBuilding = layerId.charAt(0);
             Integer poiFloor = Character.getNumericValue(layerId.charAt(1));

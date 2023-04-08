@@ -28,7 +28,6 @@ public class mainscreen {
     private Floor currFloor;
     private HashMap<Integer, POI> poiMap;
     private int poiCount;
-    private ArrayList<POI> drawnPois;
     boolean addPOI = false;
     Component activeScrollComponent;
     CheckboxTree POIList;
@@ -130,12 +129,7 @@ public class mainscreen {
                         }
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
-                        setCurrFloor(newFloor);
-                        
-                        if (drawnPois != null) {
-                            drawnPois.clear();
-                        }
-                        
+                        setCurrFloor(newFloor);                      
                         TreeModel newTree = main.makeTree(newFloor);
                         repaintUI(newTree);
                         drawPOIs();//drawing the poits
@@ -300,9 +294,6 @@ public class mainscreen {
                 changeFloor(currBuilding);
                 Floor newFloor = currBuilding.getArray().get(0);
                 setCurrFloor(newFloor);
-                if (drawnPois != null) {
-                    drawnPois.clear();
-                }
                 TreeModel newTree = main.makeTree(newFloor);
                 repaintUI(newTree);
                 drawPOIs();//drawing the poits
@@ -515,9 +506,6 @@ public class mainscreen {
         POIList.setShowsRootHandles(true);
         POIList.setRootVisible(false);
         POIList.setModel(layers);
-        if (drawnPois != null) {
-            POIList.setPOIDraw(drawnPois);
-        }
         
         JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
         panelPOIScroll.setBackground(Color.white);
@@ -689,7 +677,6 @@ public class mainscreen {
                     newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + layerType, xCoord, yCoord, roomNum, name, description, true);
                 }
                 main.addPOI(newPOI);
-                drawnPois = POIList.getPOIDraw(); // Store POIs drawn on map
                 TreeModel newTree = main.makeTree(currFloor);
                 repaintUI(newTree);
                 drawPOIs();
