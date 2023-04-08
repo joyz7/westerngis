@@ -177,7 +177,7 @@ public class CheckboxTree extends JTree {
                 if ((POI)obj instanceof POI) {
                     POI POIobj = (POI)obj;
                     checkBox.setSelected(cn.isSelected);
-                    checkBox.setText(POIobj.toString());
+                    checkBox.setText(POIobj.checkBoxText());
                     checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
                 }
             } catch (Exception e) {
