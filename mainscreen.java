@@ -27,7 +27,7 @@ public class mainscreen {
     private Building currBuilding;
     private Floor currFloor;
     private HashMap<Integer, POI> poiMap;
-    private int poiCount;
+    private ArrayList<POI> drawnPois;
     boolean addPOI = false;
     Component activeScrollComponent;
     CheckboxTree POIList;
@@ -49,16 +49,7 @@ public class mainscreen {
     JComboBox floors;
     JPanel panelSideBar;
     JScrollPane resultScrollPane;
-
-    /*
-    public int searchPOI(JTextField searchField){
-            searchText = searchField.getText();
-    System.out.println("Search query: " + searchText);
-
-    return 0;
-    }
-
-     */
+    
     public Floor getCurrFloor() {
         return currFloor;
     }
@@ -129,7 +120,10 @@ public class mainscreen {
                         }
                         Floor newFloor = building.getArray().get(floorNum);
                         changeFloorImage(building.getName(), floorNum);
-                        setCurrFloor(newFloor);                      
+                        setCurrFloor(newFloor);
+                        if (drawnPois != null) {
+                            drawnPois.clear();
+                        }
                         TreeModel newTree = main.makeTree(newFloor);
                         repaintUI(newTree);
                         drawPOIs();//drawing the poits
@@ -205,7 +199,6 @@ public class mainscreen {
     public mainscreen(Main main, Campus campus, HashMap<Integer, POI> poiMap) throws IOException {
         this.main = main;
         this.campus = campus;
-        poiCount = poiMap.size();
         panelMap = new JTabbedPane();
         panelTop = new JPanel();
         this.poiMap = poiMap;
@@ -294,6 +287,9 @@ public class mainscreen {
                 changeFloor(currBuilding);
                 Floor newFloor = currBuilding.getArray().get(0);
                 setCurrFloor(newFloor);
+                if (drawnPois != null) {
+                    drawnPois.clear();
+                }
                 TreeModel newTree = main.makeTree(newFloor);
                 repaintUI(newTree);
                 drawPOIs();//drawing the poits
@@ -387,54 +383,61 @@ public class mainscreen {
                 //create String list to contain search results
                 DefaultListModel<POI> searchResultsList = main.search(searchText, currBuilding);
                 JList resultJList = new JList<>(searchResultsList);
-
                 
-                //add selection listener to the resultJList instance
-                resultJList.addListSelectionListener(new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        if (!e.getValueIsAdjusting()) {
-                            //get the selected item
-                            POI selectedItem = (POI) resultJList.getSelectedValue();
-                            String layerId = selectedItem.getLayerId();
-                            char building = layerId.toLowerCase().charAt(0);
-                            if (building == 'a') {
-                                currBuilding = (Building) campus.getBuildings().get(0);
-                            } else if (building == 'm') {
-                                currBuilding = (Building) campus.getBuildings().get(1);
-                            } else if (building == 'h') {
-                                currBuilding = (Building) campus.getBuildings().get(2);
+                if (searchResultsList.isEmpty()) {
+                    JLabel emptyResult = new JLabel("No results were found. Try again!");
+                    emptyResult.setHorizontalAlignment(JLabel.CENTER);
+                    JOptionPane.showMessageDialog(null, emptyResult, "Search Results", JOptionPane.PLAIN_MESSAGE);
+                } else {
+                    //add selection listener to the resultJList instance
+                    resultJList.addListSelectionListener(new ListSelectionListener() {
+                        public void valueChanged(ListSelectionEvent e) {
+                            if (!e.getValueIsAdjusting()) {
+                                //get the selected item
+                                POI selectedItem = (POI) resultJList.getSelectedValue();
+                                String layerId = selectedItem.getLayerId();
+                                char building = layerId.toLowerCase().charAt(0);
+                                if (building == 'a') {
+                                    currBuilding = (Building) campus.getBuildings().get(0);
+                                } else if (building == 'm') {
+                                    currBuilding = (Building) campus.getBuildings().get(1);
+                                } else if (building == 'h') {
+                                    currBuilding = (Building) campus.getBuildings().get(2);
+                                }
+
+                                try {
+                                    panelTop.remove(floors);
+                                    floors = new JComboBox(currBuilding.getFloorsArray());
+                                    floors.setBounds(915, 3, 125, 24);
+                                    panelTop.add(floors);
+                                    Floor newFloor = currBuilding.getArray().get(Character.getNumericValue(layerId.charAt(1)));
+                                    changeFloorImage(currBuilding.getName(), newFloor.getNumber());
+                                    setCurrFloor(newFloor);
+                                    TreeModel newTree = main.makeTree(newFloor);
+                                    repaintUI(newTree); 
+                                    ArrayList<POI> draw = new ArrayList<>();
+                                    draw.add(selectedItem);
+                                    POIList.setPOIDraw(draw);
+                                    // DISPLAY THE POI BY CHECKING OFF CHECKBOX - SET POI TO ACTIVE?
+                                    selectedItem.isActive();
+                                    drawPOIs();//drawing the pois
+                                } catch (IOException error) {
+                                    error.printStackTrace();
+                                }            
                             }
-                            
-                            try {
-                                panelTop.remove(floors);
-                                floors = new JComboBox(currBuilding.getFloorsArray());
-                                floors.setBounds(915, 3, 125, 24);
-                                panelTop.add(floors);
-                                Floor newFloor = currBuilding.getArray().get(Character.getNumericValue(layerId.charAt(1)));
-                                changeFloorImage(currBuilding.getName(), newFloor.getNumber());
-                                setCurrFloor(newFloor);
-                                TreeModel newTree = main.makeTree(newFloor);
-                                repaintUI(newTree); 
-                                // DISPLAY THE POI BY CHECKING OFF CHECKBOX - SET POI TO ACTIVE?
-                                selectedItem.isActive();
-
-                                drawPOIs();//drawing the pois
-                            } catch (IOException error) {
-                                error.printStackTrace();
-                            }            
                         }
-                    }
-                });
-                
-                resultScrollPane = new JScrollPane(resultJList);
-                JPanel test = new JPanel();
-                test.add(resultScrollPane);
+                    });
 
-                //add search results components into top panel
-                JOptionPane searchResultsPanel = new JOptionPane(test);
-                
-                //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
-                JOptionPane.showMessageDialog(null, test, "Search Results", JOptionPane.PLAIN_MESSAGE);
+                    resultScrollPane = new JScrollPane(resultJList);
+                    JPanel test = new JPanel();
+                    test.add(resultScrollPane);
+
+                    //add search results components into top panel
+                    JOptionPane searchResultsPanel = new JOptionPane(test);
+
+                    //JOptionPane searchResultsPanel = new JOptionPane(resultScrollPane);
+                    JOptionPane.showMessageDialog(null, test, "Search Results", JOptionPane.PLAIN_MESSAGE);
+                }
             }
         });
 
@@ -506,6 +509,9 @@ public class mainscreen {
         POIList.setShowsRootHandles(true);
         POIList.setRootVisible(false);
         POIList.setModel(layers);
+        if (drawnPois != null) {
+            POIList.setPOIDraw(drawnPois);
+        }
         
         JScrollPane panelPOIScroll = new JScrollPane(POIList); // add tree to scroll pane
         panelPOIScroll.setBackground(Color.white);
@@ -669,14 +675,9 @@ public class mainscreen {
 
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 System.out.println(xCoord + " " + yCoord);
-                //Create POI !!!!!
-                POI newPOI;
-                if (!isDeveloper) {
-                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description, false);
-                } else {
-                    newPOI = new POI(poiCount, currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + layerType, xCoord, yCoord, roomNum, name, description, true);
-                }
-                main.addPOI(newPOI);
+                //Create POI
+                main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description);
+                drawnPois = POIList.getPOIDraw(); // Store POIs drawn on map
                 TreeModel newTree = main.makeTree(currFloor);
                 repaintUI(newTree);
                 drawPOIs();
@@ -696,7 +697,7 @@ public class mainscreen {
         boolean isDev = main.isDeveloper(); // Changes to true if user is a developer      
 
         //Get the POI object
-        POI poiToDisplay = poiMap.get(poiID);
+        POI poiToDisplay = (POI) poiMap.get(poiID);
 
         // Create pop up panel
         JPanel POIPopUp = new JPanel(new GridLayout(6, 0));
@@ -843,6 +844,7 @@ public class mainscreen {
                             JOptionPane.showMessageDialog(null, "Successfully Deleted");
                             TreeModel newTree = main.makeTree(currFloor);
                             repaintUI(newTree);
+                            drawPOIs();
                         } else {
                             JOptionPane.showMessageDialog(null, "Unsuccessful: No POI Deleted");
                         }
