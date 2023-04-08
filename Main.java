@@ -70,7 +70,7 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 

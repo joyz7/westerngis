@@ -125,6 +125,8 @@ public class Welcome extends JFrame implements ActionListener {
                     User oldUser = new User(user.getText(),password.getText());
                     try {
                         Main main = new Main(oldUser, false, false, createdPois, favourites, consumers, developers);
+                        welcomeFrame.setVisible(false);
+                        welcomeFrame.dispose();
                     } catch (IOException ex) {
                         Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -148,11 +150,12 @@ public class Welcome extends JFrame implements ActionListener {
                 User oldUser = new User(user.getText(),password.getText());
                 try {
                     Main main = new Main(oldUser, true, true, createdPois, favourites,  consumers, developers);
+                    welcomeFrame.setVisible(false);
+                    welcomeFrame.dispose();
                 } catch (IOException ex) {
                     Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
                 }
                
-                welcomeFrame.dispose();
             } else {
             // If password doesn't match, pop up error message
                     errorMessageSignup.setVisible(false);
