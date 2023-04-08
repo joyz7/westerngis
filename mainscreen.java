@@ -605,6 +605,23 @@ public class mainscreen {
      */
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
         boolean isDeveloper = main.isDeveloper();
+        ArrayList<String> layersList = new ArrayList<String>();
+        layersList.add("Classrooms");
+        layersList.add("Washrooms");
+        layersList.add("Entry/Exit");
+        layersList.add("Navigation");
+        layersList.add("Resturaunts");
+
+        if (currBuilding.getName().equals("Health Sciences Building")) {
+            layersList.add("Gen Labs");
+        } else if (currBuilding.getName().equals("Middlesex College")) {
+            layersList.add("CS Specfic");
+        }
+        
+        String[] layersArr = new String[layersList.size()];
+        layersArr = layersList.toArray(layersArr);
+ 
+        JComboBox layers = new JComboBox(layersArr);
         JTextField layerField = new JTextField();     
 
         char layerType = 'a';
@@ -628,7 +645,7 @@ public class mainscreen {
         //if dev, then add this component to panel
         if (isDeveloper) {     
             panel.add(new JLabel("Layer:"));
-            panel.add(layerField);   
+            panel.add(layers);   
         }
         
         // Show the input dialog with the panel as the message
@@ -642,19 +659,20 @@ public class mainscreen {
             // If the user is a developer, display layer
             if (isDeveloper) {
                
-                String layer = (String)layerField.getText();
+                String layer = layers.getSelectedItem().toString();
+                System.out.println(layer);
 
-                if (layer.equals("Washroom")) {
+                if (layer.equals("Washrooms")) {
                     layerType = 'w';
-                } else if (layer.equals("Classroom")) {
+                } else if (layer.equals("Classrooms")) {
                     layerType = 'c';
-                } else if (layer.equals("Gen Lab")) {
+                } else if (layer.equals("Gen Labs")) {
                     layerType = 'g';
                 } else if (layer.equals("CS Specific")) {
                     layerType = 's';
                 } else if (layer.equals("Resturaunts")) {
                     layerType = 'r';
-                } else if (layer.equals("Exit/Entry point")) {
+                } else if (layer.equals("Entry/Exit")) {
                     layerType = 'e';
                 } else if (layer.equals("Navigation")) {
                     layerType = 'n';
@@ -666,7 +684,11 @@ public class mainscreen {
             // Make all fields mandatory
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 // Create POI
-                main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description);
+                if (isDeveloper) {
+                    main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + layerType, xCoord, yCoord, roomNum, name, description);
+                } else {
+                    main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description);
+                }
                 TreeModel newTree = main.makeTree(currFloor);
                 repaintUI(newTree);
                 drawPOIs();
