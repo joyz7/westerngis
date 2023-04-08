@@ -245,9 +245,7 @@ public class Main extends JFrame {
         if (buildingKey == 'h') {
             root.add(genLabs);
         }
-        if (buildingKey != 'a') {
-            root.add(restaurant);
-        }
+        root.add(restaurant);
         root.add(washroom);
         root.add(navigation);
         root.add(entryExit);
@@ -485,9 +483,14 @@ public class Main extends JFrame {
                     for(Object o : poiArray) {
                         JSONObject poi = (JSONObject) o; 
                         if (poi != null) {
-                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
-                                newCreatedList.add(poi);
+                            if (poi.get("pid") instanceof Integer) {
+                                if ((int) poi.get("pid") != poiToDelete.getId()) {
+                                    newCreatedList.add(poi);
+                                }
                             } else {
+                                if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {
+                                    newCreatedList.add(poi);        
+                                }
                             }
                         }
                     }
