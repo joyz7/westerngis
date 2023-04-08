@@ -51,7 +51,7 @@ public class Main extends JFrame {
     private boolean developer;
     private int count;
     private boolean newUser;
-    private boolean isDev;
+    //private boolean isDev;
     
     public Main(User user, boolean newUser, boolean developer, HashMap<String,JSONArray> createdPois, HashMap<String,JSONArray> favourites, HashMap<String,String> consumers,  HashMap<String,String> developers) throws IOException {
         
@@ -68,6 +68,7 @@ public class Main extends JFrame {
         favouritePoiObjects = new HashSet<>();
         count = 0;
         
+<<<<<<< HEAD
         if (!newUser) {
             JSONArray poiArray = createdPois.get(user.getUsername());
             HashSet<Integer> createdPoiId = new HashSet<Integer>();
@@ -89,6 +90,8 @@ public class Main extends JFrame {
                     }
                 }
             }
+=======
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
         try {
            JSONParser parser = new JSONParser();
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
@@ -118,6 +121,30 @@ public class Main extends JFrame {
         } catch (Exception e) {
            e.printStackTrace();
         }
+        
+        if (!newUser) {
+            JSONArray poiArray = createdPois.get(user.getUsername());
+            HashSet<Integer> createdPoiId = new HashSet<Integer>();
+            if (poiArray != null) {
+                for (Object o : poiArray) {
+                    JSONObject poi = (JSONObject) o;
+                    createdPoiId.add((int) ((long)poi.get("pid")));
+                }
+            }
+
+            JSONArray favouriteArray = favourites.get(user.getUsername());
+            HashSet<Integer> favouritePoiId = new HashSet<Integer>();
+            if (favouriteArray != null) {
+                for (Object o : favouriteArray) {
+                    JSONObject poi = (JSONObject) o;
+                    if (poi != null) {
+                        System.out.println("wqe");
+                        favouritePoiId.add((int) ((long)poi.get("pid")));
+                    }
+                }
+            }
+            System.out.println(favouritePoiId);
+
             
         //Create set of user-created POIs
         for (Integer o : createdPoiId) {
@@ -136,6 +163,10 @@ public class Main extends JFrame {
         }
     }
         
+<<<<<<< HEAD
+=======
+        //System.out.println(poiMap.get(17).getDescription());
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
         
         //check if user is developer
         boolean isDev = false; 
@@ -245,8 +276,19 @@ public class Main extends JFrame {
         root.add(restaurant);
         root.add(washroom);
         
+        // reset the active states of all the POIs
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
+            if (currPOI.isActive()) {
+                currPOI.setActive();
+            }
+        }
+            
+            
+        for (Object poi : poiMap.values()) {
+            POI currPOI = (POI) poi;
+            System.out.println(currPOI.getName());
+            System.out.println(currPOI.isActive());
             String layerId = currPOI.getLayerId();
             char poiBuilding = layerId.charAt(0);
             Integer poiFloor = Character.getNumericValue(layerId.charAt(1));
@@ -289,16 +331,14 @@ public class Main extends JFrame {
         return myRow;
     }
     
-    public void addPOI(POI newPOI) {
-        poiMap.put(count, newPOI); 
-        newPOI.setMainframe(mainFrame);
-        
+    public void addPOI(String layerId, long xCoord, long yCoord, String roomNum, String name, String description) {
+        POI newPOI;
         if (!developer) {
+            newPOI = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, false);
             createdPoiObjects.add(newPOI);
             JSONArray poiArray = (JSONArray)createdPois.get(user.getUsername());
             JSONObject poi = new JSONObject();
             poi.put("pid", count);
-            count += 1;
             if (poiArray != null) {
                 poiArray.add(poi);
                 createdPois.put(user.getUsername(), poiArray);
@@ -307,7 +347,12 @@ public class Main extends JFrame {
                 newPoiArray.add(poi);
                 createdPois.put(user.getUsername(), newPoiArray);
             }
+        } else {
+            newPOI = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, true);
         }
+        poiMap.put(count, newPOI); 
+        newPOI.setMainframe(mainFrame);
+        count += 1;
     }
     
     public void addFavourite(int poiId) {
@@ -349,31 +394,23 @@ public class Main extends JFrame {
         }
     }
     
-    public DefaultListModel<POI> search(String searchText, Building building) {
+    public DefaultListModel<POI> search(String searchText) {
         DefaultListModel<POI> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
-
-        String buildingName;
+        searchText = searchText.toLowerCase();
 
         //search through all pois
         for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
 
             String layerId = specificPoi.getLayerId();
-            if (layerId.charAt(0) == 'm') {
-                buildingName = "Middlesex College";
-            } else if (layerId.charAt(0) == 'h') {
-                buildingName = "Health Sciences Building";
-            } else {
-                buildingName = "Alumuni Hall";
-            }
 
             //Search for room number
-            if (searchText.equals(specificPoi.getRoomNum())) {
+            if (searchText.equals(specificPoi.getRoomNum().toLowerCase())) {
                 searchResultsList.addElement(specificPoi);
-            } else if (searchText.equals(specificPoi.getName())) {  //Search for name
+            } else if (searchText.equals(specificPoi.getName().toLowerCase())) {  //Search for name
                 searchResultsList.addElement(specificPoi);
             } else {
-                String[] strArray = specificPoi.getDescription().split(" ");
+                String[] strArray = specificPoi.getDescription().toLowerCase().split(" ");
                 //Search for description
                 for (int k = 0; k < strArray.length; k++) {
                     if (searchText.equals(strArray[k])) {
@@ -480,7 +517,7 @@ public class Main extends JFrame {
                     for(Object o : poiArray) {
                         JSONObject poi = (JSONObject) o; 
                         if (poi != null) {
-                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {
+                            if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
                                 newCreatedList.add(poi);
                             } else {
                                 System.out.println("Hell");

@@ -20,7 +20,10 @@ public class Campus {
     /**
      * Constructs a Campus object with the specified name and address, and initializes the map of buildings
      * to an empty HashMap.
+<<<<<<< HEAD
      *
+=======
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
      * @param name The name of the campus.
      * @param address The address of the campus.
      */
@@ -42,7 +45,10 @@ public class Campus {
     
     /**
      * Returns the map of buildings associated with the Campus object.
+<<<<<<< HEAD
      *
+=======
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
      * @return The map of buildings associated with the Campus object.
      */
     public Map getBuildings() {
@@ -51,7 +57,10 @@ public class Campus {
     
      /**
      * Returns the name of the campus.
+<<<<<<< HEAD
      *
+=======
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
      * @return The name of the campus.
      */
     public String getName() {
@@ -60,7 +69,10 @@ public class Campus {
     
     /**
      * Returns the address of the campus.
+<<<<<<< HEAD
      *
+=======
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
      * @return The address of the campus.
      */
     public String getAddress() {

@@ -11,7 +11,7 @@ import org.json.simple.*;
 import org.json.simple.parser.*;
 
 /**
- *
+ * This class represents a Weather object that retrieves and stores the current weather and condition for a given city.
  * @author rrenv
  */
 public class Weather {
@@ -22,7 +22,10 @@ public class Weather {
     private static final String key = "205962d59a6c491b89d50234231602";
     private static final String URL = "http://api.weatherapi.com/v1/current.json?key=205962d59a6c491b89d50234231602&q=43.0096,-81.2737&aqi=no";
 
-    
+    /**
+     * Constructs a new Weather object for the given city.
+     * @param city the name of the city for which to retrieve weather information
+     */
     public Weather (String city) {
         this.city = city;
 
@@ -52,35 +55,42 @@ public class Weather {
                 currCondition = (String)condition.get("text");
             }
         } catch (Exception e) {
+<<<<<<< HEAD
             System.out.println("Error recovering weather details.");
             city = "Error ";
             currWeather = 1;
             currCondition = ": weather details available.";
+=======
+            currWeather = 1;
+            currCondition = "No internet.";
+>>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
             
         }
     }
     
+    /**
+     * Returns the name of the city for which this Weather object has retrieved information.
+     * @return the name of the city
+     */
     public String getCity() {
         return city;
     }
     
+    /**
+     * Returns the current temperature in Celsius for the city represented by this Weather object.
+     * @return the current temperature in Celsius
+     */
     public double getCurrWeather() {
         return currWeather;
     }
     
+    /**
+     * Returns a text description of the current weather conditions for the city represented by this Weather object.
+     * @return a text description of the current weather conditions
+     */
     public String getCurrCondition() {
         return currCondition;
     }
-    
-    public void updateCurrWeather() {
-        
-    }
-    
-    public void updateCurrCondition() {
-        
-    }
-    
-    
     
     
 }

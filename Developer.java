@@ -5,30 +5,18 @@
 package com.cs2212;
 
 /**
- *
+ * The Developer class represents a user who has the ability to edit built-in pois.
+ * This class extends the User class.
  * @author rrenv
  */
 public class Developer extends User {
     
+    /**
+     * Creates a new Developer object with the specified username and password.
+     * @param username the username for the new developer
+     * @param password the password for the new developer
+     */
     public Developer(String username, String password) {
         super(username, password);
     }
-    /*
-    public boolean addPOI(int layerID, int xCoord, int yCoord, String roomNum, String name, String description) {
-        POI newPOI = new POI(layerID, xCoord, yCoord, roomNum, name, description, true);
-    }
-    
-    public boolean editPOI(Main main, int poiID, int layerID, int xCoord, int yCoord, String roomNum, String name, String description) {
-        poiObject = main.getPOI(poiID);
-        poiObject.setXCoord(xCoord);
-        poiObject.setYCoord(yCoord);
-        poiObject.setRoomNum(roomNum);
-        poiObject.setName(name);
-        poiObject.setDescription(description);
-    }
-    
-    public boolean deletePOI (int poiID) {
-        main.deletePOI(poiID);
-    } 
-*/
 }
