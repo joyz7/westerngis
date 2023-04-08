@@ -87,7 +87,7 @@ public class Main extends JFrame {
                 String name = (String)poi.get("name");
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
-                POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
+                POI newPoi = new POI(id, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put((int) ((long)poi.get("pid")), newPoi);
                 // Load built in POIs from JSON
                 if (builtIn) {
@@ -146,7 +146,6 @@ public class Main extends JFrame {
             
       
         createLayers();
-        System.out.println(poiMap.get(35).getName());
         mainscreen mainscreen = new mainscreen(this, campus, poiMap);
     } 
     
@@ -221,7 +220,6 @@ public class Main extends JFrame {
         
     public TreeModel makeTree(Floor floor) {
         
-        System.out.println("We");
         Integer floorNum = floor.getNumber();
         char buildingKey = Character.toLowerCase(floor.getBuilding().getName().charAt(0));     
         // Create tree of layers
@@ -313,6 +311,7 @@ public class Main extends JFrame {
     
     public void addFavourite(int poiId) {
         POI favPOI = poiMap.get(poiId);
+        System.out.println(favPOI.getName());
         favouritePoiObjects.add(favPOI);
         favPOI.setFavourite();
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
@@ -321,10 +320,14 @@ public class Main extends JFrame {
         if (poiArray != null) {
             poiArray.add(poi);
             favourites.put(user.getUsername(), poiArray);
+            System.out.println(poiArray);
+
         } else {
             JSONArray newPoiArray = new JSONArray();
             newPoiArray.add(poi);
             favourites.put(user.getUsername(), newPoiArray);
+            System.out.println(poiArray);
+
         }
     }
     
@@ -332,7 +335,6 @@ public class Main extends JFrame {
         POI favPOI = poiMap.get(poiId);
         favouritePoiObjects.remove(favPOI);
         favPOI.setFavourite();
-        System.out.println(favPOI.getFavourite());
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
         JSONArray newFavList = new JSONArray();
         if (poiArray != null) {
@@ -350,7 +352,6 @@ public class Main extends JFrame {
                     }
                 }
             }
-            System.out.println(newFavList);
             favourites.put(user.getUsername(),newFavList);
         }
     }
