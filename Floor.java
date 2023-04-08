@@ -7,7 +7,7 @@ package com.cs2212;
 import java.util.*;
 
 /**
- *The Floor class represents a floor in a building. It contains a list of layers that make up the floor.
+ * The Floor class represents a floor in a building. It contains a list of layers that make up the floor.
  * @author JOYZH
  */
 public class Floor {
