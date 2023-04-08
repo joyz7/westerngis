@@ -20,26 +20,35 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+
 /* 
 * CheckboxTree is a class that extends the JTree class and implements its own checking mechanism. It
 * defines a new event type and implements the methods required to handle it.
 * @author Sophia Ma
 */
 
+/**
+ * The CheckboxTree class creates the checkbox tree in the sidebar in main screen.
+ */
 public class CheckboxTree extends JTree {
 
     CheckboxTree selfPointer = this;
-    //needed to keep track of nodes
-    ArrayList<POI> poisToDraw  = new ArrayList<POI>();
+    ArrayList<POI> poisToDraw  = new ArrayList<POI>(); // List of POIs available for that layer
 
-    
-    // Defining data structure that will enable to fast check-indicate the state of each node
-    // It totally replaces the "selection" mechanism of the JTree
+    /**
+     * The CheckedNode class represents one node in the CheckboxTree
+     */
     private class CheckedNode {
         boolean isSelected;
         boolean hasChildren;
         boolean allChildrenSelected;
-
+        
+        /**
+        Constructs a new CheckedNode object with selection and child node properties.
+        @param isSelected_ the selection state of the node
+        @param hasChildren_ the existence of child nodes for the node
+        @param allChildrenSelected_ the selection state of all child nodes
+        */
         public CheckedNode(boolean isSelected_, boolean hasChildren_, boolean allChildrenSelected_) {
             isSelected = isSelected_;
             hasChildren = hasChildren_;
@@ -49,42 +58,47 @@ public class CheckboxTree extends JTree {
     HashMap<TreePath, CheckedNode> nodesCheckingState;
     HashSet<TreePath> checkedPaths = new HashSet<TreePath>();
 
-    // Defining a new event type for the checking mechanism and preparing event-handling mechanism
-    protected EventListenerList listenerList = new EventListenerList();
-
-    public class CheckChangeEvent extends EventObject {     
-        private static final long serialVersionUID = -8100230309044193368L;
-
-        public CheckChangeEvent(Object source) {
+    // Define new event type for "checking" a node
+    EventListenerList listenerList = new EventListenerList();
+    
+    /**
+     * Check if there is a change of state with the checkbox node
+    */
+    private class CheckChangeEvent extends EventObject {     
+        private CheckChangeEvent(Object source) {
             super(source);          
         }       
     }   
-
-    public interface CheckChangeEventListener extends EventListener {
+    /**
+     * Event Listener to check if there is a change of state with the checkbox node
+     */
+    private interface CheckChangeEventListener extends EventListener {
+        /**
+         * Check if there was a change of state
+         * @param event representing the action taken
+         */
         public void checkStateChanged(CheckChangeEvent event);
     }
 
-    public void addCheckChangeEventListener(CheckChangeEventListener listener) {
-        listenerList.add(CheckChangeEventListener.class, listener);
-    }
-    public void removeCheckChangeEventListener(CheckChangeEventListener listener) {
-        listenerList.remove(CheckChangeEventListener.class, listener);
-    }
-
-    void fireCheckChangeEvent(CheckChangeEvent evt) {
+    /**
+     * Notifies CheckChangeEventListener objects of a check change event.
+     * @param event the CheckChangeEvent object to be fired
+     */
+    private void fireCheckChangeEvent(CheckChangeEvent event) {
         Object[] listeners = listenerList.getListenerList();
         for (int i = 0; i < listeners.length; i++) {
             if (listeners[i] == CheckChangeEventListener.class) {
-                ((CheckChangeEventListener) listeners[i + 1]).checkStateChanged(evt);
+                ((CheckChangeEventListener) listeners[i + 1]).checkStateChanged(event);
             }
         }
     }
-     
+
     /**
-     * Overrides the setModel method of JTree to reset the checking state.
-     * @param newModel the new model to set
+     * Set the model of the checkbox tree to be the new TreeModel
+     * @param newModel the TreeModel to be set as the new model
      */
-    // Override
+     
+    @Override
     public void setModel(TreeModel newModel) {
         super.setModel(newModel);
         resetCheckingState();
@@ -99,34 +113,24 @@ public class CheckboxTree extends JTree {
     }
     
     /**
-     * Sets the list of nodes to be drawn on the main screen.
-     * @param pois the list of nodes to draw
+     * Set the list of POIs to draw to a new list.
+     * @param pois the ArrayList of POIs to draw.
      */
     public void setPOIDraw(ArrayList<POI> pois) {
         poisToDraw = pois;
     }
     
     /**
+     * Clear the list of POIs to draw.
      * Clears the POIs.
      */
     public void clearPOI(){
         poisToDraw.clear();
     }
     
-    /*
-    *  Returns only the checked paths (totally ignores original "selection" mechanism)
-    * @return TreePath[] 
-    */
-    public TreePath[] getCheckedPaths() {
-        return checkedPaths.toArray(new TreePath[checkedPaths.size()]);
-    }
-
-    // Returns true in case that the node is selected, has children but not all of them are selected
-    public boolean isSelectedPartially(TreePath path) {
-        CheckedNode cn = nodesCheckingState.get(path);
-        return cn.isSelected && cn.hasChildren && !cn.allChildrenSelected;
-    }
-
+    /**
+     * Mark all nodes as unchecked.
+     */
     private void resetCheckingState() { 
         nodesCheckingState = new HashMap<TreePath, CheckedNode>();
         checkedPaths = new HashSet<TreePath>();
@@ -137,7 +141,10 @@ public class CheckboxTree extends JTree {
         addSubtreeToCheckingStateTracking(node);
     }
 
-    // Creating data structure of the current model for the checking mechanism
+    /**
+     * Creates a subtree with the specified node as the root to track checking states
+     * @param node the root node
+     */
     private void addSubtreeToCheckingStateTracking(DefaultMutableTreeNode node) {
         TreeNode[] path = node.getPath();   
         TreePath tp = new TreePath(path);
@@ -148,11 +155,14 @@ public class CheckboxTree extends JTree {
         }
     }
 
-    // Overriding cell renderer by a class that ignores the original "selection" mechanism
-    // It decides how to show the nodes due to the checking-mechanism
-    private class CheckBoxCellRenderer extends JPanel implements TreeCellRenderer {     
-        private static final long serialVersionUID = -7341833835878991719L;     
+    /**
+     * Turns nodes into checkboxes.
+     */
+    private class CheckBoxCellRenderer extends JPanel implements TreeCellRenderer {        
         JCheckBox checkBox;     
+        /**
+         * Constructor for the checkbox cell.
+         */
         public CheckBoxCellRenderer() {
             super();
             this.setLayout(new BorderLayout());
@@ -160,7 +170,17 @@ public class CheckboxTree extends JTree {
             add(checkBox, BorderLayout.CENTER);
             setOpaque(false);
         }
-
+        /**
+         * Returns the object that was used to create the TreeCellRenderer.
+         * @param tree the tree of all nodes.
+         * @param value the Object stored in the node.
+         * @param selected true/false representing if the node was selected.
+         * @param expanded true/false depending whether its children have been selected.
+         * @param leaf true/false depending if the node is a leaf.
+         * @param row index of the row being rendered
+         * @param hasFocus if the cell has focus
+         * @return component used as a tree cell renderer for that node
+         */
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean selected, boolean expanded, boolean leaf, int row,
@@ -190,17 +210,18 @@ public class CheckboxTree extends JTree {
         }       
     }
 
+    /**
+     * CheckboxTree class creates the checkbox tree in the sidebar.
+     */
     public CheckboxTree() {
         super();
         // Disabling toggling by double-click
         this.setToggleClickCount(0);
-        // Overriding cell renderer by new one defined above
+        // Override cell renderer
         CheckBoxCellRenderer cellRenderer = new CheckBoxCellRenderer();
         this.setCellRenderer(cellRenderer);
 
-        // Overriding selection model by an empty one
         DefaultTreeSelectionModel dtsm = new DefaultTreeSelectionModel() {      
-            private static final long serialVersionUID = -8190634240451667286L;
             // Totally disabling the selection mechanism
             public void setSelectionPath(TreePath path) {
             }           
@@ -219,26 +240,22 @@ public class CheckboxTree extends JTree {
                     return;
                 } else {
                     DefaultMutableTreeNode poiNode = (DefaultMutableTreeNode) tp.getLastPathComponent();
-                    //singular poi node to keep track of 
                         if (poiNode.getUserObject() instanceof POI) {
                             POI poi = (POI) poiNode.getUserObject();
                             poi.setActive();
-                            //Jacky Added; basically just checks if the poi is active and should be drawn or not
+                            // Checks if the poi is active and should be drawn or not
                             if (poi.isActive() == true){
                             poisToDraw.add(poi);
-                            }
-                            else{
-                            poisToDraw.remove(poi);
-                                
+                            } else {
+                            poisToDraw.remove(poi);   
                             }
                             
                         } else {
-                            //Goes through the child of the layer /poi nodes and marks them for active and drawing
+                            // Goes through the child of the layer/poi nodes and marks them for active and drawing
                             for (int i=0; i<poiNode.getChildCount(); i++) {
                                 DefaultMutableTreeNode poi = (DefaultMutableTreeNode) poiNode.getChildAt(i);
                                 POI p = (POI) poi.getUserObject();
                                 p.setActive();
-                                //should add or not (same above)
                                 if (p.isActive() == true){
                                  poisToDraw.add(p);
                                 }
@@ -254,23 +271,31 @@ public class CheckboxTree extends JTree {
                 updatePredecessorsWithCheckMode(tp, checkMode);
                 // Firing the check change event
                 fireCheckChangeEvent(new CheckChangeEvent(new Object()));
-                // Repainting tree after the data structures were updated
+                // Repainting tree after it was updated
                 selfPointer.repaint();                          
-            }           
+            }
+            @Override
             public void mouseEntered(MouseEvent arg0) {         
-            }           
+            }    
+            @Override
             public void mouseExited(MouseEvent arg0) {              
             }
+            @Override
             public void mousePressed(MouseEvent arg0) {             
             }
+            @Override
             public void mouseReleased(MouseEvent arg0) {
             }           
         });
         this.setSelectionModel(dtsm);
     }
     
-    // When a node is checked/unchecked, updating the states of the predecessors
-    protected void updatePredecessorsWithCheckMode(TreePath tp, boolean check) {
+    /**
+     * Updates the parent nodes of children nodes according to their changed states.
+     * @param tp TreePath representing checked nodes
+     * @param check checked state of child nodes
+     */
+    private void updatePredecessorsWithCheckMode(TreePath tp, boolean check) {
         TreePath parentPath = tp.getParentPath();
         // If it is the root, stop the recursive calls and return
         if (parentPath == null) {
@@ -278,22 +303,23 @@ public class CheckboxTree extends JTree {
         }       
         CheckedNode parentCheckedNode = nodesCheckingState.get(parentPath);
         DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();     
-        parentCheckedNode.allChildrenSelected = true;
+        parentCheckedNode.allChildrenSelected = false;
         parentCheckedNode.isSelected = false;
+        int selectedChildren = 0;
+        // for each parent node, loop through each child
         for (int i = 0 ; i < parentNode.getChildCount() ; i++) {                
             TreePath childPath = parentPath.pathByAddingChild(parentNode.getChildAt(i));
             CheckedNode childCheckedNode = nodesCheckingState.get(childPath);           
-            // It is enough that even one subtree is not fully selected
-            // to determine that the parent is not fully selected
-            if (! childCheckedNode.allChildrenSelected) {
-                parentCheckedNode.allChildrenSelected = false;      
-            }
-            // If at least one child is selected, selecting also the parent
-            if (childCheckedNode.isSelected) {
-                parentCheckedNode.isSelected = false;
-            }
-            // ADD LATER - If all child nodes are selected, select parent node
             
+            // If child is not selected, then the parent cannot be selected
+            if (childCheckedNode.isSelected == false) {
+                parentCheckedNode.isSelected = false;      
+            } else {
+                selectedChildren++;
+            }          
+        }            
+        if (parentNode.getChildCount() == selectedChildren) {
+            parentCheckedNode.isSelected = true;
         }
         if (parentCheckedNode.isSelected) {
             checkedPaths.add(parentPath);
@@ -304,8 +330,12 @@ public class CheckboxTree extends JTree {
         updatePredecessorsWithCheckMode(parentPath, check);
     }
     
-    // Recursively checks/unchecks a subtree
-    protected void checkSubTree(TreePath tp, boolean check) {
+    /**
+     * Checks/unchecks the subtree rooted at a given TreePath.
+     * @param tp the TreePath of the root node of the subtree to be checked or unchecked
+     * @param check the checking state applied to subtree
+     */
+    private void checkSubTree(TreePath tp, boolean check) {
         CheckedNode cn = nodesCheckingState.get(tp);
         cn.isSelected = check;
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp.getLastPathComponent();
