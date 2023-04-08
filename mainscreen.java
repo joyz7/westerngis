@@ -586,7 +586,6 @@ public class mainscreen {
     //creating a popup menu of getting poi info, and updating the user of adding
     //the poi or not
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-
         boolean isDeveloper = main.isDeveloper();
         char layerType = 'a';
 
@@ -664,7 +663,6 @@ public class mainscreen {
             System.out.println("Selected floor: " + selectedFloor);
 
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
-                System.out.println(xCoord + " " + yCoord);
                 //Create POI
                 main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description);
                 TreeModel newTree = main.makeTree(currFloor);

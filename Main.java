@@ -235,19 +235,28 @@ public class Main extends JFrame {
         DefaultMutableTreeNode favouriteLayer = new DefaultMutableTreeNode("Favourites");
         DefaultMutableTreeNode usercreatedLayer = new DefaultMutableTreeNode("User-Created POIs");
         DefaultMutableTreeNode classroom = new DefaultMutableTreeNode("Classrooms");
-        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
         DefaultMutableTreeNode navigation = new DefaultMutableTreeNode("Navigation");
-        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
         DefaultMutableTreeNode washroom = new DefaultMutableTreeNode("Washrooms");
-        DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry Exit");
-        DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Gen Labs");
+        DefaultMutableTreeNode entryExit = new DefaultMutableTreeNode("Entry/Exit");
+        DefaultMutableTreeNode csSpecific = new DefaultMutableTreeNode("CS Specific");
+        DefaultMutableTreeNode genLabs = new DefaultMutableTreeNode("Genlabs");
+        DefaultMutableTreeNode restaurant = new DefaultMutableTreeNode("Restaurants");
+
         root.add(favouriteLayer);
         root.add(usercreatedLayer);
         root.add(classroom);
-        root.add(csSpecific);
-        root.add(navigation);
-        root.add(restaurant);
+        if (buildingKey == 'm') {
+            root.add(csSpecific);
+        }
+        if (buildingKey == 'h') {
+            root.add(genLabs);
+        }
+        if (buildingKey != 'a') {
+            root.add(restaurant);
+        }
         root.add(washroom);
+        root.add(navigation);
+        root.add(entryExit);
         
         // reset the active states of all the POIs
         for (Object poi : poiMap.values()) {
@@ -260,8 +269,6 @@ public class Main extends JFrame {
             
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
-            System.out.println(currPOI.getName());
-            System.out.println(currPOI.isActive());
             String layerId = currPOI.getLayerId();
             char poiBuilding = layerId.charAt(0);
             Integer poiFloor = Character.getNumericValue(layerId.charAt(1));
