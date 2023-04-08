@@ -114,13 +114,10 @@ public class Main extends JFrame {
                 for (Object o : favouriteArray) {
                     JSONObject poi = (JSONObject) o;
                     if (poi != null) {
-                        System.out.println("wqe");
                         favouritePoiId.add((int) ((long)poi.get("pid")));
                     }
                 }
             }
-            System.out.println(favouritePoiId);
-
             
         //Create set of user-created POIs
         for (Integer o : createdPoiId) {
@@ -131,7 +128,6 @@ public class Main extends JFrame {
 
         //Create set of favourite POIs
         for (Integer o : favouritePoiId) {
-            System.out.println(favouritePoiId);
             if (poiMap.containsKey(o)) {
                 favouritePoiObjects.add(poiMap.get(o));
                 poiMap.get(o).setFavourite();
@@ -258,8 +254,6 @@ public class Main extends JFrame {
             
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
-            System.out.println(currPOI.getName());
-            System.out.println(currPOI.isActive());
             String layerId = currPOI.getLayerId();
             char poiBuilding = layerId.charAt(0);
             Integer poiFloor = Character.getNumericValue(layerId.charAt(1));
@@ -289,8 +283,6 @@ public class Main extends JFrame {
                 }
             }
        }
-        String tree = getTreeText(layers, root, "");
-        System.out.println(tree);
         return layers;
     }
     
@@ -331,7 +323,6 @@ public class Main extends JFrame {
         favouritePoiObjects.add(favPOI);
         favPOI.setFavourite();
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
-        System.out.println(poiArray);
         JSONObject poi = new JSONObject();
         poi.put("pid", favPOI.getId());
         if (poiArray != null) {
@@ -357,7 +348,6 @@ public class Main extends JFrame {
                     if ((int) ((long)poi.get("pid")) != poiId) {
                         newFavList.add(poi);
                     } else {
-                        System.out.println("Hell");
                     }
                 }
             }
@@ -491,7 +481,6 @@ public class Main extends JFrame {
                             if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
                                 newCreatedList.add(poi);
                             } else {
-                                System.out.println("Hell");
                             }
                         }
                     }
