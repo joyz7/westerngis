@@ -5,7 +5,7 @@
 package com.cs2212;
 import java.util.HashSet;
 /**
- *
+ *The Consumer class represents a user who has the ability to add their own personal pois and favourite pois
  * @author rrenv
  */
 public class Consumer extends User {
