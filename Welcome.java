@@ -1,6 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
 
 package com.cs2212;
 import javax.swing.*;
@@ -15,10 +12,7 @@ import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-/**
- *
- * @author rrenv
- */
+
 public class Welcome extends JFrame implements ActionListener {
 
     private JFrame welcomeFrame;
