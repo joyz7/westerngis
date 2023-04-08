@@ -146,6 +146,7 @@ public class Main extends JFrame {
             
       
         createLayers();
+        System.out.println(poiMap.get(35).getName());
         mainscreen mainscreen = new mainscreen(this, campus, poiMap);
     } 
     
@@ -220,6 +221,7 @@ public class Main extends JFrame {
         
     public TreeModel makeTree(Floor floor) {
         
+        System.out.println("We");
         Integer floorNum = floor.getNumber();
         char buildingKey = Character.toLowerCase(floor.getBuilding().getName().charAt(0));     
         // Create tree of layers
@@ -250,7 +252,6 @@ public class Main extends JFrame {
                 currPOI.setActive();
             }
         }
-            
             
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
@@ -284,14 +285,6 @@ public class Main extends JFrame {
             }
        }
         return layers;
-    }
-    
-    private String getTreeText(TreeModel model, Object object, String indent) {
-        String myRow = indent + object + "\n";
-        for (int i = 0; i < model.getChildCount(object); i++) {
-            myRow += getTreeText(model, model.getChild(object, i), indent + "  ");
-        }
-        return myRow;
     }
     
     public void addPOI(String layerId, long xCoord, long yCoord, String roomNum, String name, String description) {
@@ -339,18 +332,25 @@ public class Main extends JFrame {
         POI favPOI = poiMap.get(poiId);
         favouritePoiObjects.remove(favPOI);
         favPOI.setFavourite();
+        System.out.println(favPOI.getFavourite());
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
         JSONArray newFavList = new JSONArray();
         if (poiArray != null) {
             for(Object o : poiArray) {
                 JSONObject poi = (JSONObject) o; 
                 if (poi != null) {
-                    if ((int) ((long)poi.get("pid")) != poiId) {
-                        newFavList.add(poi);
+                    if (poi.get("pid") instanceof Integer) {
+                        if ((int) poi.get("pid") != poiId) {
+                            newFavList.add(poi);
+                        }
                     } else {
+                        if ((int) ((long)poi.get("pid")) != poiId) {
+                            newFavList.add(poi);
+                        }
                     }
                 }
             }
+            System.out.println(newFavList);
             favourites.put(user.getUsername(),newFavList);
         }
     }
