@@ -204,6 +204,7 @@ public class mainscreen {
             //For every poi that needs be draw; draw it. if empty/no pois ignore
             if (poisToDraw != null) {
                 for (POI poi : poisToDraw) {
+                    poi.setActive();
                     layeredPane.add(poi.getLbl(), JLayeredPane.PALETTE_LAYER);
                 }
             }
@@ -545,14 +546,6 @@ public class mainscreen {
         POITitle.setBackground(darkGrey);
         POITitle.setForeground(Color.white);
         panelPOITitle.add(POITitle);
-
-        // Listener for when user selects checkbox to draw the POI marker
-        POIList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                drawPOIs();
-            }
-        });
 
         // Add a button to Add POIs
         addPOIBtn = new JButton("Add POI");
