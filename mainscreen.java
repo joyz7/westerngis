@@ -660,7 +660,6 @@ public class mainscreen {
             if (isDeveloper) {
                
                 String layer = layers.getSelectedItem().toString();
-                System.out.println(layer);
 
                 if (layer.equals("Washrooms")) {
                     layerType = 'w';
