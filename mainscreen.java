@@ -207,17 +207,28 @@ public class mainscreen {
                     layeredPane.add(poi.getLbl(), JLayeredPane.PALETTE_LAYER);
                 }
             }
-            // Get the current viewport
-            JViewport viewport = activeScrollPane.getViewport();
-            // Keep the same view position
-            Point viewPosition = viewport.getViewPosition();
-            // Update the viewport's view component with the new content
-            viewport.setView(layeredPane);
-            // Set the view position to the same location as before
-            viewport.setViewPosition(viewPosition);
-            activeScrollPane.setViewport(viewport);
-            activeScrollPane.revalidate(); // Trigger a new layout pass
-            activeScrollPane.repaint(); // Repaint the JLayeredPane              
+            if (poisToDraw.size()> 0) {
+                POI lastPOI = poisToDraw.get(poisToDraw.size()-1);
+                JViewport viewport = activeScrollPane.getViewport();
+                viewport.setView(layeredPane);
+                viewport.setViewPosition(new Point((int)lastPOI.getXCoord()-50, (int)lastPOI.getYCoord()-50));
+                activeScrollPane.setViewport(viewport);
+                activeScrollPane.revalidate(); // Trigger a new layout pass
+                activeScrollPane.repaint(); // Repaint the JLayeredPane  
+            } else {
+                // Get the current viewport
+                JViewport viewport = activeScrollPane.getViewport();
+               // Keep the same view position
+                Point viewPosition = viewport.getViewPosition();
+                // Update the viewport's view component with the new content
+                viewport.setView(layeredPane);
+                // Set the view position to the same location as before
+                viewport.setViewPosition(viewPosition);
+                activeScrollPane.setViewport(viewport);
+                activeScrollPane.revalidate(); // Trigger a new layout pass
+                activeScrollPane.repaint(); // Repaint the JLayeredPane    
+            }
+
         } catch (IOException e) {
         }
     }
@@ -605,23 +616,6 @@ public class mainscreen {
      */
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
         boolean isDeveloper = main.isDeveloper();
-        ArrayList<String> layersList = new ArrayList<String>();
-        layersList.add("Classrooms");
-        layersList.add("Washrooms");
-        layersList.add("Entry/Exit");
-        layersList.add("Navigation");
-        layersList.add("Resturaunts");
-
-        if (currBuilding.getName().equals("Health Sciences Building")) {
-            layersList.add("Gen Labs");
-        } else if (currBuilding.getName().equals("Middlesex College")) {
-            layersList.add("CS Specfic");
-        }
-        
-        String[] layersArr = new String[layersList.size()];
-        layersArr = layersList.toArray(layersArr);
- 
-        JComboBox layers = new JComboBox(layersArr);
         JTextField layerField = new JTextField();     
 
         char layerType = 'a';
@@ -645,7 +639,7 @@ public class mainscreen {
         //if dev, then add this component to panel
         if (isDeveloper) {     
             panel.add(new JLabel("Layer:"));
-            panel.add(layers);   
+            panel.add(layerField);   
         }
         
         // Show the input dialog with the panel as the message
@@ -659,19 +653,19 @@ public class mainscreen {
             // If the user is a developer, display layer
             if (isDeveloper) {
                
-                String layer = layers.getSelectedItem().toString();
+                String layer = (String)layerField.getText();
 
-                if (layer.equals("Washrooms")) {
+                if (layer.equals("Washroom")) {
                     layerType = 'w';
-                } else if (layer.equals("Classrooms")) {
+                } else if (layer.equals("Classroom")) {
                     layerType = 'c';
-                } else if (layer.equals("Gen Labs")) {
+                } else if (layer.equals("Gen Lab")) {
                     layerType = 'g';
                 } else if (layer.equals("CS Specific")) {
                     layerType = 's';
                 } else if (layer.equals("Resturaunts")) {
                     layerType = 'r';
-                } else if (layer.equals("Entry/Exit")) {
+                } else if (layer.equals("Exit/Entry point")) {
                     layerType = 'e';
                 } else if (layer.equals("Navigation")) {
                     layerType = 'n';
@@ -683,11 +677,7 @@ public class mainscreen {
             // Make all fields mandatory
             if (result == JOptionPane.OK_OPTION && !pointNameField.getText().isEmpty() && !roomNumberField.getText().isEmpty() && !descriptionField.getText().isEmpty()) {
                 // Create POI
-                if (isDeveloper) {
-                    main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + layerType, xCoord, yCoord, roomNum, name, description);
-                } else {
-                    main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description);
-                }
+                main.addPOI(currBuilding.getName().toLowerCase().charAt(0) + Integer.toString(selectedFloor) + "u", xCoord, yCoord, roomNum, name, description);
                 TreeModel newTree = main.makeTree(currFloor);
                 repaintUI(newTree);
                 drawPOIs();
