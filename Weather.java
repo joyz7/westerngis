@@ -59,6 +59,8 @@ public class Weather {
             city = "Error ";
             currWeather = 1;
             currCondition = ": weather details available.";
+            currWeather = 1;
+            currCondition = "No internet.";
             
         }
     }

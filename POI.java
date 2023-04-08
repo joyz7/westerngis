@@ -18,7 +18,6 @@ import javax.swing.*;
 
 /**
  * The POI class represents a point of interest.  
- * @author JOYZH
  */
 public class POI {
     private int id;
@@ -66,7 +65,6 @@ public class POI {
             
             POILbl.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("Clicked");
                     System.out.println(id);
                     mainframe.displayPOI(id);
                 }
@@ -237,8 +235,21 @@ public class POI {
      * Returns the name of the POI.
      * @return the name of the POI.
      */
+
+    public String checkBoxText() {
+        return name;
+    }
+    
     @Override
     public String toString() {
+        String layer = this.getLayerId().substring(0,1);
+        if (layer.equals("a")) {
+            return "AH: " + name;
+        } else if (layer.equals("m")) {
+            return "MC: " + name;
+        } else if (layer.equals("h")){ 
+            return "HSB: " + name;
+        }
         return name;
     }
     

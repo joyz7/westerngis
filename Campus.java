@@ -20,6 +20,7 @@ public class Campus {
     /**
      * Constructs a Campus object with the specified name and address, and initializes the map of buildings
      * to an empty HashMap.
+
      * @param name The name of the campus.
      * @param address The address of the campus.
      */

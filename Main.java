@@ -87,7 +87,7 @@ public class Main extends JFrame {
                 String name = (String)poi.get("name");
                 String description = (String)poi.get("description");
                 boolean builtIn = (boolean)poi.get("builtin");
-                POI newPoi = new POI(count, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
+                POI newPoi = new POI(id, layerId, xCoord, yCoord, roomNum, name, description, builtIn);
                 poiMap.put((int) ((long)poi.get("pid")), newPoi);
                 // Load built in POIs from JSON
                 if (builtIn) {
@@ -114,13 +114,10 @@ public class Main extends JFrame {
                 for (Object o : favouriteArray) {
                     JSONObject poi = (JSONObject) o;
                     if (poi != null) {
-                        System.out.println("wqe");
                         favouritePoiId.add((int) ((long)poi.get("pid")));
                     }
                 }
             }
-            System.out.println(favouritePoiId);
-
             
         //Create set of user-created POIs
         for (Integer o : createdPoiId) {
@@ -131,15 +128,12 @@ public class Main extends JFrame {
 
         //Create set of favourite POIs
         for (Integer o : favouritePoiId) {
-            System.out.println(favouritePoiId);
             if (poiMap.containsKey(o)) {
                 favouritePoiObjects.add(poiMap.get(o));
                 poiMap.get(o).setFavourite();
             }
         }
     }
-        
-        //System.out.println(poiMap.get(17).getDescription());
         
         //check if user is developer
         boolean isDev = false; 
@@ -266,7 +260,6 @@ public class Main extends JFrame {
             }
         }
             
-            
         for (Object poi : poiMap.values()) {
             POI currPOI = (POI) poi;
             String layerId = currPOI.getLayerId();
@@ -298,17 +291,7 @@ public class Main extends JFrame {
                 }
             }
        }
-        String tree = getTreeText(layers, root, "");
-        System.out.println(tree);
         return layers;
-    }
-    
-    private String getTreeText(TreeModel model, Object object, String indent) {
-        String myRow = indent + object + "\n";
-        for (int i = 0; i < model.getChildCount(object); i++) {
-            myRow += getTreeText(model, model.getChild(object, i), indent + "  ");
-        }
-        return myRow;
     }
     
     public void addPOI(String layerId, long xCoord, long yCoord, String roomNum, String name, String description) {
@@ -340,12 +323,12 @@ public class Main extends JFrame {
         favouritePoiObjects.add(favPOI);
         favPOI.setFavourite();
         JSONArray poiArray = (JSONArray)favourites.get(user.getUsername());
-        System.out.println(poiArray);
         JSONObject poi = new JSONObject();
         poi.put("pid", favPOI.getId());
         if (poiArray != null) {
             poiArray.add(poi);
             favourites.put(user.getUsername(), poiArray);
+
         } else {
             JSONArray newPoiArray = new JSONArray();
             newPoiArray.add(poi);
@@ -363,10 +346,14 @@ public class Main extends JFrame {
             for(Object o : poiArray) {
                 JSONObject poi = (JSONObject) o; 
                 if (poi != null) {
-                    if ((int) ((long)poi.get("pid")) != poiId) {
-                        newFavList.add(poi);
+                    if (poi.get("pid") instanceof Integer) {
+                        if ((int) poi.get("pid") != poiId) {
+                            newFavList.add(poi);
+                        }
                     } else {
-                        System.out.println("Hell");
+                        if ((int) ((long)poi.get("pid")) != poiId) {
+                            newFavList.add(poi);
+                        }
                     }
                 }
             }
@@ -374,31 +361,23 @@ public class Main extends JFrame {
         }
     }
     
-    public DefaultListModel<POI> search(String searchText, Building building) {
+    public DefaultListModel<POI> search(String searchText) {
         DefaultListModel<POI> searchResultsList = new DefaultListModel<>();     
         //Get a string to compare later with the POI layer id
-
-        String buildingName;
+        searchText = searchText.toLowerCase();
 
         //search through all pois
         for (POI specificPoi : poiMap.values()) { //loop through POI map and compare layer id
 
             String layerId = specificPoi.getLayerId();
-            if (layerId.charAt(0) == 'm') {
-                buildingName = "Middlesex College";
-            } else if (layerId.charAt(0) == 'h') {
-                buildingName = "Health Sciences Building";
-            } else {
-                buildingName = "Alumuni Hall";
-            }
 
             //Search for room number
-            if (searchText.equals(specificPoi.getRoomNum())) {
+            if (searchText.equals(specificPoi.getRoomNum().toLowerCase())) {
                 searchResultsList.addElement(specificPoi);
-            } else if (searchText.equals(specificPoi.getName())) {  //Search for name
+            } else if (searchText.equals(specificPoi.getName().toLowerCase())) {  //Search for name
                 searchResultsList.addElement(specificPoi);
             } else {
-                String[] strArray = specificPoi.getDescription().split(" ");
+                String[] strArray = specificPoi.getDescription().toLowerCase().split(" ");
                 //Search for description
                 for (int k = 0; k < strArray.length; k++) {
                     if (searchText.equals(strArray[k])) {
@@ -508,7 +487,6 @@ public class Main extends JFrame {
                             if ((int) ((long)poi.get("pid")) != poiToDelete.getId()) {   //CLASS CAST EXCEPTION
                                 newCreatedList.add(poi);
                             } else {
-                                System.out.println("Hell");
                             }
                         }
                     }
