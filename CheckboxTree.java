@@ -20,6 +20,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+/* 
+* CheckboxTree is a class that extends the JTree class and implements its own checking mechanism. It
+* defines a new event type and implements the methods required to handle it.
+* @author Sophia Ma
+*/
 
 public class CheckboxTree extends JTree {
 
@@ -74,26 +79,44 @@ public class CheckboxTree extends JTree {
             }
         }
     }
-
+     
+    /**
+     * Overrides the setModel method of JTree to reset the checking state.
+     * @param newModel the new model to set
+     */
     // Override
     public void setModel(TreeModel newModel) {
         super.setModel(newModel);
         resetCheckingState();
     }
-
-    //to get the list of nodes to be drawn on the mainscreen
+    
+    /**
+     * Returns the list of nodes to be drawn on the main screen.
+     * @return the list of nodes to draw
+     */
     public ArrayList<POI> getPOIDraw(){
         return poisToDraw;
     }
     
+    /**
+     * Sets the list of nodes to be drawn on the main screen.
+     * @param pois the list of nodes to draw
+     */
     public void setPOIDraw(ArrayList<POI> pois) {
         poisToDraw = pois;
     }
     
+    /**
+     * Clears the POIs.
+     */
     public void clearPOI(){
         poisToDraw.clear();
     }
-    // New method that returns only the checked paths (totally ignores original "selection" mechanism)
+    
+    /*
+    *  Returns only the checked paths (totally ignores original "selection" mechanism)
+    * @return TreePath[] 
+    */
     public TreePath[] getCheckedPaths() {
         return checkedPaths.toArray(new TreePath[checkedPaths.size()]);
     }
@@ -154,7 +177,7 @@ public class CheckboxTree extends JTree {
                 if ((POI)obj instanceof POI) {
                     POI POIobj = (POI)obj;
                     checkBox.setSelected(cn.isSelected);
-                    checkBox.setText(POIobj.toString());
+                    checkBox.setText(POIobj.checkBoxText());
                     checkBox.setOpaque(cn.isSelected && cn.hasChildren && ! cn.allChildrenSelected);
                 }
             } catch (Exception e) {
