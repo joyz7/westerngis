@@ -604,7 +604,6 @@ public class mainscreen {
      * @param floorCB JComboBox containing the floors of the building.
      */
     private void newPoiAdd(long xCoord, long yCoord, JComboBox floorCB) {
-
         boolean isDeveloper = main.isDeveloper();
         JTextField layerField;
         char layerType = 'a';
