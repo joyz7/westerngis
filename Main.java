@@ -70,7 +70,7 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/test.json"));
+           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
@@ -400,7 +400,7 @@ public class Main extends JFrame {
         JSONObject poiJSON = new JSONObject();
         poiJSON.put("pois", pois);
         try {
-            FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
+            FileWriter file = new FileWriter("src/main/java/com/cs2212/poi.json");
             file.write(poiJSON.toJSONString());
             file.close();
         } catch (Exception error) {
