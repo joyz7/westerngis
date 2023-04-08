@@ -10,6 +10,8 @@ import java.awt.Color;
 import java.util.*;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
@@ -38,11 +40,25 @@ public class Welcome extends JFrame implements ActionListener {
         favourites = new HashMap<>();
         activeLayers = new HashMap<>();
         
-        JSONParser parser = new JSONParser();                        
-        try {
+        try {     
+            JSONParser parser = new JSONParser();                                  
+
+//                  TEH WORKING BUT NOT SUPPOSED TO USE !!! URGETN FIX
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/users.json"));
            JSONObject jsonObject = (JSONObject)obj;
            JSONArray userArray = (JSONArray) jsonObject.get("users");
+//            WHAT WE SUPPOSED TO USE, BUT IT JUST DOESN'T WORK
+//            //get the file as an object
+//            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("users.json");
+//            //reads that object from the stream
+//            InputStreamReader userReader = new InputStreamReader(inputStream);
+//            System.out.println(userReader == null);
+//            //parse it in as our jsonsimple object
+//            JSONObject jsonObject = (JSONObject)parser.parse(userReader);
+//                                  System.out.println(jsonObject == null);          
+//           JSONArray userArray = (JSONArray) jsonObject.get("users");
+//                       System.out.println(userArray == null);
+
 
            for(Object o : userArray) {
                
@@ -71,6 +87,7 @@ public class Welcome extends JFrame implements ActionListener {
            }
         } catch(Exception e) {
            System.out.println("Error with the initial file");
+            e.printStackTrace();
         }
         
         // Create the JFrame
