@@ -314,12 +314,6 @@ public class CheckboxTree extends JTree {
         if (parentNode.getChildCount() == selectedChildren) {
             parentCheckedNode.isSelected = true;
         }
-        /*
-        // If all child nodes are selected, select parent node
-        if (parentCheckedNode.allChildrenSelected) {
-            parentCheckedNode.isSelected = true;
-        }
-        */
         if (parentCheckedNode.isSelected) {
             checkedPaths.add(parentPath);
         } else {
