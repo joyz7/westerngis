@@ -68,30 +68,6 @@ public class Main extends JFrame {
         favouritePoiObjects = new HashSet<>();
         count = 0;
         
-<<<<<<< HEAD
-        if (!newUser) {
-            JSONArray poiArray = createdPois.get(user.getUsername());
-            HashSet<Integer> createdPoiId = new HashSet<Integer>();
-            if (poiArray != null) {
-                for (Object o : poiArray) {
-                    JSONObject poi = (JSONObject) o;
-                    createdPoiId.add((int) ((long)poi.get("pid")));
-                }
-            }
-
-            JSONArray favouriteArray = favourites.get(user.getUsername());
-            HashSet<Integer> favouritePoiId = new HashSet<Integer>();
-            if (favouriteArray != null) {
-                for (Object o : favouriteArray) {
-                    JSONObject poi = (JSONObject) o;
-                    if (poi != null) {
-                        System.out.println("wqe");
-                        favouritePoiId.add((int) ((long)poi.get("pid")));
-                    }
-                }
-            }
-=======
->>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
         try {
            JSONParser parser = new JSONParser();
            Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
@@ -162,11 +138,6 @@ public class Main extends JFrame {
             }
         }
     }
-        
-<<<<<<< HEAD
-=======
-        //System.out.println(poiMap.get(17).getDescription());
->>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
         
         //check if user is developer
         boolean isDev = false; 

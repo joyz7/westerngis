@@ -55,15 +55,12 @@ public class Weather {
                 currCondition = (String)condition.get("text");
             }
         } catch (Exception e) {
-<<<<<<< HEAD
             System.out.println("Error recovering weather details.");
             city = "Error ";
             currWeather = 1;
             currCondition = ": weather details available.";
-=======
             currWeather = 1;
             currCondition = "No internet.";
->>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
             
         }
     }

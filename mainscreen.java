@@ -146,13 +146,6 @@ public class mainscreen {
                         // Change the floor image and set new current floor to reflect user selection
                         changeFloorImage(building.getName(), floorNum);
                         setCurrFloor(newFloor);
-<<<<<<< HEAD
-                        if (drawnPois != null ){
-                            drawnPois.clear();
-                        }
-=======
-                        // Change POIs on the sidebar
->>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
                         TreeModel newTree = main.makeTree(newFloor);
                         repaintUI(newTree);
                         drawPOIs();//drawing the poits
@@ -868,10 +861,7 @@ public class mainscreen {
             // Event listener for the favourite option
             isFavourite.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
-=======
 
->>>>>>> ba1e2fd2e8c2422f463e23c6f30265afbf85f025
                     if (poiMap.get(poiID).getFavourite()) {
                         main.removeFavourite(poiID);
                         JOptionPane.showMessageDialog(null, "Successfully removed from favourites.");
