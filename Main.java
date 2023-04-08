@@ -14,6 +14,7 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.DefaultListModel;
 
 import javax.swing.BorderFactory;
@@ -70,8 +71,12 @@ public class Main extends JFrame {
         
         try {
            JSONParser parser = new JSONParser();
-           Object obj = parser.parse(new FileReader("src/main/java/com/cs2212/poi.json"));
-           JSONObject jsonObject = (JSONObject)obj;
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("poi.json");
+            //reads that object from the stream
+            InputStreamReader userReader = new InputStreamReader(inputStream);
+            //parse it in as our jsonsimple object
+            JSONObject jsonObject = (JSONObject)parser.parse(userReader);
+
            JSONArray pois = (JSONArray) jsonObject.get("pois");
 
             for(Object o : pois) {
@@ -159,28 +164,28 @@ public class Main extends JFrame {
         campus.addBuilding(0,alumni);
         campus.addBuilding(1,middlesex);
         campus.addBuilding(2,health);
-        Floor m0 = new Floor(0, middlesex, "src/main/java/com/cs2212/images/Middlesex College-0.png");
-        Floor m1 = new Floor(1, middlesex, "src/main/java/com/cs2212/images/Middlesex College-1.png");
-        Floor m2 = new Floor(2, middlesex, "src/main/java/com/cs2212/images/Middlesex College-2.png");
-        Floor m3 = new Floor(3, middlesex, "src/main/java/com/cs2212/images/Middlesex College-3.png");
-        Floor m4 = new Floor(4, middlesex, "src/main/java/com/cs2212/images/Middlesex College-4.png");
+        Floor m0 = new Floor(0, middlesex, "images/Middlesex College-0.png");
+        Floor m1 = new Floor(1, middlesex, "images/Middlesex College-1.png");
+        Floor m2 = new Floor(2, middlesex, "images/Middlesex College-2.png");
+        Floor m3 = new Floor(3, middlesex, "images/Middlesex College-3.png");
+        Floor m4 = new Floor(4, middlesex, "images/Middlesex College-4.png");
         middlesex.addFloor(m0);
         middlesex.addFloor(m1);
         middlesex.addFloor(m2);
         middlesex.addFloor(m3);
         middlesex.addFloor(m4);
         Floor h0 = new Floor(0, health, "");
-        Floor h1 = new Floor(1, health, "src/main/java/com/cs2212/images/Health Sciences Building-1.png");
-        Floor h2 = new Floor(2, health, "src/main/java/com/cs2212/images/Health Sciences Building-2.png");
-        Floor h3 = new Floor(3, health, "src/main/java/com/cs2212/images/Health Sciences Building-3.png");
-        Floor h4 = new Floor(4, health, "src/main/java/com/cs2212/images/Health Sciences Building-4.png");
+        Floor h1 = new Floor(1, health, "images/Health Sciences Building-1.png");
+        Floor h2 = new Floor(2, health, "images/Health Sciences Building-2.png");
+        Floor h3 = new Floor(3, health, "images/Health Sciences Building-3.png");
+        Floor h4 = new Floor(4, health, "images/Health Sciences Building-4.png");
         health.addFloor(h1);
         health.addFloor(h2);
         health.addFloor(h3);
         health.addFloor(h4);
-        Floor a0 = new Floor(0, alumni, "src/main/java/com/cs2212/images/Alumni Hall-0.png");
-        Floor a1 = new Floor(1, alumni, "src/main/java/com/cs2212/images/Alumni Hall-1.png");
-        Floor a2 = new Floor(2, alumni, "src/main/java/com/cs2212/images/Alumni Hall-2.png");
+        Floor a0 = new Floor(0, alumni, "images/Alumni Hall-0.png");
+        Floor a1 = new Floor(1, alumni, "images/Alumni Hall-1.png");
+        Floor a2 = new Floor(2, alumni, "images/Alumni Hall-2.png");
         alumni.addFloor(a0);
         alumni.addFloor(a1);
         alumni.addFloor(a2);
@@ -410,7 +415,10 @@ public class Main extends JFrame {
         JSONObject poiJSON = new JSONObject();
         poiJSON.put("pois", pois);
         try {
-            FileWriter file = new FileWriter("src/main/java/com/cs2212/test.json");
+            
+            URL poiUrl = getClass().getClassLoader().getResource("poi.json");
+            File filee = new File(poiUrl.getPath());
+            FileWriter file = new FileWriter(filee);
             file.write(poiJSON.toJSONString());
             file.close();
         } catch (Exception error) {
@@ -450,8 +458,10 @@ public class Main extends JFrame {
         JSONObject userJSON = new JSONObject();
         userJSON.put("users", users);
         try {
-            FileWriter file = new FileWriter("src/main/java/com/cs2212/users.json");
-            file.write(userJSON.toJSONString());
+            URL usersUrl = getClass().getClassLoader().getResource("users.json");
+            File filee = new File(usersUrl.getPath());
+            FileWriter file = new FileWriter(filee);
+            file.write(poiJSON.toJSONString());
             file.close();
         } catch (Exception error) {
             error.printStackTrace();

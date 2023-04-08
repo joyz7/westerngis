@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -74,7 +75,7 @@ public class mainscreen {
     public void createMap(String building, int floor) throws IOException {
         try {
             //Prepare map images
-            BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
+            BufferedImage mapImage = ImageIO.read(getClass().getResource("images/" + building + "-" + floor + ".png"));
             JLabel image = new JLabel(new ImageIcon(mapImage));
             image.setBounds(0, 30, 970, 550); // Set size of the image
             // Set up maps for each of the buildings
@@ -168,7 +169,7 @@ public class mainscreen {
      */
     private void changeFloorImage(String building, int floor) throws IOException {
         try {
-            BufferedImage mapImage = ImageIO.read(new File("src/main/java/com/cs2212/images/" + building + "-" + floor + ".png"));
+            BufferedImage mapImage = ImageIO.read(getClass().getResource("images/" + building + "-" + floor + ".png"));
             mapLbl = new JLabel(new ImageIcon(mapImage));
             mapLbl.setBounds(0, 30, 970, 550);
             //Create a scroll pane to hold the image
@@ -191,7 +192,7 @@ public class mainscreen {
         try {
             activeScrollComponent = panelMap.getSelectedComponent();
             JScrollPane activeScrollPane = (JScrollPane) activeScrollComponent;
-            BufferedImage mapImage = ImageIO.read(new File(currFloor.getImage()));
+            BufferedImage mapImage = ImageIO.read(getClass().getResource(currFloor.getImage()));
 
             // Create a label to hold the Alumni Hall image and set its bounds
             mapLbl = new JLabel(new ImageIcon(mapImage));
@@ -256,13 +257,13 @@ public class mainscreen {
         main.setMainframe(this);
 
         //Parse POI json
-        String filename = "src/main/java/com/cs2212/poi.json";
-
         try {
             //Parse and print out each of the different results 
             JSONParser parser = new JSONParser();
-            Object obj = parser.parse(new FileReader(filename));
-            JSONObject jsonObj = (JSONObject) obj;
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("poi.json");
+            InputStreamReader poiReader = new InputStreamReader(inputStream);
+            JSONObject jsonObj = (JSONObject)parser.parse(poiReader);
+           
             pois = (JSONArray) jsonObj.get("pois");
 
         } catch (Exception e) {
@@ -481,11 +482,12 @@ public class mainscreen {
         // Event listener so that when the help icon is clicked the PDF is opened
         helpIcon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                URL pdfUrl = getClass().getClassLoader().getResource("resources/CS2212_Help_Document.pdf");
                 try {
-                    File pdfFile = new File("src/main/java/com/cs2212/resources/CS2212_Help_Document.pdf");
+                    File pdfFile = new File(pdfUrl.getFile());
                     if (pdfFile.exists()) {
                         Desktop.getDesktop().open(pdfFile);
-                    } 
+                    }
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
