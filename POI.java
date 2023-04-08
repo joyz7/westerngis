@@ -18,7 +18,6 @@ import javax.swing.*;
 
 /**
  * The POI class represents a point of interest.  
- * @author JOYZH
  */
 public class POI {
     private int id;

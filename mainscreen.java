@@ -16,6 +16,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+/**
+ * The mainscreen class represents the home screen after the user logs in.
+ */
 public class mainscreen {
     
     // Declare Instance Variables
