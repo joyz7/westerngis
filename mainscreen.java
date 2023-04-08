@@ -489,8 +489,15 @@ public class mainscreen {
         panelSideBar.add(panelWeather);
 
         Weather newWeather = new Weather("London");
-        JLabel weatherString = new JLabel(newWeather.getCity() + ": " + newWeather.getCurrWeather() + "°C " + newWeather.getCurrCondition());
-        panelWeather.add(weatherString);
+        
+        System.out.println(newWeather.getCurrCondition().contains("Error"));
+        if (newWeather.getCurrCondition().equals("No internet.")){
+            JLabel weatherString = new JLabel ("No Internet Connection.");
+            panelWeather.add(weatherString);
+        } else {
+            JLabel weatherString = new JLabel(newWeather.getCity() + ": " + newWeather.getCurrWeather() + "°C " + newWeather.getCurrCondition());
+            panelWeather.add(weatherString);
+        }
 
         // JPanel for the POI Title and Button
         JPanel panelPOITitle = new JPanel();
