@@ -22,7 +22,7 @@ To ease the process of locating points of interest within buildings, this projec
 
 ## How to Use the Software
 
-General user:
+**General user:**
 1. As a new user, you enter a username and password, then click the "Sign Up" button. This information will be saved in our program, so as an existing user, you can enter your information and click the "Log In" button.
 2. The landing page is the map for Floor 0 of Alumni Hall. Click the tabs at the top to switch between buildings, and the Floor dropdown on the top bar to switch between floors.
 3. The sidebar contains a list of layers, including favourites and user-created POIs, and POIs for the current floor. Click the circle beside the layer name to show the POIs under the layer. Select the POI checkbox to display a pin on the map for the location of the POI and deselect it to remove the pin. Select the layer checkbox to display all the POIs under the specific layer.
@@ -33,11 +33,9 @@ General user:
 6. The top right corner has a "Help" button containing information about the program, and the current weather information.
 7. After clicking the X to close the program, a pop-up prompts the user if they are sure about exiting. When the program closes, all the POI metadata and user's log-in information, created POIs, and favourited POIs are saved to the JSON file. This file is loaded in when the program starts.
 
-Developer:
+**Developer:**
 1. As a developer, you can enter the username and password provided in the "Developer Login Information" and click the "Developer Log In" button. Only users with the developer login credentials can access this view.
 2. The features are similar to the user's view, except the developer adds built-in POIs when "Add POI" is selected. The pop-up from clicking all POI pins contains the option to edit or delete the built-in POIs. This is reflected in the sidebar and will be updated in the user's list of POIs.
-
-Note: The program screen is a fixed size, so it cannot be maximized.
 
 ## Developer Login Information
 
