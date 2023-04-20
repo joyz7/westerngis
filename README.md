@@ -10,7 +10,7 @@ To ease the process of locating points of interest within buildings, this projec
 
 ## How to Compile the Project From Source Code and Run the Project
 
-1. Download JSON-simple Version 1.1 (https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple). 
+1. Download JSON-simple Version 1.1: https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple.
 2. Add jar to libraries by going to "Tools" in the top bar and then "Libraries".
 2. Load the Maven Project into NetBeans.
 3. In the top bar of Netbeans, click on "Run", right between "Refactor" and "Debug". 
@@ -40,4 +40,5 @@ To ease the process of locating points of interest within buildings, this projec
 ## Developer Login Information
 
 Username: developer
+
 Password: encrypted
